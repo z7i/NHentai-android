@@ -1,10 +1,8 @@
 package moe.feng.nhentai.ui.fragment;
 
 import android.app.Fragment;
-import android.graphics.Bitmap;
-import android.graphics.PointF;
+import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,8 +72,13 @@ public class BookPageFragment extends Fragment {
 		protected void onPostExecute(File result) {
 			super.onPostExecute(result);
 
-			if (result != null) {
-				Picasso.with(getActivity().getApplicationContext())
+			if (result != null) {Context context;
+				try {
+					context = getActivity().getApplicationContext();
+				} catch (Exception e) {
+					return;
+				}
+				Picasso.with(context)
 						.load(result)
 						.into(mImageView, new Callback() {
 							@Override

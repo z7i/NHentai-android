@@ -1,18 +1,20 @@
 package moe.feng.nhentai.ui.adapter;
 
-import android.graphics.Bitmap;
-import android.support.v7.widget.ListPopupWindow;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.florent37.materialimageloading.MaterialImageLoading;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.util.ArrayList;
 
 import moe.feng.nhentai.R;
@@ -56,37 +58,26 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 			int color = mColorGenerator.getColor(data.get(position).title);
 			TextDrawable drawable = TextDrawable.builder().buildRect(Utility.getFirstCharacter(data.get(position).title), color);
 			mHolder.mPreviewImageView.setImageDrawable(drawable);
+			mHolder.mImagePlaceholder = drawable;
 
 			if (previewImageUrl != null) {
-				switch (previewImageUrl) {
-					case "0":
-						mHolder.mPreviewImageView.setImageResource(R.drawable.holder_0);
-						break;
-					case "1":
-						mHolder.mPreviewImageView.setImageResource(R.drawable.holder_1);
-						break;
-					case "2":
-						mHolder.mPreviewImageView.setImageResource(R.drawable.holder_2);
-						break;
-					default:
-						ViewTreeObserver vto = mHolder.mPreviewImageView.getViewTreeObserver();
-						vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-							@Override
-							public void onGlobalLayout() {
-								int thumbWidth = data.get(position).thumbWidth;
-								int thumbHeight = data.get(position).thumbHeight;
-								if (thumbWidth > 0 && thumbHeight > 0) {
-									int width = mHolder.mPreviewImageView.getMeasuredWidth();
-									int height = Math.round(width * ((float) thumbHeight / thumbWidth));
-									mHolder.mPreviewImageView.getLayoutParams().height = height;
-									mHolder.mPreviewImageView.setMinimumHeight(height);
-								}
-								mHolder.mPreviewImageView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				ViewTreeObserver vto = mHolder.mPreviewImageView.getViewTreeObserver();
+				vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+					@Override
+					public void onGlobalLayout() {
+						int thumbWidth = data.get(position).thumbWidth;
+						int thumbHeight = data.get(position).thumbHeight;
+						if (thumbWidth > 0 && thumbHeight > 0) {
+							int width = mHolder.mPreviewImageView.getMeasuredWidth();
+							int height = Math.round(width * ((float) thumbHeight / thumbWidth));
+							mHolder.mPreviewImageView.getLayoutParams().height = height;
+							mHolder.mPreviewImageView.setMinimumHeight(height);
+						}
+						mHolder.mPreviewImageView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
-							}
-						});
-						new ImageDownloader().execute(mHolder.getParentView());
-				}
+					}
+				});
+				new ImageDownloader().execute(mHolder.getParentView());
 			}
 
 			mHolder.book = data.get(position);
@@ -109,7 +100,7 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 			if (v != null && !TextUtils.isEmpty(book.previewImageUrl)) {
 				ImageView imgView = h.mPreviewImageView;
 
-				Bitmap img = BookApi.getThumb(getContext(), book);
+				File img = BookApi.getThumbFile(getContext(), book);
 
 				if (img != null) {
 					publishProgress(new Object[]{v, img, imgView, book});
@@ -130,11 +121,25 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 				return;
 			}
 
-			Bitmap img = (Bitmap) values[1];
-			ImageView iv = (ImageView) values[2];
+			File img = (File) values[1];
+			final ImageView iv = (ImageView) values[2];
 			iv.setVisibility(View.VISIBLE);
-			iv.setImageBitmap(img);
 			iv.setTag(false);
+
+			Picasso.with(getContext())
+					.load(img)
+					.placeholder(((ViewHolder) v.getTag()).mImagePlaceholder)
+					.into(iv, new Callback() {
+						@Override
+						public void onSuccess() {
+							MaterialImageLoading.animate(iv).setDuration(1500).start();
+						}
+
+						@Override
+						public void onError() {
+
+						}
+					});
 		}
 
 
@@ -144,6 +149,8 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 
 		public ImageView mPreviewImageView;
 		public TextView mTitleTextView;
+
+		public Drawable mImagePlaceholder;
 
 		public Book book;
 
