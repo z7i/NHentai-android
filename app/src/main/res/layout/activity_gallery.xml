@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/main_content"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
@@ -10,25 +11,55 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"/>
 
-	<LinearLayout
+	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/my_app_bar"
-		android:orientation="vertical"
-		android:background="@color/app_bar_translucent_black">
+		android:layout_gravity="top">
 
-		<View
+		<LinearLayout
 			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:id="@+id/status_bar_header"/>
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
 
-		<android.support.v7.widget.Toolbar
+			<moe.feng.nhentai.view.StatusBarHeaderView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"/>
+
+			<android.support.v7.widget.Toolbar
+				android:layout_width="match_parent"
+				android:layout_height="?attr/actionBarSize"
+				android:background="@android:color/transparent"
+				android:id="@+id/toolbar"
+				android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+		</LinearLayout>
+
+		<moe.feng.nhentai.view.BlurringView
 			android:layout_width="match_parent"
-			android:layout_height="?attr/actionBarSize"
-			android:background="@android:color/transparent"
-			android:id="@+id/toolbar"
-			android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+			android:layout_height="match_parent"
+			android:id="@+id/blurring_view"
+			app:blurRadius="11"
+			app:downsampleFactor="6"
+			app:overlayColor="@color/app_bar_translucent_black"/>
 
-	</LinearLayout>
+	</FrameLayout>
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/bottom_bar"
+		android:layout_gravity="bottom">
+
+		<moe.feng.nhentai.view.SeekBar
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+		    android:id="@+id/seekbar"/>
+
+		<moe.feng.nhentai.view.NavigationFooterView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+	</FrameLayout>
 
 </FrameLayout>

@@ -16,6 +16,8 @@ import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.adapter.GalleryPagerAdapter;
 import moe.feng.nhentai.ui.common.AbsActivity;
 import moe.feng.nhentai.util.FullScreenHelper;
+import moe.feng.nhentai.view.BlurringView;
+import moe.feng.nhentai.view.SeekBar;
 
 public class GalleryActivity extends AbsActivity {
 
@@ -25,6 +27,8 @@ public class GalleryActivity extends AbsActivity {
 	private ViewPager mPager;
 	private GalleryPagerAdapter mPagerAdpater;
 	private View mAppBar;
+	private BlurringView mBlurView;
+	private SeekBar mSeekBar;
 
 	private FullScreenHelper mFullScreenHelper;
 
@@ -44,6 +48,8 @@ public class GalleryActivity extends AbsActivity {
 		mFullScreenHelper.setFullScreen(true);
 		mFullScreenHelper.setFullScreen(false);
 
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 		Intent intent = getIntent();
 		book = new Gson().fromJson(intent.getStringExtra(EXTRA_BOOK_DATA), Book.class);
 		page_num = intent.getIntExtra(EXTRA_FISRT_PAGE, 0);
@@ -56,11 +62,31 @@ public class GalleryActivity extends AbsActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(book.titleJP != null ? book.titleJP : book.title);
 
+		mBlurView = $(R.id.blurring_view);
 		mAppBar = $(R.id.my_app_bar);
 		mPager = $(R.id.pager);
+		mSeekBar = $(R.id.seekbar);
 		mPagerAdpater = new GalleryPagerAdapter(getFragmentManager(), book);
 		mPager.setAdapter(mPagerAdpater);
 		mPager.setCurrentItem(page_num, false);
+		mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+			@Override
+			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+				mBlurView.invalidate();
+			}
+
+			@Override
+			public void onPageSelected(int position) {
+
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int state) {
+
+			}
+		});
+
+		mBlurView.setBlurredView(mPager);
 	}
 
 	public static void launch(Activity activity, Book book, int firstPageNum) {
