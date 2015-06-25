@@ -1,15 +1,12 @@
 package moe.feng.nhentai.ui.fragment.main;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
@@ -20,9 +17,10 @@ import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.BookDetailsActivity;
 import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
+import moe.feng.nhentai.ui.common.LazyFragment;
 import moe.feng.nhentai.util.AsyncTask;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends LazyFragment {
 
 	private RecyclerView mRecyclerView;
 	private BookListRecyclerAdapter mAdapter;
@@ -37,11 +35,14 @@ public class HomeFragment extends Fragment {
 	public static final String TAG = HomeFragment.class.getSimpleName();
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-		View view = inflater.inflate(R.layout.fragment_home, container, false);
+	public int getLayoutResId() {
+		return R.layout.fragment_home;
+	}
 
-		mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
-		mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+	@Override
+	public void finishCreateView(Bundle state) {
+		mSwipeRefreshLayout = $(R.id.swipe_refresh_layout);
+		mRecyclerView = $(R.id.recycler_view);
 		mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		mRecyclerView.setHasFixedSize(true);
@@ -69,8 +70,6 @@ public class HomeFragment extends Fragment {
 		});
 
 		new PageGetTask().execute(mNowPage);
-
-		return view;
 	}
 
 	private void setRecyclerViewAdapter(BookListRecyclerAdapter adapter) {

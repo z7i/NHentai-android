@@ -1,11 +1,9 @@
 package moe.feng.nhentai.ui.fragment;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.github.florent37.materialimageloading.MaterialImageLoading;
@@ -19,15 +17,19 @@ import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.PageApi;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.GalleryActivity;
+import moe.feng.nhentai.ui.common.LazyFragment;
 import moe.feng.nhentai.util.AsyncTask;
+import moe.feng.nhentai.view.WheelProgressView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-public class BookPageFragment extends Fragment {
+public class BookPageFragment extends LazyFragment {
 
 	private Book book;
 	private int pageNum;
 	private ImageView mImageView;
 	private PhotoViewAttacher mPhotoViewAttacher;
+	private AppCompatTextView mPageNumText, mTipsText;
+	private WheelProgressView mWheelProgress;
 
 	private static final String ARG_BOOK_DATA = "arg_book_data", ARG_PAGE_NUM = "arg_page_num";
 
@@ -51,14 +53,28 @@ public class BookPageFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-		View view = inflater.inflate(R.layout.fragment_book_page, container, false);
+	public int getLayoutResId() {
+		return R.layout.fragment_book_page;
+	}
 
-		mImageView = (ImageView) view.findViewById(R.id.image_view);
+	@Override
+	public void finishCreateView(Bundle state) {
+		mImageView = $(R.id.image_view);
 		mPhotoViewAttacher = new PhotoViewAttacher(mImageView);
-		new DownloadTask().execute();
+		mPageNumText = $(R.id.page_number);
+		mTipsText = $(R.id.little_tips);
+		mWheelProgress = $(R.id.wheel_progress);
 
-		return view;
+		mPageNumText.setText(Integer.toString(pageNum));
+
+		startLoadImage();
+	}
+
+	private void startLoadImage() {
+		$(R.id.loading_content).setVisibility(View.VISIBLE);
+		mWheelProgress.spin();
+
+		new DownloadTask().execute();
 	}
 
 	private class DownloadTask extends AsyncTask<Void, Void, File> {
@@ -72,12 +88,11 @@ public class BookPageFragment extends Fragment {
 		protected void onPostExecute(File result) {
 			super.onPostExecute(result);
 
-			if (result != null) {Context context;
-				try {
-					context = getActivity().getApplicationContext();
-				} catch (Exception e) {
-					return;
-				}
+			if (result != null) {
+				$(R.id.loading_content).setVisibility(View.GONE);
+
+				Context context = getApplicationContext();
+				if (context == null) return;
 				Picasso.with(context)
 						.load(result)
 						.into(mImageView, new Callback() {

@@ -1,13 +1,9 @@
 package moe.feng.nhentai.ui.fragment.main;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
@@ -16,8 +12,9 @@ import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.BookDetailsActivity;
 import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
+import moe.feng.nhentai.ui.common.LazyFragment;
 
-public class DownloadManagerFragment extends Fragment {
+public class DownloadManagerFragment extends LazyFragment {
 
 	private RecyclerView mRecyclerView;
 	private BookListRecyclerAdapter mAdapter;
@@ -25,10 +22,13 @@ public class DownloadManagerFragment extends Fragment {
 	public static final String TAG = DownloadManagerFragment.class.getSimpleName();
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
-		View view = inflater.inflate(R.layout.fragment_home, container, false);
+	public int getLayoutResId() {
+		return R.layout.fragment_home;
+	}
 
-		mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+	@Override
+	public void finishCreateView(Bundle state) {
+		mRecyclerView = $(R.id.recycler_view);
 		mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 		mRecyclerView.setHasFixedSize(false);
 
@@ -46,10 +46,7 @@ public class DownloadManagerFragment extends Fragment {
 			}
 		});
 		setRecyclerViewAdapter(mAdapter);
-
-		return view;
 	}
-
 
 	private void setRecyclerViewAdapter(BookListRecyclerAdapter adapter) {
 		mRecyclerView.setAdapter(mAdapter);

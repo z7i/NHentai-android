@@ -30,6 +30,7 @@
     <string name="tag_type_upload_time">上传时间:</string>
 
     <string name="activity_gallery">图库</string>
+    <string name="info_total_pages">共 %d 页</string>
 
     <string name="activity_search_result">搜索结果</string>
     <string name="title_search_result">搜索结果: %s</string>

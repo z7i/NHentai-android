@@ -5,7 +5,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPropertyAnimatorUpdateListener;
+import android.support.v7.widget.AppCompatTextView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -27,8 +31,9 @@ public class GalleryActivity extends AbsActivity {
 	private ViewPager mPager;
 	private GalleryPagerAdapter mPagerAdpater;
 	private View mAppBar;
-	private BlurringView mBlurView;
+	private BlurringView mTopBlurView, mBottomBlurView;
 	private SeekBar mSeekBar;
+	private AppCompatTextView mTotalPagesText;
 
 	private FullScreenHelper mFullScreenHelper;
 
@@ -62,22 +67,24 @@ public class GalleryActivity extends AbsActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(book.titleJP != null ? book.titleJP : book.title);
 
-		mBlurView = $(R.id.blurring_view);
+		mTopBlurView = $(R.id.blurring_view_top);
+		mBottomBlurView = $(R.id.blurring_view_bottom);
 		mAppBar = $(R.id.my_app_bar);
 		mPager = $(R.id.pager);
 		mSeekBar = $(R.id.seekbar);
+		mTotalPagesText = $(R.id.total_pages_text);
 		mPagerAdpater = new GalleryPagerAdapter(getFragmentManager(), book);
 		mPager.setAdapter(mPagerAdpater);
 		mPager.setCurrentItem(page_num, false);
 		mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
 			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-				mBlurView.invalidate();
+				updateBlurViews();
 			}
 
 			@Override
 			public void onPageSelected(int position) {
-
+				mSeekBar.setValue(position + 1, true);
 			}
 
 			@Override
@@ -86,7 +93,27 @@ public class GalleryActivity extends AbsActivity {
 			}
 		});
 
-		mBlurView.setBlurredView(mPager);
+		mTopBlurView.setBlurredView(mPager);
+		mBottomBlurView.setBlurredView(mPager);
+
+		mTotalPagesText.setText(String.format(getString(R.string.info_total_pages), book.pageCount));
+		mSeekBar.setValueRange(1, book.pageCount, false);
+		mSeekBar.setValue(page_num + 1, false);
+		mSeekBar.setOnTouchListener(new View.OnTouchListener() {
+			// TODO Maybe it will cause some problems if using OnPositionChangedListener.
+			@Override
+			public boolean onTouch(View view, MotionEvent motionEvent) {
+				if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+					mPager.setCurrentItem(mSeekBar.getValue() - 1, false);
+				}
+				return view.onTouchEvent(motionEvent);
+			}
+		});
+	}
+
+	public void updateBlurViews() {
+		mTopBlurView.invalidate();
+		mBottomBlurView.invalidate();
 	}
 
 	public static void launch(Activity activity, Book book, int firstPageNum) {
@@ -99,10 +126,10 @@ public class GalleryActivity extends AbsActivity {
 
 	public void toggleControlBar() {
 		if (mAppBar.getAlpha() != 0f) {
-			mAppBar.animate().alpha(0f).start();
+			ViewCompat.animate(mAppBar).alpha(0f).setUpdateListener(new UpdateListener()).start();
 			mFullScreenHelper.setFullScreen(true);
 		} else if (mAppBar.getAlpha() != 1f) {
-			mAppBar.animate().alpha(1f).start();
+			ViewCompat.animate(mAppBar).alpha(1f).setUpdateListener(new UpdateListener()).start();
 			mFullScreenHelper.setFullScreen(false);
 		}
 	}
@@ -114,6 +141,15 @@ public class GalleryActivity extends AbsActivity {
 		} else {
 			super.onBackPressed();
 		}
+	}
+
+	private class UpdateListener implements ViewPropertyAnimatorUpdateListener {
+
+		@Override
+		public void onAnimationUpdate(View view) {
+			updateBlurViews();
+		}
+
 	}
 
 }

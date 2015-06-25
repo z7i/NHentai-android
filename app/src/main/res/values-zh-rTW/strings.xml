@@ -30,6 +30,7 @@
     <string name="tag_type_upload_time">上載時間:</string>
 
     <string name="activity_gallery">畫廊</string>
+    <string name="info_total_pages">共 %d 頁</string>
 
     <string name="activity_search_result">搜尋結果</string>
     <string name="title_search_result">搜尋結果: %s</string>
