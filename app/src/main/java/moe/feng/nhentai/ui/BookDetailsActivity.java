@@ -79,44 +79,63 @@ public class BookDetailsActivity extends AppCompatActivity {
 		mProgressWheel = $(R.id.wheel_progress);
 
 		FileCacheManager cm = FileCacheManager.getInstance(getApplicationContext());
-		if (cm.cacheExistsUrl(Constants.CACHE_THUMB, book.previewImageUrl)) {
-			Picasso.with(getApplicationContext())
-					.load(cm.getBitmapUrlFile(Constants.CACHE_THUMB, book.previewImageUrl))
-					.fit()
-					.centerCrop()
-					.into(mImageView, new Callback() {
-						@Override
-						public void onSuccess() {
-							MaterialImageLoading.animate(mImageView).setDuration(1500).start();
-						}
-
-						@Override
-						public void onError() {
-
-						}
-					});
-		} else {
-			int color = ColorGenerator.MATERIAL.getColor(book.title);
-			TextDrawable drawable = TextDrawable.builder().buildRect(book.title.substring(0, 1), color);
-			mImageView.setImageDrawable(drawable);
-		}
 		if (cm.cacheExistsUrl(Constants.CACHE_COVER, book.bigCoverImageUrl)) {
-			Picasso.with(getApplicationContext())
-					.load(cm.getBitmapUrlFile(Constants.CACHE_COVER, book.bigCoverImageUrl))
-					.fit()
-					.centerCrop()
-					.into(mImageView, new Callback() {
-						@Override
-						public void onSuccess() {
-							MaterialImageLoading.animate(mImageView).setDuration(1500).start();
-						}
+			if (cm.cacheExistsUrl(Constants.CACHE_PAGE_IMG,
+					NHentaiUrl.getOriginPictureUrl(book.galleryId, "1"))) {
+				Picasso.with(getApplicationContext())
+						.load(cm.getBitmapUrlFile(Constants.CACHE_PAGE_IMG, NHentaiUrl.getOriginPictureUrl(book.galleryId, "1")))
+						.fit()
+						.centerCrop()
+						.into(mImageView, new Callback() {
+							@Override
+							public void onSuccess() {
+								MaterialImageLoading.animate(mImageView).setDuration(1500).start();
+							}
 
-						@Override
-						public void onError() {
+							@Override
+							public void onError() {
 
-						}
-					});
+							}
+						});
+			} else {
+				Picasso.with(getApplicationContext())
+						.load(cm.getBitmapUrlFile(Constants.CACHE_COVER, book.bigCoverImageUrl))
+						.fit()
+						.centerCrop()
+						.into(mImageView, new Callback() {
+							@Override
+							public void onSuccess() {
+								MaterialImageLoading.animate(mImageView).setDuration(1500).start();
+							}
+
+							@Override
+							public void onError() {
+
+							}
+						});
+			}
 		} else {
+			if (cm.cacheExistsUrl(Constants.CACHE_THUMB, book.previewImageUrl)) {
+				Picasso.with(getApplicationContext())
+						.load(cm.getBitmapUrlFile(Constants.CACHE_THUMB, book.previewImageUrl))
+						.fit()
+						.centerCrop()
+						.into(mImageView, new Callback() {
+							@Override
+							public void onSuccess() {
+								MaterialImageLoading.animate(mImageView).setDuration(1500).start();
+							}
+
+							@Override
+							public void onError() {
+
+							}
+						});
+			} else {
+				int color = ColorGenerator.MATERIAL.getColor(book.title);
+				TextDrawable drawable = TextDrawable.builder().buildRect(book.title.substring(0, 1), color);
+				mImageView.setImageDrawable(drawable);
+			}
 			new CoverTask().execute(book);
 		}
 
@@ -179,9 +198,8 @@ public class BookDetailsActivity extends AppCompatActivity {
 			lp.width = min_width;
 			tagGroupLayout.addView(groupNameView, lp);
 
-			TextView tagView = new TextView(ctw);
+			TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 			tagView.setText(book.parodies);
-			tagView.setBackgroundResource(R.color.deep_purple_800);
 			tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -216,9 +234,8 @@ public class BookDetailsActivity extends AppCompatActivity {
 			tagGroupLayout.addView(groupNameView, lp);
 
 			for (final String tag : book.characters) {
-				TextView tagView = new TextView(ctw);
+				TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 				tagView.setText(tag);
-				tagView.setBackgroundResource(R.color.deep_purple_800);
 				tagView.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -254,9 +271,8 @@ public class BookDetailsActivity extends AppCompatActivity {
 			tagGroupLayout.addView(groupNameView, lp);
 
 			for (final String tag : book.tags) {
-				TextView tagView = new TextView(ctw);
+				TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 				tagView.setText(tag);
-				tagView.setBackgroundResource(R.color.deep_purple_800);
 				tagView.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -267,9 +283,9 @@ public class BookDetailsActivity extends AppCompatActivity {
 						);
 					}
 				});
-				AutoWrapLayout.LayoutParams alp1 = new AutoWrapLayout.LayoutParams();
-				alp1.setMargins(x, y, x, y);
-				tagLayout.addView(tagView, alp1);
+				AutoWrapLayout.LayoutParams alp = new AutoWrapLayout.LayoutParams();
+				alp.setMargins(x, y, x, y);
+				tagLayout.addView(tagView, alp);
 			}
 			tagGroupLayout.addView(tagLayout);
 			mTagsLayout.addView(tagGroupLayout);
@@ -291,9 +307,8 @@ public class BookDetailsActivity extends AppCompatActivity {
 			lp.width = min_width;
 			tagGroupLayout.addView(groupNameView, lp);
 
-			TextView tagView = new TextView(ctw);
+			TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 			tagView.setText(book.artist);
-			tagView.setBackgroundResource(R.color.deep_purple_800);
 			tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -327,9 +342,8 @@ public class BookDetailsActivity extends AppCompatActivity {
 			lp.width = min_width;
 			tagGroupLayout.addView(groupNameView, lp);
 
-			TextView tagView = new TextView(ctw);
+			TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 			tagView.setText(book.group);
-			tagView.setBackgroundResource(R.color.deep_purple_800);
 			tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -362,9 +376,8 @@ public class BookDetailsActivity extends AppCompatActivity {
 			lp.width = min_width;
 			tagGroupLayout.addView(groupNameView, lp);
 
-			TextView tagView = new TextView(ctw);
+			TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 			tagView.setText(book.language);
-			tagView.setBackgroundResource(R.color.deep_purple_800);
 			tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {

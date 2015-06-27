@@ -2,10 +2,11 @@
 <resources>
 
 	<dimen name="fab_transition_z">5dp</dimen>
+	<dimen name="touch_raise">6dp</dimen>
 
 	<dimen name="navigation_view_width">256dp</dimen>
 
-	<dimen name="details_big_cover_max_height">320dp</dimen>
+	<dimen name="details_big_cover_max_height">380dp</dimen>
 
 	<dimen name="tag_margin_x">2dp</dimen>
 	<dimen name="tag_margin_y">4dp</dimen>

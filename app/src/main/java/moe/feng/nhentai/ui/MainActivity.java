@@ -107,6 +107,7 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 
 		mPagerAdapter = new HomePagerAdapter(getApplicationContext(), getFragmentManager());
 		mPager.setAdapter(mPagerAdapter);
+		mPager.setOffscreenPageLimit(3);
 		mTabLayout.setupWithViewPager(mPager);
 		mSearchBox.setLogoText("");
 		mSearchBox.setSearchListener(new SearchBox.SearchListener() {

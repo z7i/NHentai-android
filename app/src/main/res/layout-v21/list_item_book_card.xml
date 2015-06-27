@@ -8,6 +8,7 @@
                                     android:foreground="?attr/selectableItemBackground"
                                     android:clickable="true"
                                     android:id="@+id/book_card"
+                                    android:stateListAnimator="@anim/state_anim_raise"
                                     app:cardElevation="4dp"
                                     app:cardCornerRadius="2dp"
                                     tools:minWidth="160dp">
