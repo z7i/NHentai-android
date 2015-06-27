@@ -28,11 +28,13 @@ public abstract class LazyFragment extends Fragment {
 
 	@Override
 	public void onAttach(Activity activity) {
+		super.onAttach(activity);
 		this.activity = activity;
 	}
 
 	@Override
 	public void onDetach() {
+		super.onDetach();
 		this.activity = null;
 	}
 

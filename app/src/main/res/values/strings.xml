@@ -30,7 +30,7 @@
     <string name="tag_type_upload_time">Uploaded time: </string>
 
     <string name="activity_gallery">Gallery</string>
-    <string name="info_total_pages">%d PAGES</string>
+    <string name="info_total_pages">"%d PAGES"</string>
 
     <string name="activity_search_result">Search result</string>
     <string name="title_search_result">Search result: %s</string>

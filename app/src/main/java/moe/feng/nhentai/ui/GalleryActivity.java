@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPropertyAnimatorUpdateListener;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,7 +19,6 @@ import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.adapter.GalleryPagerAdapter;
 import moe.feng.nhentai.ui.common.AbsActivity;
 import moe.feng.nhentai.util.FullScreenHelper;
-import moe.feng.nhentai.view.BlurringView;
 import moe.feng.nhentai.view.SeekBar;
 
 public class GalleryActivity extends AbsActivity {
@@ -30,8 +28,7 @@ public class GalleryActivity extends AbsActivity {
 
 	private ViewPager mPager;
 	private GalleryPagerAdapter mPagerAdpater;
-	private View mAppBar;
-	private BlurringView mTopBlurView, mBottomBlurView;
+	private View mAppBar, mBottomBar;
 	private SeekBar mSeekBar;
 	private AppCompatTextView mTotalPagesText;
 
@@ -67,34 +64,14 @@ public class GalleryActivity extends AbsActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(book.titleJP != null ? book.titleJP : book.title);
 
-		mTopBlurView = $(R.id.blurring_view_top);
-		mBottomBlurView = $(R.id.blurring_view_bottom);
 		mAppBar = $(R.id.my_app_bar);
+		mBottomBar = $(R.id.bottom_bar);
 		mPager = $(R.id.pager);
 		mSeekBar = $(R.id.seekbar);
 		mTotalPagesText = $(R.id.total_pages_text);
 		mPagerAdpater = new GalleryPagerAdapter(getFragmentManager(), book);
 		mPager.setAdapter(mPagerAdpater);
 		mPager.setCurrentItem(page_num, false);
-		mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-			@Override
-			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-				updateBlurViews();
-			}
-
-			@Override
-			public void onPageSelected(int position) {
-				mSeekBar.setValue(position + 1, true);
-			}
-
-			@Override
-			public void onPageScrollStateChanged(int state) {
-
-			}
-		});
-
-		mTopBlurView.setBlurredView(mPager);
-		mBottomBlurView.setBlurredView(mPager);
 
 		mTotalPagesText.setText(String.format(getString(R.string.info_total_pages), book.pageCount));
 		mSeekBar.setValueRange(1, book.pageCount, false);
@@ -111,10 +88,6 @@ public class GalleryActivity extends AbsActivity {
 		});
 	}
 
-	public void updateBlurViews() {
-		mTopBlurView.invalidate();
-		mBottomBlurView.invalidate();
-	}
 
 	public static void launch(Activity activity, Book book, int firstPageNum) {
 		Intent intent = new Intent(activity, GalleryActivity.class);
@@ -126,10 +99,12 @@ public class GalleryActivity extends AbsActivity {
 
 	public void toggleControlBar() {
 		if (mAppBar.getAlpha() != 0f) {
-			ViewCompat.animate(mAppBar).alpha(0f).setUpdateListener(new UpdateListener()).start();
+			ViewCompat.animate(mAppBar).alpha(0f).start();
+			ViewCompat.animate(mBottomBar).alpha(0f).start();
 			mFullScreenHelper.setFullScreen(true);
 		} else if (mAppBar.getAlpha() != 1f) {
-			ViewCompat.animate(mAppBar).alpha(1f).setUpdateListener(new UpdateListener()).start();
+			ViewCompat.animate(mAppBar).alpha(1f).start();
+			ViewCompat.animate(mBottomBar).alpha(1f).start();
 			mFullScreenHelper.setFullScreen(false);
 		}
 	}
@@ -141,15 +116,6 @@ public class GalleryActivity extends AbsActivity {
 		} else {
 			super.onBackPressed();
 		}
-	}
-
-	private class UpdateListener implements ViewPropertyAnimatorUpdateListener {
-
-		@Override
-		public void onAnimationUpdate(View view) {
-			updateBlurViews();
-		}
-
 	}
 
 }

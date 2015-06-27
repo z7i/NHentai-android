@@ -15,15 +15,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/my_app_bar"
+		android:background="@color/app_bar_translucent_black"
 		android:layout_gravity="top">
-
-		<moe.feng.nhentai.view.BlurringView
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:id="@+id/blurring_view_top"
-			app:blurRadius="11"
-			app:downsampleFactor="6"
-			app:overlayColor="@color/app_bar_translucent_black"/>
 
 		<LinearLayout
 			android:layout_width="match_parent"
@@ -51,13 +44,22 @@
 		android:id="@+id/bottom_bar"
 		android:layout_gravity="bottom">
 
-		<moe.feng.nhentai.view.BlurringView
+		<LinearLayout
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:id="@+id/blurring_view_bottom"
-			app:blurRadius="11"
-			app:downsampleFactor="6"
-			app:overlayColor="@color/app_bar_translucent_black"/>
+			android:layout_height="wrap_content"
+			android:background="@color/app_bar_translucent_black"
+			android:orientation="vertical"
+			android:layout_gravity="bottom">
+
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="48dp"/>
+
+			<moe.feng.nhentai.view.NavigationFooterView
+				android:layout_width="match_parent"
+				android:layout_height="0dp"/>
+
+		</LinearLayout>
 
 		<LinearLayout
 			android:layout_width="match_parent"
@@ -67,25 +69,30 @@
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:orientation="horizontal">
+				android:orientation="horizontal"
+				android:gravity="center_vertical">
 
 				<moe.feng.nhentai.view.SeekBar
 					style="@style/Widget.Material.SeekBar.Discrete"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
+					android:layout_width="0dp"
+					android:layout_height="64dp"
 					android:layout_weight="1"
+					android:paddingLeft="8dp"
+					android:paddingRight="8dp"
 					android:id="@+id/seekbar"/>
 
 				<android.support.v7.widget.AppCompatTextView
 					android:layout_width="wrap_content"
-					android:layout_height="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="10dp"
+					android:layout_marginRight="8dp"
 					android:id="@+id/total_pages_text"/>
 
 			</LinearLayout>
 
 			<moe.feng.nhentai.view.NavigationFooterView
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"/>
+				android:layout_height="0dp"/>
 
 		</LinearLayout>
 
