@@ -180,7 +180,6 @@ public class BookDetailsActivity extends AppCompatActivity {
 		int x = getResources().getDimensionPixelSize(R.dimen.tag_margin_x);
 		int y = getResources().getDimensionPixelSize(R.dimen.tag_margin_y);
 		int min_width = getResources().getDimensionPixelSize(R.dimen.tag_title_width);
-		ContextThemeWrapper ctw = new ContextThemeWrapper(this, R.style.TextTag);
 
 		// Add Parodies Tags
 		if (!TextUtils.isEmpty(book.parodies)) {
