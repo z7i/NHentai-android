@@ -12,7 +12,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.ContextThemeWrapper;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,6 +31,7 @@ import moe.feng.nhentai.api.BookApi;
 import moe.feng.nhentai.api.common.NHentaiUrl;
 import moe.feng.nhentai.cache.common.Constants;
 import moe.feng.nhentai.cache.file.FileCacheManager;
+import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.util.AsyncTask;
@@ -51,6 +52,8 @@ public class BookDetailsActivity extends AppCompatActivity {
 
 	private Book book;
 
+	private boolean isFavorite = false;
+
 	private final static String EXTRA_BOOK_DATA = "book_data";
 	private final static String TRANSITION_NAME_IMAGE = "BookDetailsActivity:image";
 
@@ -61,6 +64,8 @@ public class BookDetailsActivity extends AppCompatActivity {
 
 		Intent intent = getIntent();
 		book = new Gson().fromJson(intent.getStringExtra(EXTRA_BOOK_DATA), Book.class);
+
+		isFavorite = FavoritesManager.getInstance(getApplicationContext()).contains(book);
 
 		Toolbar toolbar = $(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -139,7 +144,11 @@ public class BookDetailsActivity extends AppCompatActivity {
 			new CoverTask().execute(book);
 		}
 
-		startBookGet();
+		if (book.pageCount != 0) {
+			updateUIContent();
+		} else {
+			startBookGet();
+		}
 	}
 
 	public static void launch(Activity activity, ImageView imageView, Book book) {
@@ -396,10 +405,39 @@ public class BookDetailsActivity extends AppCompatActivity {
 	}
 
 	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		getMenuInflater().inflate(R.menu.menu_details, menu);
+
+		MenuItem mFavItem = menu.findItem(R.id.action_favorite);
+		mFavItem.setIcon(isFavorite ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_outline_white_24dp);
+		mFavItem.setTitle(isFavorite ? R.string.action_favorite_true : R.string.action_favorite_false);
+
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == android.R.id.home) {
 			this.onBackPressed();
+			return true;
+		}
+		if (id == R.id.action_favorite) {
+			FavoritesManager fm = FavoritesManager.getInstance(getApplicationContext());
+			if (isFavorite) {
+				fm.remove(book);
+			} else {
+				fm.add(book);
+			}
+			fm.save();
+			isFavorite = !isFavorite;
+			Snackbar.make(
+					$(R.id.main_content),
+					isFavorite ? R.string.favorite_add_finished : R.string.favorite_remove_finished,
+					Snackbar.LENGTH_LONG
+			).show();
+			invalidateOptionsMenu();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

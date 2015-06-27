@@ -18,4 +18,12 @@
 
 	</group>
 
+	<item android:title="">
+		<menu>
+			<item android:id="@+id/navigation_item_open_nhentai"
+			      android:icon="@drawable/ic_open_in_new_black_24dp"
+			      android:title="@string/item_open_nhentai"/>
+		</menu>
+	</item>
+
 </menu>

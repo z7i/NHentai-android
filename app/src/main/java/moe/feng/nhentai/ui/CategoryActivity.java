@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.PageApi;
+import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
@@ -21,6 +22,8 @@ import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.util.AsyncTask;
 
 public class CategoryActivity extends AbsActivity {
+
+	private FavoritesManager mFM;
 
 	private RecyclerView mRecyclerView;
 	private BookListRecyclerAdapter mAdapter;
@@ -53,6 +56,8 @@ public class CategoryActivity extends AbsActivity {
 			mActionBar.setElevation(getResources().getDimension(R.dimen.appbar_elevation));
 		}
 
+		mFM = FavoritesManager.getInstance(getApplicationContext());
+
 		mSwipeRefreshLayout.setRefreshing(true);
 		new PageGetTask().execute(mNowPage);
 	}
@@ -67,7 +72,7 @@ public class CategoryActivity extends AbsActivity {
 		mRecyclerView.setHasFixedSize(true);
 
 		mBooks = new ArrayList<>();
-		mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks);
+		mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM);
 		setRecyclerViewAdapter(mAdapter);
 
 		mSwipeRefreshLayout.setColorSchemeResources(
@@ -82,7 +87,7 @@ public class CategoryActivity extends AbsActivity {
 				}
 
 				mBooks = new ArrayList<>();
-				mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks);
+				mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM);
 				setRecyclerViewAdapter(mAdapter);
 				new PageGetTask().execute(mNowPage = 1);
 			}
@@ -115,6 +120,7 @@ public class CategoryActivity extends AbsActivity {
 
 		@Override
 		protected BaseMessage doInBackground(Integer... params) {
+			mFM.reload();
 			return PageApi.getPageList(url + "/?page=" + mNowPage);
 		}
 

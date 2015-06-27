@@ -34,4 +34,5 @@ dependencies {
 	compile ('com.github.florent37:materialimageloading:1.0.1@aar'){
 		transitive = true
 	}
+	compile 'com.lid.labelview:lib:0.1.1'
 }

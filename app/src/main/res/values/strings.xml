@@ -8,6 +8,7 @@
     <string name="item_home">Home</string>
     <string name="item_tag">Tags</string>
     <string name="item_character">Characters</string>
+	<string name="item_open_nhentai">Open NHentai.net</string>
 
     <string name="title_page_latest">Latest</string>
     <string name="title_page_download">Saved books</string>
@@ -20,6 +21,8 @@
     <string name="tips_network_error">Failed to connect to NHentai.</string>
     <string name="snack_action_try_again">Try again</string>
 
+    <string name="label_added_to_favorite">FAV.</string>
+
     <string name="activity_details">Details</string>
     <string name="tag_type_tag">Tags: </string>
     <string name="tag_type_parodies">Parodies: </string>
@@ -28,6 +31,10 @@
     <string name="tag_type_artists">Artists: </string>
     <string name="tag_type_group">Groups: </string>
     <string name="tag_type_upload_time">Uploaded time: </string>
+    <string name="action_favorite_false">Add to favorites</string>
+    <string name="action_favorite_true">Remove from favorites</string>
+    <string name="favorite_add_finished">The book successfully added to favorites.</string>
+    <string name="favorite_remove_finished">The book successfully removed from favorites.</string>
 
     <string name="activity_gallery">Gallery</string>
     <string name="info_total_pages">"%d PAGES"</string>

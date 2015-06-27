@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.florent37.materialimageloading.MaterialImageLoading;
+import com.lid.lib.LabelView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.BookApi;
+import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.util.AsyncTask;
@@ -29,14 +31,20 @@ import moe.feng.nhentai.util.Utility;
 public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 
 	private ArrayList<Book> data;
+	private FavoritesManager fm;
 
 	private ColorGenerator mColorGenerator;
 
 	public static final String TAG = BookListRecyclerAdapter.class.getSimpleName();
 
-	public BookListRecyclerAdapter(RecyclerView recyclerView, ArrayList<Book> data) {
+	public BookListRecyclerAdapter(RecyclerView recyclerView, FavoritesManager fm) {
+		this(recyclerView, fm.toArray(), fm);
+	}
+
+	public BookListRecyclerAdapter(RecyclerView recyclerView, ArrayList<Book> data, FavoritesManager fm) {
 		super(recyclerView);
 		this.data = data;
+		this.fm = fm;
 		mColorGenerator = ColorGenerator.MATERIAL;
 	}
 
@@ -44,7 +52,7 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 	public ClickableViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 		bindContext(viewGroup.getContext());
 		View view = LayoutInflater.from(getContext()).inflate(R.layout.list_item_book_card, viewGroup, false);
-		return new ViewHolder(view);
+		return new ViewHolder(view, new LabelView(getContext()));
 	}
 	
 	@Override
@@ -111,7 +119,7 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 		}
 
 		@Override
-		protected void onProgressUpdate(Object[] values) {
+		protected void onProgressUpdate(final Object[] values) {
 			super.onProgressUpdate(values);
 
 			View v = (View) values[0];
@@ -126,6 +134,8 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 			iv.setVisibility(View.VISIBLE);
 			iv.setTag(false);
 
+			final ViewHolder vh = (ViewHolder) v.getTag();
+
 			Picasso.with(getContext())
 					.load(img)
 					.placeholder(((ViewHolder) v.getTag()).mImagePlaceholder)
@@ -133,6 +143,12 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 						@Override
 						public void onSuccess() {
 							MaterialImageLoading.animate(iv).setDuration(1500).start();
+
+							if (fm.contains((Book) values[3])) {
+								vh.labelView.setText(R.string.label_added_to_favorite);
+								vh.labelView.setBackgroundResource(R.color.blue_500);
+								vh.labelView.setTargetView(iv, 10, LabelView.Gravity.RIGHT_TOP);
+							}
 						}
 
 						@Override
@@ -154,10 +170,14 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 
 		public Book book;
 
-		public ViewHolder(View itemView) {
+		public LabelView labelView;
+
+		public ViewHolder(View itemView, LabelView labelView) {
 			super(itemView);
 			mPreviewImageView = (ImageView) itemView.findViewById(R.id.book_preview);
 			mTitleTextView = (TextView) itemView.findViewById(R.id.book_title);
+
+			this.labelView = labelView;
 
 			itemView.setTag(this);
 		}

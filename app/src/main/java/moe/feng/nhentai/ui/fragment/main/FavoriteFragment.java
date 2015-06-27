@@ -1,26 +1,24 @@
 package moe.feng.nhentai.ui.fragment.main;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import java.util.ArrayList;
 
 import moe.feng.nhentai.R;
-import moe.feng.nhentai.model.Book;
+import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.ui.BookDetailsActivity;
+import moe.feng.nhentai.ui.MainActivity;
 import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.ui.common.LazyFragment;
+import moe.feng.nhentai.util.AsyncTask;
 
 public class FavoriteFragment extends LazyFragment {
 
 	private RecyclerView mRecyclerView;
 	private BookListRecyclerAdapter mAdapter;
+	private SwipeRefreshLayout mSwipeRefreshLayout;
 
 	public static final String TAG = FavoriteFragment.class.getSimpleName();
 
@@ -31,24 +29,27 @@ public class FavoriteFragment extends LazyFragment {
 
 	@Override
 	public void finishCreateView(Bundle state) {
+		mSwipeRefreshLayout = $(R.id.swipe_refresh_layout);
 		mRecyclerView = $(R.id.recycler_view);
 		mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 		mRecyclerView.setHasFixedSize(false);
 
-		ArrayList<Book> books = new ArrayList<>();
+		mAdapter = new BookListRecyclerAdapter(mRecyclerView, getFavoritesManager());
+		setRecyclerViewAdapter(mAdapter);
 
-		mAdapter = new BookListRecyclerAdapter(mRecyclerView, books);
-		mAdapter.setOnItemClickListener(new AbsRecyclerViewAdapter.OnItemClickListener() {
+		mSwipeRefreshLayout.setColorSchemeResources(
+				R.color.deep_purple_500, R.color.pink_500, R.color.orange_500, R.color.brown_500,
+				R.color.indigo_500, R.color.blue_500, R.color.teal_500, R.color.green_500
+		);
+		mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 			@Override
-			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder viewHolder) {
-				if (viewHolder instanceof BookListRecyclerAdapter.ViewHolder) {
-					BookListRecyclerAdapter.ViewHolder holder = (BookListRecyclerAdapter.ViewHolder) viewHolder;
-					Log.i(TAG, "You clicked position no." + position + " item, " +
-							"its name is " + holder.mTitleTextView.getText().toString());
+			public void onRefresh() {
+				if (!mSwipeRefreshLayout.isRefreshing()) {
+					mSwipeRefreshLayout.setRefreshing(true);
 				}
+				new FavoritesRefreshTask().execute();
 			}
 		});
-		setRecyclerViewAdapter(mAdapter);
 	}
 
 	private void setRecyclerViewAdapter(BookListRecyclerAdapter adapter) {
@@ -57,11 +58,34 @@ public class FavoriteFragment extends LazyFragment {
 			@Override
 			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder viewHolder) {
 				BookListRecyclerAdapter.ViewHolder holder = (BookListRecyclerAdapter.ViewHolder) viewHolder;
-				Log.i(TAG, "You clicked position no." + position + " item, " +
-						"its name is " + holder.mTitleTextView.getText().toString());
 				BookDetailsActivity.launch(getActivity(), holder.mPreviewImageView, holder.book);
 			}
 		});
+	}
+
+	private class FavoritesRefreshTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			getFavoritesManager().reload();
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			mSwipeRefreshLayout.setRefreshing(false);
+			mAdapter = new BookListRecyclerAdapter(mRecyclerView, getFavoritesManager());
+			setRecyclerViewAdapter(mAdapter);
+		}
+
+	}
+
+	private FavoritesManager getFavoritesManager() {
+		if (getActivity() != null && getActivity() instanceof MainActivity) {
+			return ((MainActivity) getActivity()).getFavoritesManager();
+		} else {
+			return FavoritesManager.getInstance(getApplicationContext());
+		}
 	}
 
 }

@@ -8,6 +8,7 @@
     <string name="item_home">主頁</string>
     <string name="item_tag">標籤</string>
     <string name="item_character">角色</string>
+    <string name="item_open_nhentai">打開 NHentai 站點</string>
 
     <string name="title_page_latest">最新</string>
     <string name="title_page_download">已儲存的本子</string>
@@ -20,6 +21,8 @@
     <string name="tips_network_error">無法連接到 NHentai。</string>
     <string name="snack_action_try_again">重試</string>
 
+    <string name="label_added_to_favorite">已收藏</string>
+
     <string name="activity_details">詳情</string>
     <string name="tag_type_tag">標籤:</string>
     <string name="tag_type_parodies">作品:</string>
@@ -28,6 +31,10 @@
     <string name="tag_type_artists">畫家:</string>
     <string name="tag_type_group">組別:</string>
     <string name="tag_type_upload_time">上載時間:</string>
+    <string name="action_favorite_false">添加至最愛</string>
+    <string name="action_favorite_true">從最愛中移除</string>
+    <string name="favorite_add_finished">本子成功添加至最愛。</string>
+    <string name="favorite_remove_finished">本子成功從最愛中移除。</string>
 
     <string name="activity_gallery">畫廊</string>
     <string name="info_total_pages">"共 %d 頁"</string>

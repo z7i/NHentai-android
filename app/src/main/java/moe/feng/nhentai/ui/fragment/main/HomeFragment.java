@@ -5,16 +5,17 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.PageApi;
+import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.BookDetailsActivity;
+import moe.feng.nhentai.ui.MainActivity;
 import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.ui.common.LazyFragment;
@@ -48,7 +49,7 @@ public class HomeFragment extends LazyFragment {
 		mRecyclerView.setHasFixedSize(true);
 
 		mBooks = new ArrayList<>();
-		mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks);
+		mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, getFavoritesManager());
 		setRecyclerViewAdapter(mAdapter);
 
 		mSwipeRefreshLayout.setColorSchemeResources(
@@ -63,7 +64,7 @@ public class HomeFragment extends LazyFragment {
 				}
 
 				mBooks = new ArrayList<>();
-				mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks);
+				mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, getFavoritesManager());
 				setRecyclerViewAdapter(mAdapter);
 				new PageGetTask().execute(mNowPage = 1);
 			}
@@ -77,8 +78,6 @@ public class HomeFragment extends LazyFragment {
 			@Override
 			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder viewHolder) {
 				BookListRecyclerAdapter.ViewHolder holder = (BookListRecyclerAdapter.ViewHolder) viewHolder;
-				Log.i(TAG, "You clicked position no." + position + " item, " +
-						"its name is " + holder.mTitleTextView.getText().toString());
 				BookDetailsActivity.launch(getActivity(), holder.mPreviewImageView, holder.book);
 			}
 		});
@@ -99,6 +98,7 @@ public class HomeFragment extends LazyFragment {
 
 		@Override
 		protected BaseMessage doInBackground(Integer... params) {
+			getFavoritesManager().reload();
 			return PageApi.getHomePageList(params[0]);
 		}
 
@@ -130,6 +130,14 @@ public class HomeFragment extends LazyFragment {
 			}
 		}
 
+	}
+
+	private FavoritesManager getFavoritesManager() {
+		if (getActivity() != null && getActivity() instanceof MainActivity) {
+			return ((MainActivity) getActivity()).getFavoritesManager();
+		} else {
+			return FavoritesManager.getInstance(getApplicationContext());
+		}
 	}
 
 }

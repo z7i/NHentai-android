@@ -1,6 +1,8 @@
 package moe.feng.nhentai.ui;
 
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +18,7 @@ import android.view.View;
 import com.quinny898.library.persistentsearch.SearchBox;
 
 import moe.feng.nhentai.R;
+import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.dao.SearchHistoryManager;
 import moe.feng.nhentai.ui.adapter.HomePagerAdapter;
 import moe.feng.nhentai.ui.common.AbsActivity;
@@ -31,6 +34,7 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 	private ActionBarDrawerToggle mDrawerToggle;
 
 	private SearchHistoryManager mSearchHistoryManager;
+	private FavoritesManager mFM;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +49,7 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 
 		mSearchHistoryManager = SearchHistoryManager.getInstance(getApplicationContext(), "all");
+		mFM = FavoritesManager.getInstance(getApplicationContext());
 	}
 
 	@Override
@@ -163,6 +168,10 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 		}, 250);
 	}
 
+	public FavoritesManager getFavoritesManager() {
+		return mFM;
+	}
+
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
@@ -220,6 +229,10 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 			case R.id.navigation_item_tag:
 				return true;
 			case R.id.navigation_item_character:
+				return true;
+			case R.id.navigation_item_open_nhentai:
+				Uri uri = Uri.parse("http://nhentai.net");
+				startActivity(new Intent(Intent.ACTION_VIEW, uri));
 				return true;
 		}
 		return false;

@@ -8,8 +8,10 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import moe.feng.nhentai.R;
+import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.BookDetailsActivity;
+import moe.feng.nhentai.ui.MainActivity;
 import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.ui.common.LazyFragment;
@@ -34,7 +36,7 @@ public class DownloadManagerFragment extends LazyFragment {
 
 		ArrayList<Book> books = new ArrayList<>();
 
-		mAdapter = new BookListRecyclerAdapter(mRecyclerView, books);
+		mAdapter = new BookListRecyclerAdapter(mRecyclerView, books, getFavoritesManager());
 		mAdapter.setOnItemClickListener(new AbsRecyclerViewAdapter.OnItemClickListener() {
 			@Override
 			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder viewHolder) {
@@ -59,6 +61,14 @@ public class DownloadManagerFragment extends LazyFragment {
 				BookDetailsActivity.launch(getActivity(), holder.mPreviewImageView, holder.book);
 			}
 		});
+	}
+
+	private FavoritesManager getFavoritesManager() {
+		if (getActivity() != null && getActivity() instanceof MainActivity) {
+			return ((MainActivity) getActivity()).getFavoritesManager();
+		} else {
+			return FavoritesManager.getInstance(getApplicationContext());
+		}
 	}
 
 }
