@@ -53,6 +53,12 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 	}
 
 	@Override
+	protected void onStop() {
+		super.onStop();
+		mFM.save();
+	}
+
+	@Override
 	protected void setUpViews() {
 		mPager = $(R.id.viewpager);
 		mTabLayout = $(R.id.tabs);
@@ -142,6 +148,16 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 				SearchResultActivity.launch(MainActivity.this, result);
 			}
 		});
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		if (requestCode == BookDetailsActivity.REQUEST_MAIN) {
+			if (resultCode == BookDetailsActivity.RESULT_HAVE_FAV) {
+				mPagerAdapter.notifyFragmentsDataUpdated(intent.getIntExtra("position", 0));
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, intent);
 	}
 
 	private void openSearchBox() {

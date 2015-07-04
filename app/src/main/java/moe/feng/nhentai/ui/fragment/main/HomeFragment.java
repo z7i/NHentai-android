@@ -78,7 +78,7 @@ public class HomeFragment extends LazyFragment {
 			@Override
 			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder viewHolder) {
 				BookListRecyclerAdapter.ViewHolder holder = (BookListRecyclerAdapter.ViewHolder) viewHolder;
-				BookDetailsActivity.launch(getActivity(), holder.mPreviewImageView, holder.book);
+				BookDetailsActivity.launch(getActivity(), holder.mPreviewImageView, holder.book, position);
 			}
 		});
 		adapter.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -92,6 +92,10 @@ public class HomeFragment extends LazyFragment {
 		});
 
 		mRecyclerView.setAdapter(adapter);
+	}
+
+	public void onDataUpdate(int itemPosition) {
+		mAdapter.notifyItemChanged(itemPosition);
 	}
 
 	private class PageGetTask extends AsyncTask<Integer, Void, BaseMessage> {

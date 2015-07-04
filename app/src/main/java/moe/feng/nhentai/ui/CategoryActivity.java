@@ -48,6 +48,8 @@ public class CategoryActivity extends AbsActivity {
 		url = intent.getStringExtra(EXTRA_URL);
 		title = intent.getStringExtra(EXTRA_TITLE);
 
+		mFM = FavoritesManager.getInstance(getApplicationContext());
+
 		setContentView(R.layout.activity_search_result);
 
 		mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -55,8 +57,6 @@ public class CategoryActivity extends AbsActivity {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			mActionBar.setElevation(getResources().getDimension(R.dimen.appbar_elevation));
 		}
-
-		mFM = FavoritesManager.getInstance(getApplicationContext());
 
 		mSwipeRefreshLayout.setRefreshing(true);
 		new PageGetTask().execute(mNowPage);
@@ -100,7 +100,7 @@ public class CategoryActivity extends AbsActivity {
 			@Override
 			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder viewHolder) {
 				BookListRecyclerAdapter.ViewHolder holder = (BookListRecyclerAdapter.ViewHolder) viewHolder;
-				BookDetailsActivity.launch(CategoryActivity.this, holder.mPreviewImageView, holder.book);
+				BookDetailsActivity.launch(CategoryActivity.this, holder.mPreviewImageView, holder.book, position);
 			}
 		});
 		adapter.addOnScrollListener(new RecyclerView.OnScrollListener() {

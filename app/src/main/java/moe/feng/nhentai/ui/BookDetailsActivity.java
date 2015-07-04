@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -50,11 +49,14 @@ public class BookDetailsActivity extends AppCompatActivity {
 	private WheelProgressView mProgressWheel;
 
 	private Book book;
+	private int fromPosition;
 
-	private boolean isFavorite = false;
+	private boolean isFavorite = false, originFavorite = false;
 
-	private final static String EXTRA_BOOK_DATA = "book_data";
+	private final static String EXTRA_BOOK_DATA = "book_data", EXTRA_POSITION = "item_position";
 	private final static String TRANSITION_NAME_IMAGE = "BookDetailsActivity:image";
+
+	public final static int REQUEST_MAIN = 1001, RESULT_HAVE_FAV = 100;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +65,9 @@ public class BookDetailsActivity extends AppCompatActivity {
 
 		Intent intent = getIntent();
 		book = new Gson().fromJson(intent.getStringExtra(EXTRA_BOOK_DATA), Book.class);
+		fromPosition = intent.getIntExtra(EXTRA_POSITION, 0);
 
-		isFavorite = FavoritesManager.getInstance(getApplicationContext()).contains(book);
+		isFavorite = originFavorite = FavoritesManager.getInstance(getApplicationContext()).contains(book.bookId);
 
 		Toolbar toolbar = $(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -120,13 +123,14 @@ public class BookDetailsActivity extends AppCompatActivity {
 		}
 	}
 
-	public static void launch(Activity activity, ImageView imageView, Book book) {
+	public static void launch(Activity activity, ImageView imageView, Book book, int fromPosition) {
 		ActivityOptionsCompat options = ActivityOptionsCompat
 				.makeSceneTransitionAnimation(activity, imageView, TRANSITION_NAME_IMAGE);
 		Intent intent = new Intent(activity, BookDetailsActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		intent.putExtra(EXTRA_BOOK_DATA, book.toJSONString());
-		ActivityCompat.startActivity(activity, intent, options.toBundle());
+		intent.putExtra(EXTRA_POSITION, fromPosition);
+		ActivityCompat.startActivityForResult(activity, intent, REQUEST_MAIN, options.toBundle());
 	}
 
 	private void updateUIContent() {
@@ -410,6 +414,16 @@ public class BookDetailsActivity extends AppCompatActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (originFavorite != isFavorite) {
+			Intent intent = new Intent();
+			intent.putExtra("position", fromPosition);
+			setResult(RESULT_HAVE_FAV, intent);
+		}
+		super.onBackPressed();
 	}
 
 	private void startBookGet() {

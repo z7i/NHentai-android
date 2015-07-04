@@ -47,6 +47,8 @@ public class SearchResultActivity extends AbsActivity {
 		Intent intent = getIntent();
 		keyword = intent.getStringExtra(EXTRA_KEYWORD);
 
+		mFM = FavoritesManager.getInstance(getApplicationContext());
+
 		setContentView(R.layout.activity_search_result);
 
 		mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -54,8 +56,6 @@ public class SearchResultActivity extends AbsActivity {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			mActionBar.setElevation(getResources().getDimension(R.dimen.appbar_elevation));
 		}
-
-		mFM = FavoritesManager.getInstance(getApplicationContext());
 
 		mSwipeRefreshLayout.setRefreshing(true);
 		new PageGetTask().execute(mNowPage);
@@ -99,7 +99,7 @@ public class SearchResultActivity extends AbsActivity {
 			@Override
 			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder viewHolder) {
 				BookListRecyclerAdapter.ViewHolder holder = (BookListRecyclerAdapter.ViewHolder) viewHolder;
-				BookDetailsActivity.launch(SearchResultActivity.this, holder.mPreviewImageView, holder.book);
+				BookDetailsActivity.launch(SearchResultActivity.this, holder.mPreviewImageView, holder.book, position);
 			}
 		});
 		adapter.addOnScrollListener(new RecyclerView.OnScrollListener() {

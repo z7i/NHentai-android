@@ -3,6 +3,7 @@ package moe.feng.nhentai.ui.adapter;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,12 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 	}
 
 	@Override
+	public void onViewRecycled(ClickableViewHolder holder) {
+		super.onViewRecycled(holder);
+		((ViewHolder) holder).labelView.remove();
+	}
+
+	@Override
 	public ClickableViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 		bindContext(viewGroup.getContext());
 		View view = LayoutInflater.from(getContext()).inflate(R.layout.list_item_book_card, viewGroup, false);
@@ -88,6 +95,13 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 			}
 
 			mHolder.book = data.get(position);
+
+			if (fm.contains(mHolder.book.bookId)) {
+				Log.i(TAG, "Find favorite: " + mHolder.book.bookId);
+				mHolder.labelView.setText(R.string.label_added_to_favorite);
+				mHolder.labelView.setBackgroundResource(R.color.blue_500);
+				mHolder.labelView.setTargetView(mHolder.mPreviewImageView, 10, LabelView.Gravity.RIGHT_TOP);
+			}
 		}
 	}
 
@@ -141,11 +155,6 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 					.into(iv, new Callback() {
 						@Override
 						public void onSuccess() {
-							if (fm.contains((Book) values[3])) {
-								vh.labelView.setText(R.string.label_added_to_favorite);
-								vh.labelView.setBackgroundResource(R.color.blue_500);
-								vh.labelView.setTargetView(iv, 10, LabelView.Gravity.RIGHT_TOP);
-							}
 						}
 
 						@Override

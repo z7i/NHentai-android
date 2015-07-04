@@ -58,9 +58,13 @@ public class DownloadManagerFragment extends LazyFragment {
 				BookListRecyclerAdapter.ViewHolder holder = (BookListRecyclerAdapter.ViewHolder) viewHolder;
 				Log.i(TAG, "You clicked position no." + position + " item, " +
 						"its name is " + holder.mTitleTextView.getText().toString());
-				BookDetailsActivity.launch(getActivity(), holder.mPreviewImageView, holder.book);
+				BookDetailsActivity.launch(getActivity(), holder.mPreviewImageView, holder.book, position);
 			}
 		});
+	}
+
+	public void onDataUpdate() {
+		mAdapter.notifyDataSetChanged();
 	}
 
 	private FavoritesManager getFavoritesManager() {

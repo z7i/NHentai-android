@@ -58,9 +58,13 @@ public class FavoriteFragment extends LazyFragment {
 			@Override
 			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder viewHolder) {
 				BookListRecyclerAdapter.ViewHolder holder = (BookListRecyclerAdapter.ViewHolder) viewHolder;
-				BookDetailsActivity.launch(getActivity(), holder.mPreviewImageView, holder.book);
+				BookDetailsActivity.launch(getActivity(), holder.mPreviewImageView, holder.book, position);
 			}
 		});
+	}
+
+	public void onDataUpdate() {
+		mAdapter.notifyDataSetChanged();
 	}
 
 	private class FavoritesRefreshTask extends AsyncTask<Void, Void, Void> {

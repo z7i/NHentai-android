@@ -50,4 +50,10 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
 		return titles[position];
 	}
 
+	public void notifyFragmentsDataUpdated(int itemPosition) {
+		homeFragment.onDataUpdate(itemPosition);
+		downloadManagerFragment.onDataUpdate();
+		favoriteFragment.onDataUpdate();
+	}
+
 }

@@ -45,8 +45,6 @@ public class FavoritesManager {
 		}
 
 		books = new Gson().fromJson(json, MyArray.class);
-
-		Log.i(TAG, "array size:" + books.size());
 	}
 
 	public Book get(int position) {
@@ -78,9 +76,17 @@ public class FavoritesManager {
 	}
 
 	public int find(Book book) {
-		Log.i(TAG, "array size:" + books.size());
 		for (int i = 0; i < books.size(); i++) {
-			if (book.bookId == books.get(i).bookId) {
+			if (book.bookId.equals(books.get(i).bookId)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public int find(String bookId) {
+		for (int i = 0; i < books.size(); i++) {
+			if (bookId.equals(books.get(i).bookId)) {
 				return i;
 			}
 		}
@@ -89,6 +95,10 @@ public class FavoritesManager {
 
 	public boolean contains(Book book) {
 		return find(book) != -1;
+	}
+
+	public boolean contains(String bookId) {
+		return find(bookId) != -1;
 	}
 
 	public void save() {
