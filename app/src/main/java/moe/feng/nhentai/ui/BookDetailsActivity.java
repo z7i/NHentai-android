@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.github.florent37.materialimageloading.MaterialImageLoading;
 import com.google.gson.Gson;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -91,33 +90,13 @@ public class BookDetailsActivity extends AppCompatActivity {
 						.load(cm.getBitmapUrlFile(Constants.CACHE_PAGE_IMG, NHentaiUrl.getOriginPictureUrl(book.galleryId, "1")))
 						.fit()
 						.centerCrop()
-						.into(mImageView, new Callback() {
-							@Override
-							public void onSuccess() {
-								MaterialImageLoading.animate(mImageView).setDuration(1500).start();
-							}
-
-							@Override
-							public void onError() {
-
-							}
-						});
+						.into(mImageView);
 			} else {
 				Picasso.with(getApplicationContext())
 						.load(cm.getBitmapUrlFile(Constants.CACHE_COVER, book.bigCoverImageUrl))
 						.fit()
 						.centerCrop()
-						.into(mImageView, new Callback() {
-							@Override
-							public void onSuccess() {
-								MaterialImageLoading.animate(mImageView).setDuration(1500).start();
-							}
-
-							@Override
-							public void onError() {
-
-							}
-						});
+						.into(mImageView);
 			}
 		} else {
 			if (cm.cacheExistsUrl(Constants.CACHE_THUMB, book.previewImageUrl)) {
@@ -125,17 +104,7 @@ public class BookDetailsActivity extends AppCompatActivity {
 						.load(cm.getBitmapUrlFile(Constants.CACHE_THUMB, book.previewImageUrl))
 						.fit()
 						.centerCrop()
-						.into(mImageView, new Callback() {
-							@Override
-							public void onSuccess() {
-								MaterialImageLoading.animate(mImageView).setDuration(1500).start();
-							}
-
-							@Override
-							public void onError() {
-
-							}
-						});
+						.into(mImageView);
 			} else {
 				int color = ColorGenerator.MATERIAL.getColor(book.title);
 				TextDrawable drawable = TextDrawable.builder().buildRect(book.title.substring(0, 1), color);
@@ -426,7 +395,7 @@ public class BookDetailsActivity extends AppCompatActivity {
 		if (id == R.id.action_favorite) {
 			FavoritesManager fm = FavoritesManager.getInstance(getApplicationContext());
 			if (isFavorite) {
-				fm.remove(book);
+				fm.remove(fm.find(book));
 			} else {
 				fm.add(book);
 			}
@@ -494,17 +463,7 @@ public class BookDetailsActivity extends AppCompatActivity {
 		protected void onPostExecute(File result) {
 			Picasso.with(getApplicationContext())
 					.load(result)
-					.into(mImageView, new Callback() {
-						@Override
-						public void onSuccess() {
-							MaterialImageLoading.animate(mImageView).setDuration(1500).start();
-						}
-
-						@Override
-						public void onError() {
-
-						}
-					});
+					.into(mImageView);
 		}
 	}
 

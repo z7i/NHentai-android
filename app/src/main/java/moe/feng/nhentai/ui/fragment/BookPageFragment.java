@@ -1,17 +1,15 @@
 package moe.feng.nhentai.ui.fragment;
 
-import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.github.florent37.materialimageloading.MaterialImageLoading;
 import com.google.gson.Gson;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.PageApi;
@@ -31,9 +29,12 @@ public class BookPageFragment extends LazyFragment {
 	private AppCompatTextView mPageNumText, mTipsText;
 	private WheelProgressView mWheelProgress;
 
+	private Bitmap mBitmap;
+
 	private static final String ARG_BOOK_DATA = "arg_book_data", ARG_PAGE_NUM = "arg_page_num";
 
 	public static final String TAG = BookPageFragment.class.getSimpleName();
+	public static final int MSG_FINISHED_LOADING = 1, MSG_ERROR_LOADING = 2;
 
 	public static BookPageFragment newInstance(Book book, int pageNum) {
 		BookPageFragment fragment = new BookPageFragment();
@@ -50,6 +51,8 @@ public class BookPageFragment extends LazyFragment {
 		Bundle data = getArguments();
 		book = new Gson().fromJson(data.getString(ARG_BOOK_DATA), Book.class);
 		pageNum = data.getInt(ARG_PAGE_NUM);
+
+		setHandler(new MyHandler());
 	}
 
 	@Override
@@ -66,53 +69,95 @@ public class BookPageFragment extends LazyFragment {
 		mWheelProgress = $(R.id.wheel_progress);
 
 		mPageNumText.setText(Integer.toString(pageNum));
-
-		startLoadImage();
 	}
 
-	private void startLoadImage() {
+	@Override
+	public void onResume() {
+		super.onResume();
+
 		$(R.id.loading_content).setVisibility(View.VISIBLE);
+		mWheelProgress.setVisibility(View.VISIBLE);
 		mWheelProgress.spin();
 
-		new DownloadTask().execute();
+		try {
+			if (PageApi.isPageOriginImageLocalFileExist(getApplicationContext(), book, pageNum)) {
+				new DownloadTask().execute();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-	private class DownloadTask extends AsyncTask<Void, Void, File> {
+	@Override
+	public void onPause() {
+		super.onPause();
+		mImageView.setImageBitmap(null);
+		if (mBitmap != null) {
+			mBitmap.recycle();
+		} else {
+			try {
+				((BitmapDrawable) mImageView.getDrawable()).getBitmap().recycle();
+			} catch (Exception e) {
+			}
+		}
+	}
+
+	private class DownloadTask extends AsyncTask<Void, Void, Bitmap> {
 
 		@Override
-		protected File doInBackground(Void... params) {
-			return PageApi.getPageOriginImageFile(getActivity().getApplicationContext(), book, pageNum);
+		protected Bitmap doInBackground(Void... params) {
+			return PageApi.getPageOriginImage(getApplicationContext(), book, pageNum);
 		}
 
 		@Override
-		protected void onPostExecute(File result) {
+		protected void onPostExecute(Bitmap result) {
 			super.onPostExecute(result);
 
 			if (result != null) {
 				$(R.id.loading_content).setVisibility(View.GONE);
+				mBitmap = result;
+				mImageView.setImageBitmap(mBitmap);
+				mPhotoViewAttacher.update();
+				mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+					@Override
+					public void onViewTap(View view, float v, float v1) {
+						((GalleryActivity) getActivity()).toggleControlBar();
+					}
+				});
+			}
+		}
 
-				Context context = getApplicationContext();
-				if (context == null) return;
-				Picasso.with(context)
-						.load(result)
-						.into(mImageView, new Callback() {
-							@Override
-							public void onSuccess() {
-								MaterialImageLoading.animate(mImageView).setDuration(700).start();
+	}
+
+	private class MyHandler extends Handler {
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case MSG_FINISHED_LOADING:
+					Bitmap b = PageApi.getPageOriginImage(getApplicationContext(), book, pageNum);
+					if (b != null) {
+						$(R.id.loading_content).setVisibility(View.GONE);
+						mBitmap = b;
+						if (mImageView != null) {
+							mImageView.setImageBitmap(mBitmap);
+							if (mPhotoViewAttacher != null) {
 								mPhotoViewAttacher.update();
 								mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
 									@Override
 									public void onViewTap(View view, float v, float v1) {
-										((GalleryActivity) getActivity()).toggleControlBar();
+										if (getActivity() instanceof GalleryActivity) {
+											((GalleryActivity) getActivity()).toggleControlBar();
+										}
 									}
 								});
 							}
-
-							@Override
-							public void onError() {
-
-							}
-						});
+						}
+					}
+					break;
+				case MSG_ERROR_LOADING:
+					mWheelProgress.setVisibility(View.INVISIBLE);
+					break;
 			}
 		}
 

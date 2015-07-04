@@ -19,6 +19,7 @@ import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.adapter.GalleryPagerAdapter;
 import moe.feng.nhentai.ui.common.AbsActivity;
 import moe.feng.nhentai.util.FullScreenHelper;
+import moe.feng.nhentai.util.task.PageDownloader;
 import moe.feng.nhentai.view.SeekBar;
 
 public class GalleryActivity extends AbsActivity {
@@ -33,6 +34,8 @@ public class GalleryActivity extends AbsActivity {
 	private AppCompatTextView mTotalPagesText;
 
 	private FullScreenHelper mFullScreenHelper;
+
+	private PageDownloader mDownloader;
 
 	private static final String EXTRA_BOOK_DATA = "book_data", EXTRA_FISRT_PAGE = "first_page";
 
@@ -55,8 +58,29 @@ public class GalleryActivity extends AbsActivity {
 		Intent intent = getIntent();
 		book = new Gson().fromJson(intent.getStringExtra(EXTRA_BOOK_DATA), Book.class);
 		page_num = intent.getIntExtra(EXTRA_FISRT_PAGE, 0);
+		mDownloader = new PageDownloader(getApplicationContext(), book);
+		mDownloader.setCurrentPosition(page_num);
+		mDownloader.setOnDownloadListener(new GalleryDownloaderListener());
 
 		setContentView(R.layout.activity_gallery);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		mDownloader.start();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		mDownloader.pause();
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		mDownloader.stop();
 	}
 
 	@Override
@@ -72,6 +96,23 @@ public class GalleryActivity extends AbsActivity {
 		mPagerAdpater = new GalleryPagerAdapter(getFragmentManager(), book);
 		mPager.setAdapter(mPagerAdpater);
 		mPager.setCurrentItem(page_num, false);
+		mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+			@Override
+			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+			}
+
+			@Override
+			public void onPageSelected(int position) {
+				mSeekBar.setValue(position + 1, true);
+				mDownloader.setCurrentPosition(position);
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int state) {
+
+			}
+		});
 
 		mTotalPagesText.setText(String.format(getString(R.string.info_total_pages), book.pageCount));
 		mSeekBar.setValueRange(1, book.pageCount, false);
@@ -116,6 +157,29 @@ public class GalleryActivity extends AbsActivity {
 		} else {
 			super.onBackPressed();
 		}
+	}
+
+	private class GalleryDownloaderListener implements PageDownloader.OnDownloadListener {
+
+		@Override
+		public void onFinish(int position) {
+			if (mPagerAdpater != null) {
+				mPagerAdpater.notifyPageImageLoaded(position, true);
+			}
+		}
+
+		@Override
+		public void onError(int position, int errorCode) {
+			if (mPagerAdpater != null) {
+				mPagerAdpater.notifyPageImageLoaded(position, false);
+			}
+		}
+
+		@Override
+		public void onStateChange(int state) {
+
+		}
+
 	}
 
 }

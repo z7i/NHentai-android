@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ public abstract class LazyFragment extends Fragment {
 
 	private View parentView;
 	private Activity activity;
+	protected Handler mHandler;
 
 	public abstract @LayoutRes int getLayoutResId();
 
@@ -46,6 +48,14 @@ public abstract class LazyFragment extends Fragment {
 
 	public <T extends View> T $(int id) {
 		return (T) parentView.findViewById(id);
+	}
+
+	protected void setHandler(Handler handler) {
+		this.mHandler = handler;
+	}
+
+	public Handler getHandler() {
+		return mHandler;
 	}
 
 }

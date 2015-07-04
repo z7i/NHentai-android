@@ -10,12 +10,12 @@ import moe.feng.nhentai.ui.fragment.BookPageFragment;
 public class GalleryPagerAdapter extends FragmentPagerAdapter {
 
 	private Book book;
-	private Fragment[] fragments;
+	private BookPageFragment[] fragments;
 
 	public GalleryPagerAdapter(FragmentManager fm, Book book) {
 		super(fm);
 		this.book = book;
-		this.fragments = new Fragment[book.pageCount];
+		this.fragments = new BookPageFragment[book.pageCount];
 	}
 
 	@Override
@@ -29,6 +29,14 @@ public class GalleryPagerAdapter extends FragmentPagerAdapter {
 	@Override
 	public int getCount() {
 		return book.pageCount;
+	}
+
+	public void notifyPageImageLoaded(int position, boolean isSucceed) {
+		if (fragments[position] != null) {
+			fragments[position].getHandler().sendEmptyMessage(
+					isSucceed ? BookPageFragment.MSG_FINISHED_LOADING : BookPageFragment.MSG_ERROR_LOADING
+			);
+		}
 	}
 
 }

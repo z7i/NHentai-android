@@ -3,20 +3,22 @@ package moe.feng.nhentai.dao;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 import moe.feng.nhentai.model.Book;
-import sumimakito.android.quickkv.QuickKV;
-import sumimakito.android.quickkv.database.KeyValueDatabase;
+import moe.feng.nhentai.util.Utility;
 
 public class FavoritesManager {
 
-	private ArrayList<Book> books;
-
-	private QuickKV mQKV;
-	private KeyValueDatabase mKVDB;
+	private MyArray books;
+	private Context context;
 
 	public static final String TAG = FavoritesManager.class.getSimpleName();
+
+	private static final String FILE_NAME = "favorite_books.json";
 
 	private static FavoritesManager sInstance;
 
@@ -29,14 +31,20 @@ public class FavoritesManager {
 	}
 
 	private FavoritesManager(Context context) {
-		mQKV = new QuickKV(context);
-		books = new ArrayList<>();
+		this.context = context;
+		this.books = new MyArray();
 	}
 
 	public void reload() {
-		mKVDB = mQKV.getDatabase("favorites_manager");
+		String json;
+		try {
+			json = Utility.readStringFromFile(context, FILE_NAME);
+		} catch (IOException e) {
+			e.printStackTrace();
+			json = "{\"data\":[]}";
+		}
 
-		books = mKVDB.containsKey("books") ? (ArrayList<Book>) mKVDB.get("books") : new ArrayList<Book>();
+		books = new Gson().fromJson(json, MyArray.class);
 
 		Log.i(TAG, "array size:" + books.size());
 	}
@@ -47,10 +55,6 @@ public class FavoritesManager {
 
 	public void remove(int position) {
 		books.remove(position);
-	}
-
-	public void remove(Book book) {
-		books.remove(book);
 	}
 
 	public void add(Book book) {
@@ -70,7 +74,7 @@ public class FavoritesManager {
 	}
 
 	public ArrayList<Book> toArray() {
-		return books;
+		return books.data;
 	}
 
 	public int find(Book book) {
@@ -84,12 +88,49 @@ public class FavoritesManager {
 	}
 
 	public boolean contains(Book book) {
-		return books.contains(book);
+		return find(book) != -1;
 	}
 
 	public void save() {
-		mKVDB.put("books", books);
-		mKVDB.persist();
+		try {
+			Utility.saveStringToFile(context, FILE_NAME, books.toJSONString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private class MyArray {
+
+		public ArrayList<Book> data = new ArrayList<>();
+
+		public String toJSONString() {
+			return new Gson().toJson(this);
+		}
+
+		public Book get(int position) {
+			return data.get(position);
+		}
+
+		public int size() {
+			return data.size();
+		}
+
+		public Book set(int position, Book book) {
+			return data.set(position, book);
+		}
+
+		public boolean add(Book book) {
+			return data.add(book);
+		}
+
+		public void add(int position, Book book) {
+			data.add(position, book);
+		}
+
+		public void remove(int position) {
+			data.remove(position);
+		}
+
 	}
 
 }

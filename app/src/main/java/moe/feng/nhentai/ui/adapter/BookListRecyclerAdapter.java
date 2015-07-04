@@ -10,7 +10,6 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.florent37.materialimageloading.MaterialImageLoading;
 import com.lid.lib.LabelView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -142,8 +141,6 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 					.into(iv, new Callback() {
 						@Override
 						public void onSuccess() {
-							MaterialImageLoading.animate(iv).setDuration(1500).start();
-
 							if (fm.contains((Book) values[3])) {
 								vh.labelView.setText(R.string.label_added_to_favorite);
 								vh.labelView.setBackgroundResource(R.color.blue_500);

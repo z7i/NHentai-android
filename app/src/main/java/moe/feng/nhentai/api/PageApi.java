@@ -112,4 +112,11 @@ public class PageApi {
 		return m.getBitmapUrlFile(CACHE_PAGE_IMG, url);
 	}
 
+	public static boolean isPageOriginImageLocalFileExist(Context context, Book book, int page_num) {
+		String url = NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(page_num));
+		FileCacheManager m = FileCacheManager.getInstance(context);
+
+		return m.cacheExistsUrl(CACHE_PAGE_IMG, url);
+	}
+
 }
