@@ -7,6 +7,7 @@ import android.support.v13.app.FragmentPagerAdapter;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.ui.fragment.main.DownloadManagerFragment;
+import moe.feng.nhentai.ui.fragment.main.FavoriteCategoryFragment;
 import moe.feng.nhentai.ui.fragment.main.FavoriteFragment;
 import moe.feng.nhentai.ui.fragment.main.HomeFragment;
 
@@ -15,6 +16,7 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
 	private HomeFragment homeFragment;
 	private DownloadManagerFragment downloadManagerFragment;
 	private FavoriteFragment favoriteFragment;
+	private FavoriteCategoryFragment favoriteCategoryFragment;
 
 	private String[] titles;
 
@@ -24,6 +26,7 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
 		homeFragment = new HomeFragment();
 		downloadManagerFragment = new DownloadManagerFragment();
 		favoriteFragment = new FavoriteFragment();
+		favoriteCategoryFragment = new FavoriteCategoryFragment();
 	}
 
 	@Override
@@ -35,6 +38,8 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
 				return downloadManagerFragment;
 			case 2:
 				return favoriteFragment;
+			case 3:
+				return favoriteCategoryFragment;
 			default:
 				return null;
 		}
@@ -42,7 +47,7 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public int getCount() {
-		return 3;
+		return titles.length;
 	}
 
 	@Override

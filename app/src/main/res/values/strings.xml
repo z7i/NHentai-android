@@ -12,11 +12,13 @@
 
     <string name="title_page_latest">Latest</string>
     <string name="title_page_download">Saved books</string>
-    <string name="title_page_favorite">Favorites</string>
+    <string name="title_page_favorite">Favorite books</string>
+    <string name="title_page_favorite_category">Favorite categories</string>
     <string-array name="page_titles">
         <item>@string/title_page_latest</item>
         <item>@string/title_page_download</item>
         <item>@string/title_page_favorite</item>
+        <item>@string/title_page_favorite_category</item>
     </string-array>
     <string name="tips_network_error">Failed to connect to NHentai.</string>
     <string name="snack_action_try_again">Try again</string>

@@ -32,6 +32,7 @@ import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
+import moe.feng.nhentai.model.Category;
 import moe.feng.nhentai.util.AsyncTask;
 import moe.feng.nhentai.util.ColorGenerator;
 import moe.feng.nhentai.util.TextDrawable;
@@ -186,8 +187,7 @@ public class BookDetailsActivity extends AppCompatActivity {
 				public void onClick(View v) {
 					CategoryActivity.launch(
 							BookDetailsActivity.this,
-							NHentaiUrl.getParodyUrl(book.parodies),
-							getString(R.string.tag_type_parodies).trim() + " " + book.parodies
+							new Category(Category.Type.PARODY, book.parodies)
 					);
 				}
 			});
@@ -222,8 +222,7 @@ public class BookDetailsActivity extends AppCompatActivity {
 					public void onClick(View v) {
 						CategoryActivity.launch(
 								BookDetailsActivity.this,
-								NHentaiUrl.getCharacterUrl(tag),
-								getString(R.string.tag_type_characters).trim() + " " + tag
+								new Category(Category.Type.CHARACTER, tag)
 						);
 					}
 				});
@@ -259,8 +258,7 @@ public class BookDetailsActivity extends AppCompatActivity {
 					public void onClick(View v) {
 						CategoryActivity.launch(
 								BookDetailsActivity.this,
-								NHentaiUrl.getTagUrl(tag),
-								getString(R.string.tag_type_tag).trim() + " " + tag
+								new Category(Category.Type.TAG, tag)
 						);
 					}
 				});
@@ -295,8 +293,7 @@ public class BookDetailsActivity extends AppCompatActivity {
 				public void onClick(View v) {
 					CategoryActivity.launch(
 							BookDetailsActivity.this,
-							NHentaiUrl.getArtistUrl(book.artist),
-							getString(R.string.tag_type_artists).trim() + " " + book.artist
+							new Category(Category.Type.ARTIST, book.artist)
 					);
 				}
 			});
@@ -330,8 +327,7 @@ public class BookDetailsActivity extends AppCompatActivity {
 				public void onClick(View v) {
 					CategoryActivity.launch(
 							BookDetailsActivity.this,
-							NHentaiUrl.getGroupUrl(book.group),
-							getString(R.string.tag_type_group).trim() + " " + book.group
+							new Category(Category.Type.GROUP, book.group)
 					);
 				}
 			});
@@ -364,8 +360,7 @@ public class BookDetailsActivity extends AppCompatActivity {
 				public void onClick(View v) {
 					CategoryActivity.launch(
 							BookDetailsActivity.this,
-							NHentaiUrl.getLanguageUrl(book.language),
-							getString(R.string.tag_type_language).trim() + " " + book.language
+							new Category(Category.Type.LANGUAGE, book.language)
 					);
 				}
 			});

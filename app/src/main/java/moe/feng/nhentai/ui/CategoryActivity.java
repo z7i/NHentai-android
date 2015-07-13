@@ -8,14 +8,21 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.PageApi;
+import moe.feng.nhentai.api.common.NHentaiUrl;
+import moe.feng.nhentai.dao.FavoriteCategoriesManager;
 import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
+import moe.feng.nhentai.model.Category;
 import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsActivity;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
@@ -24,6 +31,7 @@ import moe.feng.nhentai.util.AsyncTask;
 public class CategoryActivity extends AbsActivity {
 
 	private FavoritesManager mFM;
+	private FavoriteCategoriesManager mFCM;
 
 	private RecyclerView mRecyclerView;
 	private BookListRecyclerAdapter mAdapter;
@@ -34,9 +42,11 @@ public class CategoryActivity extends AbsActivity {
 	private ArrayList<Book> mBooks;
 
 	private int mNowPage = 1;
-	private String url, title;
+	private Category category;
 
-	private static final String EXTRA_URL = "url", EXTRA_TITLE = "title";
+	private boolean isFavorite = false;
+
+	private static final String EXTRA_CATEGORY_JSON = "category_json";
 
 	public static final String TAG = CategoryActivity.class.getSimpleName();
 
@@ -45,14 +55,40 @@ public class CategoryActivity extends AbsActivity {
 		super.onCreate(savedInstanceState);
 
 		Intent intent = getIntent();
-		url = intent.getStringExtra(EXTRA_URL);
-		title = intent.getStringExtra(EXTRA_TITLE);
+		category = new Gson().fromJson(intent.getStringExtra(EXTRA_CATEGORY_JSON), Category.class);
 
 		mFM = FavoritesManager.getInstance(getApplicationContext());
+		mFCM = FavoriteCategoriesManager.getInstance(getApplicationContext());
+
+		isFavorite = mFCM.contains(category);
 
 		setContentView(R.layout.activity_search_result);
 
 		mActionBar.setDisplayHomeAsUpEnabled(true);
+
+		String title = "";
+		switch (category.type) {
+			case Category.Type.ARTIST:
+				title += getString(R.string.tag_type_artists);
+				break;
+			case Category.Type.CHARACTER:
+				title += getString(R.string.tag_type_characters);
+				break;
+			case Category.Type.GROUP:
+				title += getString(R.string.tag_type_group);
+				break;
+			case Category.Type.PARODY:
+				title += getString(R.string.tag_type_parodies);
+				break;
+			case Category.Type.TAG:
+				title += getString(R.string.tag_type_tag);
+				break;
+			case Category.Type.LANGUAGE:
+				title += getString(R.string.tag_type_language);
+				break;
+		}
+		title += category.name;
+
 		mActionBar.setTitle(title);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			mActionBar.setElevation(getResources().getDimension(R.dimen.appbar_elevation));
@@ -94,6 +130,39 @@ public class CategoryActivity extends AbsActivity {
 		});
 	}
 
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		getMenuInflater().inflate(R.menu.menu_details, menu);
+
+		MenuItem mFavItem = menu.findItem(R.id.action_favorite);
+		mFavItem.setIcon(isFavorite ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_outline_white_24dp);
+		mFavItem.setTitle(isFavorite ? R.string.action_favorite_true : R.string.action_favorite_false);
+
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		if (id == R.id.action_favorite) {
+			if (isFavorite) {
+				mFCM.remove(mFCM.find(category));
+			} else {
+				mFCM.add(category);
+			}
+			mFCM.save();
+			isFavorite = !isFavorite;
+			Snackbar.make(
+					mRecyclerView,
+					isFavorite ? R.string.favorite_add_finished : R.string.favorite_remove_finished,
+					Snackbar.LENGTH_LONG
+			).show();
+			invalidateOptionsMenu();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 
 	private void setRecyclerViewAdapter(BookListRecyclerAdapter adapter) {
 		adapter.setOnItemClickListener(new AbsRecyclerViewAdapter.OnItemClickListener() {
@@ -121,7 +190,7 @@ public class CategoryActivity extends AbsActivity {
 		@Override
 		protected BaseMessage doInBackground(Integer... params) {
 			mFM.reload();
-			return PageApi.getPageList(url + "/?page=" + mNowPage);
+			return PageApi.getPageList(NHentaiUrl.getCategoryUrl(category) + "/?page=" + mNowPage);
 		}
 
 		@Override
@@ -146,11 +215,10 @@ public class CategoryActivity extends AbsActivity {
 
 	}
 
-	public static void launch(AppCompatActivity activity, String url, String title) {
+	public static void launch(AppCompatActivity activity, Category category) {
 		Intent intent = new Intent(activity, CategoryActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.putExtra(EXTRA_URL, url);
-		intent.putExtra(EXTRA_TITLE, title);
+		intent.putExtra(EXTRA_CATEGORY_JSON, category.toJSONString());
 		activity.startActivity(intent);
 	}
 

@@ -13,10 +13,12 @@
     <string name="title_page_latest">最新</string>
     <string name="title_page_download">已保存的本子</string>
     <string name="title_page_favorite">我的收藏</string>
+    <string name="title_page_favorite_category">收藏分类</string>
     <string-array name="page_titles">
         <item>@string/title_page_latest</item>
         <item>@string/title_page_download</item>
         <item>@string/title_page_favorite</item>
+        <item>@string/title_page_favorite_category</item>
     </string-array>
     <string name="tips_network_error">无法连接到 NHentai。</string>
     <string name="snack_action_try_again">重试</string>

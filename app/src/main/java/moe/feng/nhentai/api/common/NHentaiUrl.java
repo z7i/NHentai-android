@@ -1,5 +1,7 @@
 package moe.feng.nhentai.api.common;
 
+import moe.feng.nhentai.model.Category;
+
 public class NHentaiUrl {
 
 	public static final String NHENTAI_HOME = "http://nhentai.net";
@@ -50,6 +52,7 @@ public class NHentaiUrl {
 		return getGalleryUrl(g_id) + "/" + page_num + "." + file_type;
 	}
 
+	@Deprecated
 	public static String getParodyUrl(String name) {
 		String targetName = name;
 		if (targetName.contains(" ")) {
@@ -58,6 +61,7 @@ public class NHentaiUrl {
 		return NHENTAI_HOME + "/parody/" + targetName;
 	}
 
+	@Deprecated
 	public static String getCharacterUrl(String name) {
 		String targetName = name;
 		if (targetName.contains(" ")) {
@@ -66,6 +70,7 @@ public class NHentaiUrl {
 		return NHENTAI_HOME + "/character/" + targetName;
 	}
 
+	@Deprecated
 	public static String getTagUrl(String tag) {
 		String targetTag = tag;
 		if (targetTag.contains(" ")) {
@@ -74,6 +79,7 @@ public class NHentaiUrl {
 		return NHENTAI_HOME + "/tagged/" + targetTag;
 	}
 
+	@Deprecated
 	public static String getArtistUrl(String name) {
 		String targetName = name;
 		if (targetName.contains(" ")) {
@@ -82,6 +88,7 @@ public class NHentaiUrl {
 		return NHENTAI_HOME + "/artist/" + targetName;
 	}
 
+	@Deprecated
 	public static String getGroupUrl(String name) {
 		String targetName = name;
 		if (targetName.contains(" ")) {
@@ -90,12 +97,21 @@ public class NHentaiUrl {
 		return NHENTAI_HOME + "/group/" + targetName;
 	}
 
+	@Deprecated
 	public static String getLanguageUrl(String name) {
 		String targetName = name;
 		if (targetName.contains(" ")) {
 			targetName = targetName.replaceAll(" ", "-");
 		}
 		return NHENTAI_HOME + "/language/" + targetName;
+	}
+
+	public static String getCategoryUrl(Category category) {
+		String targetName = category.name;
+		if (targetName.contains(" ")) {
+			targetName = targetName.replaceAll(" ", "-");
+		}
+		return NHENTAI_HOME + "/" + category.type.toLowerCase() + "/" + targetName;
 	}
 
 	public static String getHomePageUrl(int page) {
