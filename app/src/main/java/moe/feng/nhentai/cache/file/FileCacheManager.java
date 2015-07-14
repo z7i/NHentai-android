@@ -3,6 +3,7 @@ package moe.feng.nhentai.cache.file;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -25,7 +26,7 @@ public class FileCacheManager {
 	
 	private File mCacheDir;
 	
-	public static final FileCacheManager getInstance(Context context) {
+	public static FileCacheManager getInstance(Context context) {
 		if (sInstance == null) {
 			sInstance = new FileCacheManager(context);
 		}
@@ -34,7 +35,15 @@ public class FileCacheManager {
 	}
 	
 	private FileCacheManager(Context context) {
-		mCacheDir = context.getExternalCacheDir();
+		try {
+			mCacheDir = context.getExternalCacheDir();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (mCacheDir == null) {
+			String cacheAbsDir = "/Android/data" + context.getPackageName() + "/cache/";
+			mCacheDir = new File(Environment.getExternalStorageDirectory().getPath() + cacheAbsDir);
+		}
 	}
 	
 	public boolean createCacheFromNetwork(String type, String url) {
