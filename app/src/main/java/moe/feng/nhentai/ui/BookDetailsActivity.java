@@ -37,6 +37,7 @@ import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.model.Category;
 import moe.feng.nhentai.ui.adapter.BookPreviewGridAdapter;
+import moe.feng.nhentai.ui.common.AbsActivity;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.util.AsyncTask;
 import moe.feng.nhentai.util.ColorGenerator;
@@ -44,7 +45,7 @@ import moe.feng.nhentai.util.TextDrawable;
 import moe.feng.nhentai.view.AutoWrapLayout;
 import moe.feng.nhentai.view.WheelProgressView;
 
-public class BookDetailsActivity extends AppCompatActivity {
+public class BookDetailsActivity extends AbsActivity {
 
 	private ImageView mImageView;
 	private CollapsingToolbarLayout collapsingToolbar;
@@ -76,8 +77,6 @@ public class BookDetailsActivity extends AppCompatActivity {
 
 		isFavorite = originFavorite = FavoritesManager.getInstance(getApplicationContext()).contains(book.bookId);
 
-		Toolbar toolbar = $(R.id.toolbar);
-		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		collapsingToolbar = $(R.id.collapsing_toolbar);
@@ -132,6 +131,11 @@ public class BookDetailsActivity extends AppCompatActivity {
 		} else {
 			startBookGet();
 		}
+	}
+
+	@Override
+	protected void setUpViews() {
+
 	}
 
 	public static void launch(Activity activity, ImageView imageView, Book book, int fromPosition) {

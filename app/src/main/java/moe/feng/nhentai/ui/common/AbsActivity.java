@@ -1,5 +1,6 @@
 package moe.feng.nhentai.ui.common;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ public abstract class AbsActivity extends AppCompatActivity {
 
 	protected int statusBarHeight = 0;
 
+	@SuppressLint("MissingSuperCall")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		this.onCreate(savedInstanceState, true);

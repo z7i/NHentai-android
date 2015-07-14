@@ -26,6 +26,11 @@
 		    android:title="@string/set_title_weibo"
 		    android:summary="@string/set_title_weibo_summary"/>
 
+		<moe.feng.nhentai.view.pref.Preference
+			android:key="telegram"
+			android:title="@string/set_title_telegram"
+			android:summary="@string/set_title_telegram_link"/>
+
 	</PreferenceCategory>
 
 </PreferenceScreen>

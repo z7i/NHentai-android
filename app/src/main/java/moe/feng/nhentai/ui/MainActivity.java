@@ -42,6 +42,7 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			getWindow().setStatusBarColor(getResources().getColor(R.color.deep_purple_800));
+			getWindow().setNavigationBarColor(getResources().getColor(R.color.deep_purple_800));
 		}
 
 		setContentView(R.layout.activity_main);

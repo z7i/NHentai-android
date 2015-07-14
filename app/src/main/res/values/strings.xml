@@ -55,5 +55,7 @@
     <string name="set_title_google_plus_summary">+Fung Jichun</string>
     <string name="set_title_github">Github Repo</string>
     <string name="set_title_github_website">"https://github.com/fython/NHentai-android"</string>
+    <string name="set_title_telegram">Telegram Group</string>
+    <string name="set_title_telegram_link">"https://telegram.me/joinchat/0668165200bd194d0a89b8995057e330"</string>
 
 </resources>

@@ -16,6 +16,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 	private Preference mWeiboPref;
 	private Preference mGooglePlusPref;
 	private Preference mGithubPref;
+	private Preference mTelegreamPref;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 		mWeiboPref = (Preference) findPreference("weibo");
 		mGooglePlusPref = (Preference) findPreference("google_plus");
 		mGithubPref = (Preference) findPreference("github");
+		mTelegreamPref = (Preference) findPreference("telegram");
 
 		String version = "Unknown";
 		try {
@@ -41,6 +43,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 		mWeiboPref.setOnPreferenceClickListener(this);
 		mGooglePlusPref.setOnPreferenceClickListener(this);
 		mGithubPref.setOnPreferenceClickListener(this);
+		mTelegreamPref.setOnPreferenceClickListener(this);
 	}
 
 	@Override
@@ -59,6 +62,11 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 		}
 		if (pref == mGithubPref) {
 			openWebUrl(getString(R.string.set_title_github_website));
+			return true;
+		}
+		if (pref == mTelegreamPref) {
+			openWebUrl(getString(R.string.set_title_telegram_link));
+			return true;
 		}
 		return false;
 	}
