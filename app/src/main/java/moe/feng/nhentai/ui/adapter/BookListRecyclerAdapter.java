@@ -147,8 +147,6 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 			iv.setVisibility(View.VISIBLE);
 			iv.setTag(false);
 
-			final ViewHolder vh = (ViewHolder) v.getTag();
-
 			Picasso.with(getContext())
 					.load(img)
 					.placeholder(((ViewHolder) v.getTag()).mImagePlaceholder)

@@ -99,6 +99,10 @@ public class PageDownloader {
 		return b;
 	}
 
+	public boolean isDownloading() {
+		return mDownloadThread != null && mDownloadThread.isRunning;
+	}
+
 	public OnDownloadListener getOnDownloadListener() {
 		return listener;
 	}

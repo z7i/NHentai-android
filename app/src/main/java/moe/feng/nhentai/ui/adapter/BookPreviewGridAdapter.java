@@ -1,76 +1,72 @@
 package moe.feng.nhentai.ui.adapter;
 
-import android.content.Context;
-import android.graphics.Bitmap;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.BookApi;
 import moe.feng.nhentai.model.Book;
+import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.util.AsyncTask;
 
-public class BookPreviewGridAdapter extends BaseAdapter {
+public class BookPreviewGridAdapter extends AbsRecyclerViewAdapter {
 
 	private Book book;
-	private Context mContext;
 
-	public BookPreviewGridAdapter(Context context, Book book) {
-		super();
-		this.mContext = context;
+	public BookPreviewGridAdapter(RecyclerView rv, Book book) {
+		super(rv);
 		this.book = book;
 	}
 
 	@Override
-	public int getCount() {
+	public ClickableViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		bindContext(parent.getContext());
+		return new ViewHolder(
+				LayoutInflater
+						.from(getContext())
+						.inflate(R.layout.list_item_book_picture_thumb, parent, false)
+		);
+	}
+
+	@Override
+	public void onBindViewHolder(ClickableViewHolder cvh, int position) {
+		super.onBindViewHolder(cvh, position);
+		if (cvh instanceof ViewHolder) {
+			ViewHolder holder = (ViewHolder) cvh;
+
+			holder.mImageView.setVisibility(View.INVISIBLE);
+			holder.mNumberText.setText(Integer.toString(position + 1));
+
+			new ImageDownloader().execute(holder.getParentView(), position + 1);
+		}
+	}
+
+	@Override
+	public int getItemCount() {
 		return book.pageCount;
 	}
 
-	@Override
-	public Object getItem(int i) {
-		return null;
-	}
+	public class ViewHolder extends AbsRecyclerViewAdapter.ClickableViewHolder {
 
-	@Override
-	public long getItemId(int i) {
-		return 0;
-	}
-
-	@Override
-	public View getView(int position, View view, ViewGroup viewGroup) {
-		ViewHolder holder;
-		if (view == null) {
-			view = View.inflate(mContext, R.layout.list_item_book_picture_thumb, null);
-
-			holder = new ViewHolder(view);
-			view.setTag(holder);
-		} else {
-			holder = (ViewHolder) view.getTag();
-		}
-
-		holder.mImageView.setLayoutParams(new GridView.LayoutParams(300, 100));
-		holder.mNumberText.setText(position);
-
-		new ImageDownloader().execute(holder.mImageView, position);
-
-		return view;
-	}
-
-	private class ViewHolder {
-
-		View mParentView;
 		ImageView mImageView;
 		TextView mNumberText;
 
 		public ViewHolder(View itemView) {
-			this.mParentView = itemView;
+			super(itemView);
 			this.mImageView = (ImageView) itemView.findViewById(R.id.image_view);
 			this.mNumberText = (TextView) itemView.findViewById(R.id.number_text);
+
+			itemView.setTag(this);
 		}
 
 	}
@@ -82,13 +78,13 @@ public class BookPreviewGridAdapter extends BaseAdapter {
 			View v = (View) params[0];
 			ViewHolder h = (ViewHolder) v.getTag();
 
-			if (v != null && !TextUtils.isEmpty(book.previewImageUrl)) {
+			if (v != null) {
 				ImageView imgView = h.mImageView;
 
-				Bitmap img = BookApi.getPageThumb(mContext, book, (int) params[1]);
+				File img = BookApi.getPageThumbFile(getContext(), book, (int) params[1]);
 
 				if (img != null) {
-					publishProgress(new Object[]{v, img, imgView, book});
+					publishProgress(new Object[]{v, img, imgView, book, params[1]});
 				}
 			}
 
@@ -105,11 +101,29 @@ public class BookPreviewGridAdapter extends BaseAdapter {
 				return;
 			}
 
-			Bitmap img = (Bitmap) values[1];
-			ImageView iv = (ImageView) values[2];
+			ViewHolder vh = (ViewHolder) v.getTag();
+
+			if (!vh.mNumberText.getText().equals(Integer.toString((int) values[4]))) {
+				return;
+			}
+
+			File img = (File) values[1];
+			final ImageView iv = (ImageView) values[2];
 			iv.setVisibility(View.VISIBLE);
-			iv.setImageBitmap(img);
 			iv.setTag(false);
+
+			Picasso.with(getContext())
+					.load(img)
+					.into(iv, new Callback() {
+						@Override
+						public void onSuccess() {
+						}
+
+						@Override
+						public void onError() {
+
+						}
+					});
 		}
 
 

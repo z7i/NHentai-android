@@ -17,6 +17,7 @@ import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.GalleryActivity;
 import moe.feng.nhentai.ui.common.LazyFragment;
 import moe.feng.nhentai.util.AsyncTask;
+import moe.feng.nhentai.util.task.PageDownloader;
 import moe.feng.nhentai.view.WheelProgressView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -135,23 +136,41 @@ public class BookPageFragment extends LazyFragment {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 				case MSG_FINISHED_LOADING:
-					Bitmap b = PageApi.getPageOriginImage(getApplicationContext(), book, pageNum);
-					if (b != null) {
-						$(R.id.loading_content).setVisibility(View.GONE);
-						mBitmap = b;
-						if (mImageView != null) {
-							mImageView.setImageBitmap(mBitmap);
-							if (mPhotoViewAttacher != null) {
-								mPhotoViewAttacher.update();
-								mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
-									@Override
-									public void onViewTap(View view, float v, float v1) {
-										if (getActivity() instanceof GalleryActivity) {
-											((GalleryActivity) getActivity()).toggleControlBar();
+					Bitmap b;
+					if (PageApi.isPageOriginImageLocalFileExist(getApplicationContext(), book, pageNum)) {
+						b = PageApi.getPageOriginImage(getApplicationContext(), book, pageNum);
+						if (b != null) {
+							$(R.id.loading_content).setVisibility(View.GONE);
+							mBitmap = b;
+							if (mImageView != null) {
+								mImageView.setImageBitmap(mBitmap);
+								if (mPhotoViewAttacher != null) {
+									mPhotoViewAttacher.update();
+									mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+										@Override
+										public void onViewTap(View view, float v, float v1) {
+											if (getActivity() instanceof GalleryActivity) {
+												((GalleryActivity) getActivity()).toggleControlBar();
+											}
 										}
-									}
-								});
+									});
+								}
 							}
+						}
+					} else {
+						if (getActivity() != null && getActivity() instanceof GalleryActivity) {
+							PageDownloader downloader = ((GalleryActivity) getActivity()).getPageDownloader();
+							if (downloader != null) {
+								downloader.setDownloaded(pageNum - 1, false);
+								if (!downloader.isDownloading()) {
+									downloader.start();
+								}
+							} else {
+								new DownloadTask().execute();
+								return;
+							}
+						} else {
+							new DownloadTask().execute();
 						}
 					}
 					break;

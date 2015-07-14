@@ -159,6 +159,10 @@ public class GalleryActivity extends AbsActivity {
 		}
 	}
 
+	public PageDownloader getPageDownloader() {
+		return mDownloader;
+	}
+
 	private class GalleryDownloaderListener implements PageDownloader.OnDownloadListener {
 
 		@Override

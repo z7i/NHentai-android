@@ -10,6 +10,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -33,6 +36,8 @@ import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.model.Category;
+import moe.feng.nhentai.ui.adapter.BookPreviewGridAdapter;
+import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.util.AsyncTask;
 import moe.feng.nhentai.util.ColorGenerator;
 import moe.feng.nhentai.util.TextDrawable;
@@ -48,6 +53,7 @@ public class BookDetailsActivity extends AppCompatActivity {
 	private LinearLayout mTagsLayout;
 	private LinearLayout mContentView;
 	private WheelProgressView mProgressWheel;
+	private RecyclerView mPreviewList;
 
 	private Book book;
 	private int fromPosition;
@@ -85,6 +91,10 @@ public class BookDetailsActivity extends AppCompatActivity {
 		mTagsLayout = $(R.id.book_tags_layout);
 		mContentView = $(R.id.book_content);
 		mProgressWheel = $(R.id.wheel_progress);
+		mPreviewList = $(R.id.preview_list);
+
+		mPreviewList.setHasFixedSize(true);
+		mPreviewList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2, LinearLayoutManager.HORIZONTAL, false));
 
 		FileCacheManager cm = FileCacheManager.getInstance(getApplicationContext());
 		if (cm.cacheExistsUrl(Constants.CACHE_COVER, book.bigCoverImageUrl)) {
@@ -156,7 +166,19 @@ public class BookDetailsActivity extends AppCompatActivity {
 		mContentView.animate().alphaBy(0f).alpha(1f).setDuration(1500).start();
 		mTitleText.setText(TextUtils.isEmpty(book.titleJP) ? book.title : book.titleJP);
 
+		updatePreviewList();
 		updateTagsContent();
+	}
+
+	private void updatePreviewList() {
+		BookPreviewGridAdapter adapter = new BookPreviewGridAdapter(mPreviewList, book);
+		adapter.setOnItemClickListener(new AbsRecyclerViewAdapter.OnItemClickListener() {
+			@Override
+			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder holder) {
+				GalleryActivity.launch(BookDetailsActivity.this, book, position);
+			}
+		});
+		mPreviewList.setAdapter(adapter);
 	}
 
 	private void updateTagsContent() {
