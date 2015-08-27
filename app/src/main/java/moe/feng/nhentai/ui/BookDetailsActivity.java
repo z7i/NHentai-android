@@ -8,13 +8,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,10 +57,12 @@ public class BookDetailsActivity extends AbsActivity {
 	private WheelProgressView mProgressWheel;
 	private RecyclerView mPreviewList;
 
+	private ShareActionProvider mShareActionProvider;
+
 	private Book book;
 	private int fromPosition;
 
-	private boolean isFavorite = false, originFavorite = false;
+	private boolean isFavorite = false, originFavorite = false, isFromExternal = false;
 
 	private final static String EXTRA_BOOK_DATA = "book_data", EXTRA_POSITION = "item_position";
 	private final static String TRANSITION_NAME_IMAGE = "BookDetailsActivity:image";
@@ -71,16 +74,27 @@ public class BookDetailsActivity extends AbsActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_book_details);
 
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		collapsingToolbar = $(R.id.collapsing_toolbar);
+
 		Intent intent = getIntent();
-		book = new Gson().fromJson(intent.getStringExtra(EXTRA_BOOK_DATA), Book.class);
-		fromPosition = intent.getIntExtra(EXTRA_POSITION, 0);
+		if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+			book = new Book();
+			String url = intent.getData().toString();
+			if (url.endsWith("/")) url = url.substring(0, url.length() - 1);
+			String bid = url.substring(url.lastIndexOf("/") + 1, url.length());
+			Log.i("TAG", "url get id:" + bid);
+			book.bookId = bid;
+			fromPosition = -1;
+			isFromExternal = true;
+		} else {
+			book = new Gson().fromJson(intent.getStringExtra(EXTRA_BOOK_DATA), Book.class);
+			fromPosition = intent.getIntExtra(EXTRA_POSITION, 0);
+
+			collapsingToolbar.setTitle(book.title);
+		}
 
 		isFavorite = originFavorite = FavoritesManager.getInstance(getApplicationContext()).contains(book.bookId);
-
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-		collapsingToolbar = $(R.id.collapsing_toolbar);
-		collapsingToolbar.setTitle(book.title);
 
 		mImageView = $(R.id.app_bar_background);
 		ViewCompat.setTransitionName(mImageView, TRANSITION_NAME_IMAGE);
@@ -96,38 +110,58 @@ public class BookDetailsActivity extends AbsActivity {
 		mPreviewList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2, LinearLayoutManager.HORIZONTAL, false));
 
 		FileCacheManager cm = FileCacheManager.getInstance(getApplicationContext());
-		if (cm.cacheExistsUrl(Constants.CACHE_COVER, book.bigCoverImageUrl)) {
-			if (cm.cacheExistsUrl(Constants.CACHE_PAGE_IMG,
-					NHentaiUrl.getOriginPictureUrl(book.galleryId, "1"))) {
-				Picasso.with(getApplicationContext())
-						.load(cm.getBitmapUrlFile(Constants.CACHE_PAGE_IMG, NHentaiUrl.getOriginPictureUrl(book.galleryId, "1")))
-						.fit()
-						.centerCrop()
-						.into(mImageView);
+		if (book.galleryId != null) {
+			if (cm.cacheExistsUrl(Constants.CACHE_COVER, book.bigCoverImageUrl)) {
+				if (cm.cacheExistsUrl(Constants.CACHE_PAGE_IMG,
+						NHentaiUrl.getOriginPictureUrl(book.galleryId, "1"))) {
+					Picasso.with(getApplicationContext())
+							.load(cm.getBitmapUrlFile(Constants.CACHE_PAGE_IMG, NHentaiUrl.getOriginPictureUrl(book.galleryId, "1")))
+							.fit()
+							.centerCrop()
+							.into(mImageView);
+				} else {
+					Picasso.with(getApplicationContext())
+							.load(cm.getBitmapUrlFile(Constants.CACHE_COVER, book.bigCoverImageUrl))
+							.fit()
+							.centerCrop()
+							.into(mImageView);
+				}
 			} else {
-				Picasso.with(getApplicationContext())
-						.load(cm.getBitmapUrlFile(Constants.CACHE_COVER, book.bigCoverImageUrl))
-						.fit()
-						.centerCrop()
-						.into(mImageView);
+				if (cm.cacheExistsUrl(Constants.CACHE_THUMB, book.previewImageUrl)) {
+					Picasso.with(getApplicationContext())
+							.load(cm.getBitmapUrlFile(Constants.CACHE_THUMB, book.previewImageUrl))
+							.fit()
+							.centerCrop()
+							.into(mImageView);
+				} else {
+					int color = ColorGenerator.MATERIAL.getColor(book.title);
+					TextDrawable drawable = TextDrawable.builder().buildRect(book.title.substring(0, 1), color);
+					mImageView.setImageDrawable(drawable);
+				}
+				new CoverTask().execute(book);
 			}
-		} else {
-			if (cm.cacheExistsUrl(Constants.CACHE_THUMB, book.previewImageUrl)) {
-				Picasso.with(getApplicationContext())
-						.load(cm.getBitmapUrlFile(Constants.CACHE_THUMB, book.previewImageUrl))
-						.fit()
-						.centerCrop()
-						.into(mImageView);
-			} else {
-				int color = ColorGenerator.MATERIAL.getColor(book.title);
-				TextDrawable drawable = TextDrawable.builder().buildRect(book.title.substring(0, 1), color);
-				mImageView.setImageDrawable(drawable);
-			}
-			new CoverTask().execute(book);
 		}
 
 		if (book.pageCount != 0) {
-			updateUIContent();
+			mContentView.setVisibility(View.GONE);
+			mProgressWheel.setVisibility(View.VISIBLE);
+			mProgressWheel.spin();
+			new Thread() {
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							updateUIContent();
+						}
+					});
+				}
+			}.start();
 		} else {
 			startBookGet();
 		}
@@ -169,7 +203,11 @@ public class BookDetailsActivity extends AbsActivity {
 		mContentView.setVisibility(View.VISIBLE);
 		mContentView.animate().alphaBy(0f).alpha(1f).setDuration(1500).start();
 		mTitleText.setText(TextUtils.isEmpty(book.titleJP) ? book.title : book.titleJP);
+		if (isFromExternal) {
+			new CoverTask().execute(book);
+		}
 
+		setUpShareAction();
 		updatePreviewList();
 		updateTagsContent();
 	}
@@ -398,6 +436,21 @@ public class BookDetailsActivity extends AbsActivity {
 		}
 	}
 
+	private void setUpShareAction() {
+		String sendingText = String.format(getString(R.string.action_share_send_text),
+				book.titleJP != null ? book.titleJP : book.title,
+				NHentaiUrl.getBookDetailsUrl(book.bookId)
+		);
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra(Intent.EXTRA_TEXT, sendingText);
+		intent.setType("text/plain");
+		if (mShareActionProvider != null) {
+			mShareActionProvider.setShareHistoryFileName("custom_share_history.xml");
+			mShareActionProvider.setShareIntent(intent);
+		}
+	}
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
@@ -406,6 +459,10 @@ public class BookDetailsActivity extends AbsActivity {
 		MenuItem mFavItem = menu.findItem(R.id.action_favorite);
 		mFavItem.setIcon(isFavorite ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_outline_white_24dp);
 		mFavItem.setTitle(isFavorite ? R.string.action_favorite_true : R.string.action_favorite_false);
+
+		MenuItem mShareItem = menu.findItem(R.id.action_share);
+		mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(mShareItem);
+		setUpShareAction();
 
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -439,7 +496,7 @@ public class BookDetailsActivity extends AbsActivity {
 
 	@Override
 	public void onBackPressed() {
-		if (originFavorite != isFavorite) {
+		if (originFavorite != isFavorite && fromPosition >= 0) {
 			Intent intent = new Intent();
 			intent.putExtra("position", fromPosition);
 			setResult(RESULT_HAVE_FAV, intent);

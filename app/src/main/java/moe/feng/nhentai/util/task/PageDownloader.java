@@ -131,6 +131,7 @@ public class PageDownloader {
 				downloadingPosition = nextToDownloadPosition();
 				Log.i(TAG, "downloadingPosition:" + downloadingPosition);
 				if (state == STATE_PAUSE) {
+					Log.i(TAG, "download paused");
 					if (listener != null) listener.onStateChange(STATE_PAUSE);
 					while (state == STATE_PAUSE) {
 						try {
@@ -141,11 +142,17 @@ public class PageDownloader {
 					}
 				}
 				if (state == STATE_STOP) {
+					Log.i(TAG, "download stopped");
 					if (listener != null) listener.onStateChange(STATE_STOP);
 					isRunning = false;
 					return;
 				}
-				File tempFile = PageApi.getPageOriginImageFile(context, book, downloadingPosition + 1);
+				File tempFile = null;
+				try {
+					tempFile = PageApi.getPageOriginImageFile(context, book, downloadingPosition + 1);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				if (tempFile != null) {
 					Log.i(TAG, "download finish");
 					isDownloaded[downloadingPosition] = true;

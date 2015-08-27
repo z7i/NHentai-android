@@ -70,6 +70,15 @@ public class BookPageFragment extends LazyFragment {
 		mWheelProgress = $(R.id.wheel_progress);
 
 		mPageNumText.setText(Integer.toString(pageNum));
+
+		$(R.id.background_view).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (getActivity() instanceof GalleryActivity) {
+					((GalleryActivity) getActivity()).toggleControlBar();
+				}
+			}
+		});
 	}
 
 	@Override

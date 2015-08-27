@@ -105,11 +105,12 @@ public class PageApi {
 		String url = NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(page_num));
 		FileCacheManager m = FileCacheManager.getInstance(context);
 
-		if (!m.cacheExistsUrl(CACHE_PAGE_IMG, url) && !m.createCacheFromNetwork(CACHE_PAGE_IMG, url)) {
+		if (!m.externalExists(book, page_num) &&
+				!m.cacheExistsUrl(CACHE_PAGE_IMG, url) && !m.createCacheFromNetwork(CACHE_PAGE_IMG, url)) {
 			return null;
 		}
 
-		return m.getBitmapUrlFile(CACHE_PAGE_IMG, url);
+		return m.getBitmapAllowingExternalPic(book, page_num);
 	}
 
 	public static boolean isPageOriginImageLocalFileExist(Context context, Book book, int page_num) {

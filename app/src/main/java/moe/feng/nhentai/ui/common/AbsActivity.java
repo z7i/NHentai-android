@@ -31,12 +31,9 @@ public abstract class AbsActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState, boolean statusBarTranslucent) {
 		/** Set up translucent status bar */
 		if (statusBarTranslucent) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && !Utility.isChrome()) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 				getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 				statusBarHeight = Utility.getStatusBarHeight(getApplicationContext());
-			}
-
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 				getWindow().setStatusBarColor(Color.TRANSPARENT);
 				getWindow().setNavigationBarColor(getResources().getColor(R.color.deep_purple_800));
 			}

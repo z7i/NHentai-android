@@ -130,7 +130,12 @@ public class BookApi {
 		for (Element e : coverDiv.getElementsByTag("img")) {
 			try {
 				Log.i(TAG, coverDiv.html());
-				String coverUrl = e.attr("src");
+				String coverUrl;
+				if (e.hasAttr("src")){
+					coverUrl = e.attr("src");
+				} else {
+					coverUrl = e.attr("data-cfsrc");
+				}
 				Log.i(TAG, coverUrl);
 				coverUrl = coverUrl.substring(0, coverUrl.lastIndexOf("/"));
 				String galleryId = coverUrl.substring(coverUrl.lastIndexOf("/") + 1, coverUrl.length());

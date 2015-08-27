@@ -37,9 +37,16 @@
     <string name="action_favorite_true">從最愛中移除</string>
     <string name="favorite_add_finished">本子成功添加至最愛。</string>
     <string name="favorite_remove_finished">本子成功從最愛中移除。</string>
+    <string name="action_share">分享....</string>
+	<string name="action_share_send_text">我發現了一個很不錯的本子:\"%1$s\" 連結:%2$s (R-18 警告! 分享自 NHBooks 客戶端 https://github.com/fython/NHentai-android )</string>
+	<string name="action_share_send_category">正在分享的 %1$s 很贊. 連結:%2$s (R-18 警告! 分享自 NHBooks 客戶端 https://github.com/fython/NHentai-android )</string>
 
     <string name="activity_gallery">畫廊</string>
     <string name="info_total_pages">"共 %d 頁"</string>
+	<string name="action_save">保存</string>
+	<string name="action_save_succeed">當前圖像已儲存至 \"%s\"。</string>
+	<string name="action_save_failed">當前圖像尚未下載完成，請耐心等待！</string>
+	<string name="action_save_unknown">由於未知原因儲存失敗。</string>
 
     <string name="activity_search_result">搜尋結果</string>
     <string name="title_search_result">搜尋結果: %s</string>
@@ -56,5 +63,6 @@
     <string name="set_title_github">Github 開源項目</string>
     <string name="set_title_github_website">"https://github.com/fython/NHentai-android"</string>
     <string name="set_title_telegram">Telegram 討論小組</string>
+    <string name="set_title_telegram_link">"https://telegram.me/joinchat/0668165200bd194d0a89b8995057e330"</string>
 
 </resources>

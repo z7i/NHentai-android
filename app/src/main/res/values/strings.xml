@@ -37,9 +37,16 @@
     <string name="action_favorite_true">Remove from favorites</string>
     <string name="favorite_add_finished">The book successfully added to favorites.</string>
     <string name="favorite_remove_finished">The book successfully removed from favorites.</string>
+    <string name="action_share">Share....</string>
+	<string name="action_share_send_text">I found a interesting book:\"%1$s\" Link:%2$s (R-18 WARNING! Share from NHBooks Client https://github.com/fython/NHentai-android )</string>
+	<string name="action_share_send_category">%1$s is great. Link:%2$s (R-18 WARNING! Share from NHBooks Client https://github.com/fython/NHentai-android )</string>
 
     <string name="activity_gallery">Gallery</string>
     <string name="info_total_pages">"%d PAGES"</string>
+	<string name="action_save">Save</string>
+	<string name="action_save_succeed">The current image has been saved to \"%s\".</string>
+	<string name="action_save_failed">The current image hasn\'t been downloaded. Please wait for finishing.</string>
+	<string name="action_save_unknown">Failed to save images for unknown error.</string>
 
     <string name="activity_search_result">Search result</string>
     <string name="title_search_result">Search result: %s</string>

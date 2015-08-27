@@ -72,4 +72,6 @@
 		<item name="sl_discreteMode">true</item>
 	</style>
 
+	<style name="Theme.NHBooks.Dark.Translucent" parent="Theme.NHBooks.Dark"/>
+
 </resources>

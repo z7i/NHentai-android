@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -38,6 +41,8 @@ public class CategoryActivity extends AbsActivity {
 	private StaggeredGridLayoutManager mLayoutManager;
 
 	private SwipeRefreshLayout mSwipeRefreshLayout;
+
+	private ShareActionProvider mShareActionProvider;
 
 	private ArrayList<Book> mBooks;
 
@@ -90,6 +95,7 @@ public class CategoryActivity extends AbsActivity {
 		title += category.name;
 
 		mActionBar.setTitle(title);
+		setUpShareAction();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			mActionBar.setElevation(getResources().getDimension(R.dimen.appbar_elevation));
 		}
@@ -130,6 +136,25 @@ public class CategoryActivity extends AbsActivity {
 		});
 	}
 
+	private void setUpShareAction() {
+		String title = "";
+		if (getSupportActionBar() != null && !TextUtils.isEmpty(getSupportActionBar().getTitle())) {
+			title = getSupportActionBar().getTitle().toString().replace(":", "");
+		}
+		String sendingText = String.format(getString(R.string.action_share_send_category),
+				title,
+				NHentaiUrl.getCategoryUrl(category)
+		);
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra(Intent.EXTRA_TEXT, sendingText);
+		intent.setType("text/plain");
+		if (mShareActionProvider != null) {
+			mShareActionProvider.setShareHistoryFileName("custom_share_history.xml");
+			mShareActionProvider.setShareIntent(intent);
+		}
+	}
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
@@ -138,6 +163,10 @@ public class CategoryActivity extends AbsActivity {
 		MenuItem mFavItem = menu.findItem(R.id.action_favorite);
 		mFavItem.setIcon(isFavorite ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_outline_white_24dp);
 		mFavItem.setTitle(isFavorite ? R.string.action_favorite_true : R.string.action_favorite_false);
+
+		MenuItem mShareItem = menu.findItem(R.id.action_share);
+		mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(mShareItem);
+		setUpShareAction();
 
 		return super.onPrepareOptionsMenu(menu);
 	}
