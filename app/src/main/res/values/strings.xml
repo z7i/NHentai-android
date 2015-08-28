@@ -40,6 +40,12 @@
     <string name="action_share">Share....</string>
 	<string name="action_share_send_text">I found a interesting book:\"%1$s\" Link:%2$s (R-18 WARNING! Share from NHBooks Client https://github.com/fython/NHentai-android )</string>
 	<string name="action_share_send_category">%1$s is great. Link:%2$s (R-18 WARNING! Share from NHBooks Client https://github.com/fython/NHentai-android )</string>
+    <string name="action_download_none">Save to external</string>
+    <string name="action_download_okay">Delete</string>
+
+    <string name="dialog_download_title">Downloading %s....</string>
+    <string name="dialog_download_restart">Has problem?</string>
+    <string name="dialog_download_notification_title">Finish downloading!</string>
 
     <string name="activity_gallery">Gallery</string>
     <string name="info_total_pages">"%d PAGES"</string>

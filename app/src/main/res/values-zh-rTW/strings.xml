@@ -40,6 +40,12 @@
     <string name="action_share">分享....</string>
 	<string name="action_share_send_text">我發現了一個很不錯的本子:\"%1$s\" 連結:%2$s (R-18 警告! 分享自 NHBooks 客戶端 https://github.com/fython/NHentai-android )</string>
 	<string name="action_share_send_category">正在分享的 %1$s 很贊. 連結:%2$s (R-18 警告! 分享自 NHBooks 客戶端 https://github.com/fython/NHentai-android )</string>
+    <string name="action_download_none">儲存到本地</string>
+    <string name="action_download_okay">刪除</string>
+
+    <string name="dialog_download_title">正在下載 %s....</string>
+    <string name="dialog_download_restart">卡住沒有動靜?</string>
+    <string name="dialog_download_notification_title">下載完畢!</string>
 
     <string name="activity_gallery">畫廊</string>
     <string name="info_total_pages">"共 %d 頁"</string>

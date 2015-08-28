@@ -8,15 +8,9 @@
 	      android:icon="@drawable/ic_favorite_outline_white_24dp"
 	      app:showAsAction="ifRoom"/>
 
-	<item android:id="@+id/action_download"
-	      android:title="@string/action_download_none"
-	      android:orderInCategory="1"
-	      android:icon="@drawable/ic_cloud_download_white_24dp"
-	      app:showAsAction="ifRoom"/>
-
 	<item android:id="@+id/action_share"
 	      android:title="@string/action_share"
-	      android:orderInCategory="2"
+	      android:orderInCategory="1"
 	      app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
 		  app:showAsAction="never"/>
 

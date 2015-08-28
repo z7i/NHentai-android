@@ -194,6 +194,19 @@ public class FileCacheManager {
 		return new File(mExternalDir.getAbsolutePath()+ "/" + book.title + "/book.json").isFile();
 	}
 
+	public boolean isExternalBookAllDownloaded(String bid) {
+		Book book = getExternalBook(bid);
+		if (book != null) {
+			boolean b = true;
+			for (int i = 0; i < book.pageCount && b; i++) {
+				b = externalPageExists(book, i);
+			}
+			return b;
+		} else {
+			return false;
+		}
+	}
+
 	public boolean deleteCacheUrl(String type, String url) {
 		return deleteCache(type, getCacheName(url));
 	}

@@ -57,12 +57,14 @@ public class BookDetailsActivity extends AbsActivity {
 	private WheelProgressView mProgressWheel;
 	private RecyclerView mPreviewList;
 
+	private MenuItem mActionDownload;
 	private ShareActionProvider mShareActionProvider;
 
 	private Book book;
 	private int fromPosition;
 
 	private boolean isFavorite = false, originFavorite = false, isFromExternal = false;
+	private boolean isDownloaded = false;
 
 	private final static String EXTRA_BOOK_DATA = "book_data", EXTRA_POSITION = "item_position";
 	private final static String TRANSITION_NAME_IMAGE = "BookDetailsActivity:image";
@@ -464,6 +466,10 @@ public class BookDetailsActivity extends AbsActivity {
 		mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(mShareItem);
 		setUpShareAction();
 
+		mActionDownload = menu.findItem(R.id.action_download);
+		mActionDownload.setIcon(isDownloaded ? R.drawable.ic_cloud_done_white_24dp : R.drawable.ic_cloud_download_white_24dp);
+		mActionDownload.setTitle(isDownloaded ? R.string.action_download_okay : R.string.action_download_none);
+
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -491,6 +497,15 @@ public class BookDetailsActivity extends AbsActivity {
 			invalidateOptionsMenu();
 			return true;
 		}
+		if (id == R.id.action_download) {
+			new Thread() {
+				@Override
+				public void run() {
+					onActionDownloadClick();
+				}
+			}.start();
+			return true;
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -510,6 +525,46 @@ public class BookDetailsActivity extends AbsActivity {
 		mProgressWheel.spin();
 
 		new BookGetTask().execute(book.bookId);
+	}
+
+	private void onActionDownloadClick() {
+		FileCacheManager fm = FileCacheManager.getInstance(getApplicationContext());
+		if (fm.externalBookExists(book)) {
+			if (fm.isExternalBookAllDownloaded(book.bookId)) {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						showDeleteDialog();
+					}
+				});
+			} else {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						showDeleteOrDownloadDialog();
+					}
+				});
+			}
+		} else {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					showDownloadDialog();
+				}
+			});
+		}
+	}
+
+	private void showDeleteDialog() {
+		// TODO
+	}
+
+	private void showDownloadDialog() {
+		// TODO
+	}
+
+	private void showDeleteOrDownloadDialog() {
+		// TODO
 	}
 
 	private class BookGetTask extends AsyncTask<String, Void, BaseMessage> {

@@ -158,7 +158,7 @@ public class CategoryActivity extends AbsActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		getMenuInflater().inflate(R.menu.menu_details, menu);
+		getMenuInflater().inflate(R.menu.menu_category, menu);
 
 		MenuItem mFavItem = menu.findItem(R.id.action_favorite);
 		mFavItem.setIcon(isFavorite ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_outline_white_24dp);
