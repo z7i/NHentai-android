@@ -2,6 +2,7 @@ package moe.feng.nhentai.ui.adapter;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.os.Handler;
 import android.support.v13.app.FragmentPagerAdapter;
 
 import moe.feng.nhentai.model.Book;
@@ -33,9 +34,12 @@ public class GalleryPagerAdapter extends FragmentPagerAdapter {
 
 	public void notifyPageImageLoaded(int position, boolean isSucceed) {
 		if (fragments[position] != null) {
-			fragments[position].getHandler().sendEmptyMessage(
-					isSucceed ? BookPageFragment.MSG_FINISHED_LOADING : BookPageFragment.MSG_ERROR_LOADING
-			);
+			Handler handler = fragments[position].getHandler();
+			if (handler != null) {
+				handler.sendEmptyMessage(
+						isSucceed ? BookPageFragment.MSG_FINISHED_LOADING : BookPageFragment.MSG_ERROR_LOADING
+				);
+			}
 		}
 	}
 

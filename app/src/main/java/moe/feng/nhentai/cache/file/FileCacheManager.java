@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
@@ -16,6 +18,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 
 import moe.feng.nhentai.api.common.NHentaiUrl;
 import moe.feng.nhentai.cache.common.Constants;
@@ -50,7 +53,7 @@ public class FileCacheManager {
 			mCacheDir = new File(Environment.getExternalStorageDirectory().getPath() + cacheAbsDir);
 		}
 		if (mExternalDir == null) {
-			String externalAbsDir = "/NHBooks/Books/";
+			String externalAbsDir = "/NHBooks/";
 			mExternalDir = new File(Environment.getExternalStorageDirectory().getPath() + externalAbsDir);
 		}
 	}
@@ -183,8 +186,12 @@ public class FileCacheManager {
 		return new File(getCachePath(type, name)).isFile();
 	}
 
-	public boolean externalExists(Book book, int page) {
+	public boolean externalPageExists(Book book, int page) {
 		return new File(getExternalPagePath(book, page)).isFile();
+	}
+
+	public boolean externalBookExists(Book book) {
+		return new File(mExternalDir.getAbsolutePath()+ "/" + book.title + "/book.json").isFile();
 	}
 
 	public boolean deleteCacheUrl(String type, String url) {
@@ -246,6 +253,72 @@ public class FileCacheManager {
 		return getBitmapFile(type, getCacheName(url));
 	}
 
+	public Book getExternalBook(String bid) {
+		File parentDir = new File(mExternalDir.getAbsolutePath()+ "/Books/");
+
+		if (parentDir.isDirectory()) {
+			File[] files = parentDir.listFiles();
+			for (File file : files) {
+				if (file.isDirectory()) {
+					File bookFile = new File(file.getAbsolutePath() + "/book.json");
+					if (bookFile.isFile()) {
+						try {
+							InputStream ins = new FileInputStream(bookFile);
+
+							byte b[] = new byte[(int) bookFile.length()];
+							ins.read(b);
+							ins.close();
+
+							Book book = new Gson().fromJson(new String(b), Book.class);
+							if (book.bookId.equals(bid)) {
+								Log.i(TAG, "Found bookId: " + book.bookId);
+								return book;
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+			return null;
+		} else {
+			return null;
+		}
+
+	}
+
+	public ArrayList<Book> getExternalBooks() {
+		File parentDir = new File(mExternalDir.getAbsolutePath()+ "/Books/");
+
+		if (parentDir.isDirectory()) {
+			File[] files = parentDir.listFiles();
+			ArrayList<Book> result = new ArrayList<>();
+			for (File file : files) {
+				if (file.isDirectory()) {
+					File bookFile = new File(file.getAbsolutePath() + "/book.json");
+					if (bookFile.isFile()) {
+						try {
+							InputStream ins = new FileInputStream(bookFile);
+
+							byte b[] = new byte[(int) bookFile.length()];
+							ins.read(b);
+							ins.close();
+
+							Book book = new Gson().fromJson(new String(b), Book.class);
+							Log.i(TAG, "Found external bookId: " + book.bookId);
+							result.add(book);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+			return result;
+		} else {
+			return null;
+		}
+	}
+
 	private String getCacheName(String url) {
 		return url.replaceAll("/", ".").replaceAll(":", "");
 	}
@@ -256,6 +329,7 @@ public class FileCacheManager {
 
 	public String getExternalPagePath(Book book, int page) {
 		return mExternalDir.getAbsolutePath()
+				+ "/Books"
 				+ "/" + book.title
 				+ "/" + String.format("%03d", page) + ".png";
 	}
@@ -278,7 +352,34 @@ public class FileCacheManager {
 			target.delete();
 		}
 
-		return srcFile.isFile() && copy(srcFile, target);
+		return saveBookDataToExternalPath(book) && srcFile.isFile() && copy(srcFile, target);
+	}
+
+	public boolean saveBookDataToExternalPath(Book book) {
+		String path = mExternalDir.getAbsolutePath()+ "/Books/" + book.title;
+		File d = new File(path);
+
+		if (d.isFile()) {
+			d.delete();
+		}
+		d.mkdirs();
+
+		File f = new File(path + "/book.json");
+
+		f.delete();
+
+		try {
+			OutputStream out = new FileOutputStream(f);
+
+			out.write(book.toJSONString().getBytes());
+
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
 	}
 
 }

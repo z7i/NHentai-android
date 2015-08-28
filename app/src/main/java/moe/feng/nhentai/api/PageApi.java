@@ -105,7 +105,7 @@ public class PageApi {
 		String url = NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(page_num));
 		FileCacheManager m = FileCacheManager.getInstance(context);
 
-		if (!m.externalExists(book, page_num) &&
+		if (!m.externalPageExists(book, page_num) &&
 				!m.cacheExistsUrl(CACHE_PAGE_IMG, url) && !m.createCacheFromNetwork(CACHE_PAGE_IMG, url)) {
 			return null;
 		}

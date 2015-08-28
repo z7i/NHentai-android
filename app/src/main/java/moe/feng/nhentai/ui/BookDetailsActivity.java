@@ -516,7 +516,9 @@ public class BookDetailsActivity extends AbsActivity {
 
 		@Override
 		protected BaseMessage doInBackground(String... params) {
-			return BookApi.getBook(params[0]);
+			Book externalBook = FileCacheManager.getInstance(getApplicationContext())
+					.getExternalBook(book.bookId);
+			return externalBook != null ? new BaseMessage(0, externalBook) : BookApi.getBook(params[0]);
 		}
 
 		@Override

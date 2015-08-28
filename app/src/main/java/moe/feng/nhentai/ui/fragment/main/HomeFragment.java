@@ -70,6 +70,7 @@ public class HomeFragment extends LazyFragment {
 			}
 		});
 
+		mSwipeRefreshLayout.setRefreshing(true);
 		new PageGetTask().execute(mNowPage);
 	}
 

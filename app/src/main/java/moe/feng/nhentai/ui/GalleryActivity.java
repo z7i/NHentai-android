@@ -109,15 +109,15 @@ public class GalleryActivity extends AbsActivity {
 				FileCacheManager m = FileCacheManager.getInstance(getApplicationContext());
 				String externalTarget = m.getExternalPagePath(book, mPager.getCurrentItem() + 1);
 				if (m.saveToExternalPath(book, mPager.getCurrentItem() + 1)){
-					Snackbar.make($(R.id.main_content), String.format(
+					Snackbar.make($(R.id.space_layout), String.format(
 							getString(R.string.action_save_succeed),
 							externalTarget
 					), Snackbar.LENGTH_SHORT).show();
 					return true;
 				}
-				Snackbar.make($(R.id.main_content), R.string.action_save_unknown, Snackbar.LENGTH_SHORT).show();
+				Snackbar.make($(R.id.space_layout), R.string.action_save_unknown, Snackbar.LENGTH_SHORT).show();
 			} else {
-				Snackbar.make($(R.id.main_content), R.string.action_save_failed, Snackbar.LENGTH_SHORT).show();
+				Snackbar.make($(R.id.space_layout), R.string.action_save_failed, Snackbar.LENGTH_SHORT).show();
 			}
 			return true;
 		}
