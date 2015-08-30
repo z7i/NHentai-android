@@ -82,5 +82,7 @@
     <string name="set_title_github_website">"https://github.com/fython/NHentai-android"</string>
     <string name="set_title_telegram">Telegram Group</string>
     <string name="set_title_telegram_link">"https://telegram.me/joinchat/0668165200bd194d0a89b8995057e330"</string>
+	<string name="set_title_alipay">Donate us by Alipay</string>
+	<string name="set_title_alipay_address">316643843\@qq.com</string>
 
 </resources>

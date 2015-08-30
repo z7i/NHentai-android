@@ -17,6 +17,11 @@
 		    android:summary="@string/set_title_github_website"/>
 
 		<moe.feng.nhentai.view.pref.Preference
+			android:key="alipay"
+		    android:title="@string/set_title_alipay"
+		    android:summary="@string/set_title_alipay_address"/>
+
+		<moe.feng.nhentai.view.pref.Preference
 			android:key="google_plus"
 		    android:title="@string/set_title_google_plus"
 		    android:summary="@string/set_title_google_plus_summary"/>

@@ -682,33 +682,12 @@ public class BookDetailsActivity extends AbsActivity {
 			mDownloader.setCurrentPosition(0);
 			mDownloader.setOnDownloadListener(new PageDownloader.OnDownloadListener() {
 				@Override
-				public void onFinish(int position, int progress) {
+				public void onFinish(int position, final int progress) {
 					if (mDialogDownloading == null) return;
-					mDialogDownloading.setProgress(Utility.calcProgress(progress, book.pageCount));
-					mDialogDownloading.setMessage(
-							(mDownloader.isPause() ? getString(R.string.dialog_download_paused) : "")
-							+ getString(
-									R.string.dialog_download_progress,
-									progress,
-									book.pageCount
-							)
-					);
-				}
-
-				@Override
-				public void onError(int position, int errorCode) {
-
-				}
-
-				@Override
-				public void onStateChange(int state, int progress) {
-					switch (state) {
-						case PageDownloader.STATE_STOP:
-							if (mDialogDownloading == null) return;
-							mDialogDownloading.dismiss();
-							break;
-						case PageDownloader.STATE_PAUSE:
-							if (mDialogDownloading == null) return;
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							mDialogDownloading.setProgress(Utility.calcProgress(progress, book.pageCount));
 							mDialogDownloading.setMessage(
 									(mDownloader.isPause() ? getString(R.string.dialog_download_paused) : "")
 											+ getString(
@@ -717,6 +696,42 @@ public class BookDetailsActivity extends AbsActivity {
 											book.pageCount
 									)
 							);
+						}
+					});
+				}
+
+				@Override
+				public void onError(int position, int errorCode) {
+
+				}
+
+				@Override
+				public void onStateChange(int state, final int progress) {
+					switch (state) {
+						case PageDownloader.STATE_STOP:
+							if (mDialogDownloading == null) return;
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									mDialogDownloading.dismiss();
+								}
+							});
+							break;
+						case PageDownloader.STATE_PAUSE:
+							if (mDialogDownloading == null) return;
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									mDialogDownloading.setMessage(
+											(mDownloader.isPause() ? getString(R.string.dialog_download_paused) : "")
+													+ getString(
+													R.string.dialog_download_progress,
+													progress,
+													book.pageCount
+											)
+									);
+								}
+							});
 							break;
 						case PageDownloader.STATE_ALL_OK:
 							startCopyToExternal();
@@ -759,8 +774,8 @@ public class BookDetailsActivity extends AbsActivity {
 					}
 				}
 		);
-		mDialogDownloading.setButton(
-				DialogInterface.BUTTON_POSITIVE,
+		/** mDialogDownloading.setButton(
+				DialogInterface.BUTTON_NEUTRAL,
 				getString(R.string.dialog_download_restart),
 				new DialogInterface.OnClickListener() {
 					@Override
@@ -769,7 +784,7 @@ public class BookDetailsActivity extends AbsActivity {
 						mDownloader.start();
 					}
 				}
-		);
+		); **/
 
 		mDialogDownloading.show();
 		mFileCacheManager.saveBookDataToExternalPath(book);
@@ -777,7 +792,14 @@ public class BookDetailsActivity extends AbsActivity {
 	}
 
 	private void startCopyToExternal() {
-		mDialogDownloading.setMessage(getString(R.string.dialog_download_copying));
+		runOnUiThread(
+			new Runnable() {
+				@Override
+				public void run() {
+					mDialogDownloading.setMessage(getString(R.string.dialog_download_copying));
+				}
+			}
+		);
 		new Thread() {
 			@Override
 			public void run() {
@@ -856,7 +878,7 @@ public class BookDetailsActivity extends AbsActivity {
 		}
 
 	}
-	
+
 	private class CoverTask extends AsyncTask<Book, Void, File> {
 
 		@Override
