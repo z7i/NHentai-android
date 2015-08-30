@@ -42,10 +42,22 @@
 	<string name="action_share_send_category">正在分享的 %1$s 很贊. 連結:%2$s (R-18 警告! 分享自 NHBooks 客戶端 https://github.com/fython/NHentai-android )</string>
     <string name="action_download_none">儲存到本地</string>
     <string name="action_download_okay">刪除</string>
+    <string name="dialog_ask_download_title">你想下载這個本子嗎？</string>
+    <string name="dialog_ask_download_summary">本子圖片將會儲存至 \"%s\"。</string>
+    <string name="dialog_ask_delete_title">你要移除這個本子嗎？</string>
+    <string name="dialog_ask_delete_summary">注意！移除操作將無法撤回。</string>
+    <string name="dialog_ask_d_or_d_title">這個本子還沒下載完畢</string>
+    <string name="dialog_ask_d_or_d_summary">你已經下載了 %1$d 頁並儲存在\"%2$s\".</string>
+    <string name="dialog_ask_d_or_d_delete">移除</string>
+    <string name="dialog_ask_d_or_d_continue">繼續下載</string>
 
     <string name="dialog_download_title">正在下載 %s....</string>
     <string name="dialog_download_restart">卡住沒有動靜?</string>
+    <string name="dialog_download_progress">%1$d/%2$d</string>
+    <string name="dialog_download_paused">(已暫停)</string>
     <string name="dialog_download_notification_title">下載完畢!</string>
+    <string name="dialog_download_pause">暫停/繼續</string>
+    <string name="dialog_download_copying">正在拷貝到外置儲存.... 請稍後。</string>
 
     <string name="activity_gallery">畫廊</string>
     <string name="info_total_pages">"共 %d 頁"</string>

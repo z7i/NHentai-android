@@ -38,6 +38,10 @@ public class Book {
 		this.previewImageUrl = previewImageUrl;
 	}
 
+	public String getAvailableTitle() {
+		return this.titleJP != null ? this.titleJP : this.title;
+	}
+
 	public String toJSONString() {
 		return new Gson().toJson(this);
 	}

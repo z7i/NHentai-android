@@ -104,4 +104,8 @@ public class Utility {
 		return string;
 	}
 
+	public static int calcProgress(int progress, int max) {
+		return (int) (((float) progress)/((float) max) * 100);
+	}
+
 }

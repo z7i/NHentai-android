@@ -9,9 +9,11 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -191,17 +193,17 @@ public class FileCacheManager {
 	}
 
 	public boolean externalBookExists(Book book) {
-		return new File(mExternalDir.getAbsolutePath()+ "/" + book.title + "/book.json").isFile();
+		return new File(mExternalDir.getAbsolutePath()+ "/Books/" + book.title + "/book.json").isFile();
+	}
+
+	public boolean externalBookExists(String bookId) {
+		return new File(mExternalDir.getAbsolutePath()+ "/Books/" + getExternalBook(bookId).title + "/book.json").isFile();
 	}
 
 	public boolean isExternalBookAllDownloaded(String bid) {
 		Book book = getExternalBook(bid);
 		if (book != null) {
-			boolean b = true;
-			for (int i = 0; i < book.pageCount && b; i++) {
-				b = externalPageExists(book, i);
-			}
-			return b;
+			return getExternalBookDownloadedCount(book.bookId) == book.pageCount;
 		} else {
 			return false;
 		}
@@ -332,6 +334,22 @@ public class FileCacheManager {
 		}
 	}
 
+	public int getExternalBookDownloadedCount(String bookId) {
+		Book book = getExternalBook(bookId);
+		if (book != null && externalBookExists(book)) {
+			File parentDir = new File(mExternalDir.getAbsolutePath()+ "/Books/" + book.title);
+			String[] pngs = parentDir.list(new FilenameFilter() {
+				@Override
+				public boolean accept(File file, String s) {
+					return s.endsWith(".png");
+				}
+			});
+			return pngs != null ? pngs.length : 0;
+		} else {
+			return -1;
+		}
+	}
+
 	private String getCacheName(String url) {
 		return url.replaceAll("/", ".").replaceAll(":", "");
 	}
@@ -340,11 +358,12 @@ public class FileCacheManager {
 		return mCacheDir.getAbsolutePath() + "/" + type + "/" + name + ".cache";
 	}
 
+	public String getExternalPath(Book book) {
+		return mExternalDir.getAbsolutePath() + "/Books/" + book.title;
+	}
+
 	public String getExternalPagePath(Book book, int page) {
-		return mExternalDir.getAbsolutePath()
-				+ "/Books"
-				+ "/" + book.title
-				+ "/" + String.format("%03d", page) + ".png";
+		return getExternalPath(book) + "/" + String.format("%03d", page) + ".png";
 	}
 
 	public boolean saveToExternalPath(Book book, int page) {
@@ -353,7 +372,7 @@ public class FileCacheManager {
 		File target = new File(path);
 		File srcFile = new File(src);
 
-		File targetParent = new File(mExternalDir.getAbsolutePath() + "/" + book.title);
+		File targetParent = new File(mExternalDir.getAbsolutePath() + "/Books/" + book.title);
 		if (targetParent.isFile()) {
 			targetParent.delete();
 		}
@@ -369,7 +388,7 @@ public class FileCacheManager {
 	}
 
 	public boolean saveBookDataToExternalPath(Book book) {
-		String path = mExternalDir.getAbsolutePath()+ "/Books/" + book.title;
+		String path = getExternalPath(book);
 		File d = new File(path);
 
 		if (d.isFile()) {

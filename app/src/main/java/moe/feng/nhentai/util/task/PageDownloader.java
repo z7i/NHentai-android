@@ -73,6 +73,15 @@ public class PageDownloader {
 		mDownloadThread.start();
 	}
 
+	public void continueDownload() {
+		Log.i(TAG, "download continue");
+		if (mDownloadThread != null && mDownloadThread.isRunning) {
+			state = STATE_START;
+		} else {
+			this.start();
+		}
+	}
+
 	public void pause() {
 		Log.i(TAG, "download pause");
 		state = STATE_PAUSE;
@@ -99,8 +108,30 @@ public class PageDownloader {
 		return b;
 	}
 
+	public int getDownloadedCount() {
+		int i = 0;
+		for (boolean b : isDownloaded) {
+			if (b) {
+				i++;
+			}
+		}
+		return i;
+	}
+
 	public boolean isDownloading() {
 		return mDownloadThread != null && mDownloadThread.isRunning;
+	}
+
+	public boolean isStop() {
+		return state == STATE_STOP;
+	}
+
+	public boolean isPause() {
+		return state == STATE_PAUSE;
+	}
+
+	public boolean isThreadAllOk() {
+		return state == STATE_ALL_OK;
 	}
 
 	public OnDownloadListener getOnDownloadListener() {
@@ -113,9 +144,9 @@ public class PageDownloader {
 
 	public interface OnDownloadListener {
 
-		void onFinish(int position);
+		void onFinish(int position, int progress);
 		void onError(int position, int errorCode);
-		void onStateChange(int state);
+		void onStateChange(int state, int progress);
 
 	}
 
@@ -126,13 +157,13 @@ public class PageDownloader {
 		@Override
 		public void run() {
 			Log.i(TAG, "download thread start");
-			if (listener != null) listener.onStateChange(STATE_START);
+			if (listener != null) listener.onStateChange(STATE_START, getDownloadedCount());
 			while (isRunning && !isAllDownloaded()) {
 				downloadingPosition = nextToDownloadPosition();
 				Log.i(TAG, "downloadingPosition:" + downloadingPosition);
 				if (state == STATE_PAUSE) {
 					Log.i(TAG, "download paused");
-					if (listener != null) listener.onStateChange(STATE_PAUSE);
+					if (listener != null) listener.onStateChange(STATE_PAUSE, getDownloadedCount());
 					while (state == STATE_PAUSE) {
 						try {
 							Thread.sleep(1000);
@@ -143,7 +174,7 @@ public class PageDownloader {
 				}
 				if (state == STATE_STOP) {
 					Log.i(TAG, "download stopped");
-					if (listener != null) listener.onStateChange(STATE_STOP);
+					if (listener != null) listener.onStateChange(STATE_STOP, getDownloadedCount());
 					isRunning = false;
 					return;
 				}
@@ -156,14 +187,14 @@ public class PageDownloader {
 				if (tempFile != null) {
 					Log.i(TAG, "download finish");
 					isDownloaded[downloadingPosition] = true;
-					if (listener != null) listener.onFinish(currentPosition);
+					if (listener != null) listener.onFinish(currentPosition, getDownloadedCount());
 				} else {
 					Log.i(TAG, "download error");
 					if (listener != null) listener.onError(currentPosition, -1);
 				}
 			}
 			Log.i(TAG, "all downloaded");
-			if (listener != null) listener.onStateChange(STATE_ALL_OK);
+			if (listener != null) listener.onStateChange(STATE_ALL_OK, getDownloadedCount());
 			isRunning = false;
 		}
 

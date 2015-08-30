@@ -78,7 +78,7 @@ public class GalleryActivity extends AbsActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		mDownloader.start();
+		mDownloader.continueDownload();
 	}
 
 	@Override
@@ -127,7 +127,7 @@ public class GalleryActivity extends AbsActivity {
 	@Override
 	protected void setUpViews() {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle(book.titleJP != null ? book.titleJP : book.title);
+		getSupportActionBar().setTitle(book.getAvailableTitle());
 
 		mAppBar = $(R.id.my_app_bar);
 		mBottomBar = $(R.id.bottom_bar);
@@ -207,7 +207,7 @@ public class GalleryActivity extends AbsActivity {
 	private class GalleryDownloaderListener implements PageDownloader.OnDownloadListener {
 
 		@Override
-		public void onFinish(int position) {
+		public void onFinish(int position, int progress) {
 			if (mPagerAdpater != null) {
 				mPagerAdpater.notifyPageImageLoaded(position, true);
 			}
@@ -221,7 +221,7 @@ public class GalleryActivity extends AbsActivity {
 		}
 
 		@Override
-		public void onStateChange(int state) {
+		public void onStateChange(int state, int progress) {
 
 		}
 

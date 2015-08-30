@@ -1,6 +1,10 @@
 package moe.feng.nhentai.ui;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -8,8 +12,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,6 +50,8 @@ import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.util.AsyncTask;
 import moe.feng.nhentai.util.ColorGenerator;
 import moe.feng.nhentai.util.TextDrawable;
+import moe.feng.nhentai.util.Utility;
+import moe.feng.nhentai.util.task.PageDownloader;
 import moe.feng.nhentai.view.AutoWrapLayout;
 import moe.feng.nhentai.view.WheelProgressView;
 
@@ -70,6 +79,13 @@ public class BookDetailsActivity extends AbsActivity {
 	private final static String TRANSITION_NAME_IMAGE = "BookDetailsActivity:image";
 
 	public final static int REQUEST_MAIN = 1001, RESULT_HAVE_FAV = 100;
+	public final static int NOTIFICATION_ID_FINISH = 10000;
+
+	private AlertDialog mDialogDel, mDialogDownload, mDialogDelOrDownload;
+	private ProgressDialog mDialogDownloading;
+
+	private PageDownloader mDownloader;
+	private FileCacheManager mFileCacheManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +111,8 @@ public class BookDetailsActivity extends AbsActivity {
 
 			collapsingToolbar.setTitle(book.title);
 		}
+
+		mFileCacheManager = FileCacheManager.getInstance(getApplicationContext());
 
 		isFavorite = originFavorite = FavoritesManager.getInstance(getApplicationContext()).contains(book.bookId);
 
@@ -152,7 +170,7 @@ public class BookDetailsActivity extends AbsActivity {
 				@Override
 				public void run() {
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(250);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -167,6 +185,8 @@ public class BookDetailsActivity extends AbsActivity {
 		} else {
 			startBookGet();
 		}
+
+		if (!isFromExternal) checkIsDownloaded();
 	}
 
 	@Override
@@ -209,6 +229,7 @@ public class BookDetailsActivity extends AbsActivity {
 			new CoverTask().execute(book);
 		}
 
+		checkIsDownloaded();
 		setUpShareAction();
 		updatePreviewList();
 		updateTagsContent();
@@ -440,7 +461,7 @@ public class BookDetailsActivity extends AbsActivity {
 
 	private void setUpShareAction() {
 		String sendingText = String.format(getString(R.string.action_share_send_text),
-				book.titleJP != null ? book.titleJP : book.title,
+				book.getAvailableTitle(),
 				NHentaiUrl.getBookDetailsUrl(book.bookId)
 		);
 		Intent intent = new Intent(Intent.ACTION_SEND);
@@ -528,51 +549,286 @@ public class BookDetailsActivity extends AbsActivity {
 	}
 
 	private void onActionDownloadClick() {
-		FileCacheManager fm = FileCacheManager.getInstance(getApplicationContext());
-		if (fm.externalBookExists(book)) {
-			if (fm.isExternalBookAllDownloaded(book.bookId)) {
+		final String downloadPath = mFileCacheManager.getExternalPath(book);
+		final int count = mFileCacheManager.getExternalBookDownloadedCount(book.bookId);
+		if (mFileCacheManager.externalBookExists(book)) {
+			if (mFileCacheManager.isExternalBookAllDownloaded(book.bookId)) {
+				isDownloaded = true;
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
+						invalidateOptionsMenu();
 						showDeleteDialog();
 					}
 				});
 			} else {
+				isDownloaded = false;
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						showDeleteOrDownloadDialog();
+						invalidateOptionsMenu();
+						showDeleteOrDownloadDialog(count, downloadPath);
 					}
 				});
 			}
 		} else {
+			Log.i("TAG", "Couldn\'t find downloaded info.");
+			isDownloaded = false;
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					showDownloadDialog();
+					invalidateOptionsMenu();
+					showDownloadDialog(count, downloadPath);
 				}
 			});
 		}
 	}
 
+	private void checkIsDownloaded() {
+		new Thread() {
+			@Override
+			public void run() {
+				isDownloaded = mFileCacheManager.externalBookExists(book)
+						&& mFileCacheManager.isExternalBookAllDownloaded(book.bookId);
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						invalidateOptionsMenu();
+					}
+				});
+			}
+		}.start();
+	}
+
 	private void showDeleteDialog() {
-		// TODO
+		if (mDialogDel == null) {
+			mDialogDel = new AlertDialog.Builder(this)
+					.setTitle(R.string.dialog_ask_delete_title)
+					.setMessage(R.string.dialog_ask_delete_summary)
+					.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							new DeleteTask().execute();
+						}
+					})
+					.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							mDialogDel.dismiss();
+						}
+					})
+					.create();
+		}
+
+		mDialogDel.show();
 	}
 
-	private void showDownloadDialog() {
-		// TODO
+	private void showDownloadDialog(final int count, String downloadPath) {
+		if (mDialogDownload == null) {
+			mDialogDownload = new AlertDialog.Builder(this)
+					.setTitle(R.string.dialog_ask_download_title)
+					.setMessage(getString(R.string.dialog_ask_download_summary, downloadPath))
+					.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							startDownload(count);
+						}
+					})
+					.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							mDialogDownload.dismiss();
+						}
+					})
+					.create();
+		}
+
+		mDialogDownload.show();
 	}
 
-	private void showDeleteOrDownloadDialog() {
-		// TODO
+	private void showDeleteOrDownloadDialog(final int count, String downloadPath) {
+		if (mDialogDelOrDownload == null) {
+			mDialogDelOrDownload = new AlertDialog.Builder(this)
+					.setTitle(R.string.dialog_ask_d_or_d_title)
+					.setMessage(getString(R.string.dialog_ask_d_or_d_summary, count, downloadPath))
+					.setPositiveButton(R.string.dialog_ask_d_or_d_continue, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							startDownload(count);
+						}
+					})
+					.setNeutralButton(R.string.dialog_ask_d_or_d_delete, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							new DeleteTask().execute();
+						}
+					})
+					.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							mDialogDelOrDownload.dismiss();
+						}
+					})
+					.create();
+		}
+
+		mDialogDelOrDownload.show();
+	}
+
+	private void startDownload(int progress) {
+		progress = Math.max(0, progress);
+		if (mDownloader == null) {
+			mDownloader = new PageDownloader(getApplicationContext(), book);
+			mDownloader.setCurrentPosition(0);
+			mDownloader.setOnDownloadListener(new PageDownloader.OnDownloadListener() {
+				@Override
+				public void onFinish(int position, int progress) {
+					if (mDialogDownloading == null) return;
+					mDialogDownloading.setProgress(Utility.calcProgress(progress, book.pageCount));
+					mDialogDownloading.setMessage(
+							(mDownloader.isPause() ? getString(R.string.dialog_download_paused) : "")
+							+ getString(
+									R.string.dialog_download_progress,
+									progress,
+									book.pageCount
+							)
+					);
+				}
+
+				@Override
+				public void onError(int position, int errorCode) {
+
+				}
+
+				@Override
+				public void onStateChange(int state, int progress) {
+					switch (state) {
+						case PageDownloader.STATE_STOP:
+							if (mDialogDownloading == null) return;
+							mDialogDownloading.dismiss();
+							break;
+						case PageDownloader.STATE_PAUSE:
+							if (mDialogDownloading == null) return;
+							mDialogDownloading.setMessage(
+									(mDownloader.isPause() ? getString(R.string.dialog_download_paused) : "")
+											+ getString(
+											R.string.dialog_download_progress,
+											progress,
+											book.pageCount
+									)
+							);
+							break;
+						case PageDownloader.STATE_ALL_OK:
+							startCopyToExternal();
+							break;
+					}
+				}
+			});
+		}
+
+		mDialogDownloading = new ProgressDialog(BookDetailsActivity.this);
+		mDialogDownloading.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		mDialogDownloading.setCancelable(false);
+		mDialogDownloading.setCanceledOnTouchOutside(false);
+		mDialogDownloading.setMax(100);
+		mDialogDownloading.setProgress(Utility.calcProgress(progress, book.pageCount));
+		mDialogDownloading.setTitle(getString(R.string.dialog_download_title, book.getAvailableTitle()));
+		mDialogDownloading.setMessage(getString(R.string.dialog_download_progress, progress, book.pageCount));
+		mDialogDownloading.setButton(
+				DialogInterface.BUTTON_POSITIVE,
+				getString(R.string.dialog_download_pause),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						if (mDownloader.isThreadAllOk()) return;
+						if (mDownloader.isDownloading()) {
+							mDownloader.pause();
+						} else {
+							mDownloader.continueDownload();
+						}
+					}
+				}
+		);
+		mDialogDownloading.setButton(
+				DialogInterface.BUTTON_NEGATIVE,
+				getString(android.R.string.cancel),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						mDownloader.stop();
+					}
+				}
+		);
+		mDialogDownloading.setButton(
+				DialogInterface.BUTTON_POSITIVE,
+				getString(R.string.dialog_download_restart),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						if (mDownloader.isThreadAllOk()) return;
+						mDownloader.start();
+					}
+				}
+		);
+
+		mDialogDownloading.show();
+		mFileCacheManager.saveBookDataToExternalPath(book);
+		mDownloader.start();
+	}
+
+	private void startCopyToExternal() {
+		mDialogDownloading.setMessage(getString(R.string.dialog_download_copying));
+		new Thread() {
+			@Override
+			public void run() {
+				for (int i = 0; i < book.pageCount; i++) {
+					mDialogDownloading.setIndeterminate(true);
+					mFileCacheManager.saveToExternalPath(book, i + 1);
+				}
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						isDownloaded = true;
+						invalidateOptionsMenu();
+
+						NotificationManagerCompat nm = NotificationManagerCompat.from(getApplicationContext());
+
+						Intent intent = new Intent(getApplicationContext(), BookDetailsActivity.class);
+						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						intent.putExtra(EXTRA_BOOK_DATA, book.toJSONString());
+
+						Notification n = new NotificationCompat.Builder(BookDetailsActivity.this)
+								.setContentTitle(getString(R.string.dialog_download_notification_title))
+								.setTicker(getString(R.string.dialog_download_notification_title))
+								.setContentInfo(book.getAvailableTitle())
+								.setContentIntent(
+										PendingIntent.getActivity(
+												getApplicationContext(),
+												0,
+												intent,
+												PendingIntent.FLAG_CANCEL_CURRENT
+										)
+								)
+								.setAutoCancel(true)
+								.setSmallIcon(R.drawable.ic_file_download_white_24dp)
+								.setPriority(Notification.PRIORITY_MAX)
+								.build();
+
+						nm.notify(NOTIFICATION_ID_FINISH, n);
+
+						if (mDialogDownloading == null) return;
+						mDialogDownloading.dismiss();
+					}
+				});
+			}
+		}.start();
 	}
 
 	private class BookGetTask extends AsyncTask<String, Void, BaseMessage> {
 
 		@Override
 		protected BaseMessage doInBackground(String... params) {
-			Book externalBook = FileCacheManager.getInstance(getApplicationContext())
-					.getExternalBook(book.bookId);
+			Book externalBook = mFileCacheManager.getExternalBook(book.bookId);
 			return externalBook != null ? new BaseMessage(0, externalBook) : BookApi.getBook(params[0]);
 		}
 
@@ -614,6 +870,52 @@ public class BookDetailsActivity extends AbsActivity {
 					.load(result)
 					.into(mImageView);
 		}
+	}
+
+	private class DeleteTask extends AsyncTask<Void, Integer, Void> {
+
+		private ProgressDialog dialog;
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+
+			dialog = new ProgressDialog(BookDetailsActivity.this);
+			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			dialog.setCancelable(false);
+			dialog.setCanceledOnTouchOutside(false);
+			dialog.setMax(100);
+
+			dialog.show();
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			File parentDir = new File(mFileCacheManager.getExternalPath(book));
+			File[] files = parentDir.listFiles();
+			int count = 0;
+			for (File file : files) {
+				file.delete();
+				count++;
+				this.onProgressUpdate(Utility.calcProgress(count, files.length));
+			}
+			parentDir.delete();
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... ints) {
+			super.onProgressUpdate(ints);
+			dialog.setProgress(ints[0]);
+		}
+
+		@Override
+		protected void onPostExecute(Void args) {
+			isDownloaded = false;
+			invalidateOptionsMenu();
+			dialog.dismiss();
+		}
+
 	}
 
 	protected <T extends View> T $(int id) {
