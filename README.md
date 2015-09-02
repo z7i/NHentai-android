@@ -1,13 +1,16 @@
 # NHBooks for Android
-![NHBooksLogo](/art/nhbooks.png)
+<img src="./art/nhbooks.png" width="30%"/>
 
 a Material Design NHentai client for Android.
 一枚 Material Design 風格的 NHentai Android 客戶端
 
-### 螢幕截圖
-![S0](/art/screenshot0.png)
+注意：R-18 警告！ (R-18 WARNING!!)
 
-![S1](/art/screenshot1.png)
+到這裡下載已編譯的應用程式 (Download binary): https://github.com/fython/NHentai-android/releases
+
+### 螢幕截圖
+<a href="./art/screenshot_main.png"><img src="./art/screenshot_main.png" width="40%"/></a>
+<a href="./art/screenshot_details.png"><img src="./art/screenshot_details.png" width="40%"/></a>
 
 ## 軟體說明
 該程式按照 Material Design 設計規範，提供簡潔、美觀的介面，並通過 API 從 NHentai 獲取本子，給你一個輕量、方便的客戶端。
