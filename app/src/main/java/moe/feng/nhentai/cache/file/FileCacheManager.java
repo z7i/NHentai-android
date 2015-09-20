@@ -330,7 +330,7 @@ public class FileCacheManager {
 			}
 			return result;
 		} else {
-			return null;
+			return new ArrayList<>();
 		}
 	}
 
