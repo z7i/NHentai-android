@@ -6,6 +6,7 @@ public class NHentaiUrl {
 
 	public static final String NHENTAI_HOME = "http://nhentai.net";
 	public static final String NHENTAI_I = "http://i.nhentai.net";
+	public static final String NHENTAI_T = "http://t.nhentai.net";
 
 	public static String getSearchUrl(String content) {
 		return getSearchUrl(content, 1);
@@ -31,12 +32,16 @@ public class NHentaiUrl {
 		return NHENTAI_I + "/galleries/" + g_id;
 	}
 
+	public static String getThumbGalleryUrl(String g_id) {
+		return NHENTAI_T + "/galleries/" + g_id;
+	}
+
 	public static String getOriginPictureUrl(String g_id, String page_num) {
 		return getPictureUrl(g_id, page_num, "jpg");
 	}
 
 	public static String getThumbPictureUrl(String g_id, String page_num) {
-		return getPictureUrl(g_id, page_num + "t", "jpg");
+		return getThumbPictureUrl(g_id, page_num + "t", "jpg");
 	}
 
 	public static String getThumbUrl(String g_id) {
@@ -50,6 +55,10 @@ public class NHentaiUrl {
 
 	public static String getPictureUrl(String g_id, String page_num, String file_type) {
 		return getGalleryUrl(g_id) + "/" + page_num + "." + file_type;
+	}
+
+	public static String getThumbPictureUrl(String g_id, String page_num, String file_type) {
+		return getThumbGalleryUrl(g_id) + "/" + page_num + "." + file_type;
 	}
 
 	@Deprecated

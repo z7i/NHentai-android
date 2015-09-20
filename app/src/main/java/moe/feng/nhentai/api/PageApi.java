@@ -36,20 +36,22 @@ public class PageApi {
 			return result;
 		}
 
-		Elements container = doc.getElementsByClass("outer-preview-container");
+		Elements container = doc.getElementsByClass("gallery");
 
 		ArrayList<Book> books = new ArrayList<>();
 
 		for (Element e : container) {
 			Book book = new Book();
 
-			Element caption = e.getElementsByClass("caption").get(0);
-			Element titleElement = caption.getElementsByTag("a").get(0);
-			String bookId = titleElement.attr("href");
+			Element bookIdElement = e.getElementsByClass("cover").get(0);
+			String bookId = bookIdElement.attr("href");
 			bookId = bookId.substring(0, bookId.lastIndexOf("/"));
 			bookId = bookId.substring(bookId.lastIndexOf("/") + 1, bookId.length());
+
+			Element caption = e.getElementsByClass("caption").get(0);
+
 			book.bookId = bookId;
-			book.title = titleElement.text();
+			book.title = caption.text();
 
 			Elements imgs = e.getElementsByTag("img");
 			for (Element imge : imgs) {

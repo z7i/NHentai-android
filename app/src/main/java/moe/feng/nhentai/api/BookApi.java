@@ -55,51 +55,55 @@ public class BookApi {
 		/** Get tags */
 		Elements tags = doc.getElementsByClass("field-name");
 		for (Element r : tags) {
-			if (r.text().contains("Parodies")) {
-				String ts = r.getElementsByClass("tagbutton").get(0).text();
-				if (ts.contains("(")) {
-					ts = ts.substring(0, ts.indexOf("(") - 1);
-				}
-				book.parodies = ts;
-			}
-			if (r.text().contains("Tags")) {
-				for (Element e : r.getElementsByClass("tagbutton")) {
-					String ts = e.text();
+			try {
+				if (r.text().contains("Parodies")) {
+					String ts = r.getElementsByClass("a").get(0).text();
 					if (ts.contains("(")) {
 						ts = ts.substring(0, ts.indexOf("(") - 1);
 					}
-					book.tags.add(ts);
+					book.parodies = ts;
 				}
-			}
-			if (r.text().contains("Language")) {
-				String ts = r.getElementsByClass("tagbutton").get(0).text();
-				if (ts.contains("(")) {
-					ts = ts.substring(0, ts.indexOf("(") - 1);
+				if (r.text().contains("Tags")) {
+					for (Element e : r.getElementsByClass("a")) {
+						String ts = e.text();
+						if (ts.contains("(")) {
+							ts = ts.substring(0, ts.indexOf("(") - 1);
+						}
+						book.tags.add(ts);
+					}
 				}
-				book.language = ts;
-			}
-			if (r.text().contains("Groups")) {
-				String ts = r.getElementsByClass("tagbutton").get(0).text();
-				if (ts.contains("(")) {
-					ts = ts.substring(0, ts.indexOf("(") - 1);
-				}
-				book.group = ts;
-			}
-			if (r.text().contains("Artists")) {
-				String ts = r.getElementsByClass("tagbutton").get(0).text();
-				if (ts.contains("(")) {
-					ts = ts.substring(0, ts.indexOf("(") - 1);
-				}
-				book.artist = ts;
-			}
-			if (r.text().contains("Characters")) {
-				for (Element e : r.getElementsByClass("tagbutton")) {
-					String ts = e.text();
+				if (r.text().contains("Language")) {
+					String ts = r.getElementsByClass("a").get(0).text();
 					if (ts.contains("(")) {
 						ts = ts.substring(0, ts.indexOf("(") - 1);
 					}
-					book.characters.add(ts);
+					book.language = ts;
 				}
+				if (r.text().contains("Groups")) {
+					String ts = r.getElementsByClass("a").get(0).text();
+					if (ts.contains("(")) {
+						ts = ts.substring(0, ts.indexOf("(") - 1);
+					}
+					book.group = ts;
+				}
+				if (r.text().contains("Artists")) {
+					String ts = r.getElementsByClass("a").get(0).text();
+					if (ts.contains("(")) {
+						ts = ts.substring(0, ts.indexOf("(") - 1);
+					}
+					book.artist = ts;
+				}
+				if (r.text().contains("Characters")) {
+					for (Element e : r.getElementsByClass("a")) {
+						String ts = e.text();
+						if (ts.contains("(")) {
+							ts = ts.substring(0, ts.indexOf("(") - 1);
+						}
+						book.characters.add(ts);
+					}
+				}
+			} catch (Exception e) {
+				Log.e(TAG, "Failed to analysis \"" + r.html() + "\"");
 			}
 		}
 
