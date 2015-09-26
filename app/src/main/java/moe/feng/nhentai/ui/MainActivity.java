@@ -7,10 +7,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +24,7 @@ import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.dao.SearchHistoryManager;
 import moe.feng.nhentai.ui.adapter.HomePagerAdapter;
 import moe.feng.nhentai.ui.common.AbsActivity;
+import moe.feng.nhentai.util.Settings;
 
 public class MainActivity extends AbsActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -36,9 +39,13 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 	private SearchHistoryManager mSearchHistoryManager;
 	private FavoritesManager mFM;
 
+	private Settings mSets;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState, false);
+
+		mSets = Settings.getInstance(getApplicationContext());
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			getWindow().setStatusBarColor(getResources().getColor(R.color.deep_purple_800));
@@ -51,6 +58,18 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 
 		mSearchHistoryManager = SearchHistoryManager.getInstance(getApplicationContext(), "all");
 		mFM = FavoritesManager.getInstance(getApplicationContext());
+
+		if (mSets.getInt(Settings.KEY_CELEBRATE, -1) != 1) {
+			Snackbar.make(
+				mDrawerLayout, R.string.celebrate_mid_autumn, Snackbar.LENGTH_INDEFINITE
+			).setAction(R.string.snack_action_get_it, new View.OnClickListener() {
+				/** 如果此处用 null 做 listener 参数则不会显示按钮 */
+				@Override
+				public void onClick(View view) {
+					mSets.putInt(Settings.KEY_CELEBRATE, 1);
+				}
+			}).show();
+		}
 	}
 
 	@Override

@@ -22,6 +22,7 @@
     </string-array>
     <string name="tips_network_error">Failed to connect to NHentai.</string>
     <string name="snack_action_try_again">Try again</string>
+    <string name="snack_action_get_it">I got it</string>
 
     <string name="label_added_to_favorite">FAV.</string>
 

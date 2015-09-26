@@ -8,6 +8,8 @@ public class Settings {
 
 	public static final String PREFERENCES_NAME = "settings";
 
+	public static final String KEY_CELEBRATE = "celebrate";
+
 	private static Settings sInstance;
 
 	private CommonPreferences mPrefs;

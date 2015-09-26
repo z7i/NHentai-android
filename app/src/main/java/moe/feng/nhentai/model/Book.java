@@ -15,9 +15,13 @@ public class Book {
 
 	public int thumbHeight = 0, thumbWidth = 0;
 
-	public String parodies, language, artist, group;
+	public String parodies, language, group;
 	public ArrayList<String> tags = new ArrayList<>();
 	public ArrayList<String> characters = new ArrayList<>();
+	public ArrayList<String> artists = new ArrayList<>();
+
+	/** 旧数据 */
+	private String artist = null;
 
 	public String uploadTime, uploadTimeText;
 
@@ -44,6 +48,14 @@ public class Book {
 
 	public String toJSONString() {
 		return new Gson().toJson(this);
+	}
+
+	public static Book toBookFromJson(String json) {
+		Book book = new Gson().fromJson(json, Book.class);
+		if (book.artist != null && !book.artist.trim().isEmpty()) {
+			book.artists.add(book.artist);
+		}
+		return book;
 	}
 
 }

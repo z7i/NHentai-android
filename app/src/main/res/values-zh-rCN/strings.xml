@@ -22,6 +22,7 @@
     </string-array>
     <string name="tips_network_error">无法连接到 NHentai。</string>
     <string name="snack_action_try_again">重试</string>
+    <string name="snack_action_get_it">我知道了</string>
 
     <string name="label_added_to_favorite">已收藏</string>
 

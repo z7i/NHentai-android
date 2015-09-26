@@ -45,12 +45,11 @@ public class NHentaiUrl {
 	}
 
 	public static String getThumbUrl(String g_id) {
-		return getPictureUrl(g_id, "thumb", "jpg");
+		return getThumbPictureUrl(g_id, "thumb", "jpg");
 	}
 
 	public static String getBigCoverUrl(String g_id) {
-		// TODO Not all covers are jpgs
-		return getPictureUrl(g_id, "cover", "jpg");
+		return getThumbPictureUrl(g_id, "cover", "jpg");
 	}
 
 	public static String getPictureUrl(String g_id, String page_num, String file_type) {

@@ -11,6 +11,7 @@ import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import moe.feng.nhentai.api.common.NHentaiUrl;
 import moe.feng.nhentai.cache.file.FileCacheManager;
@@ -57,52 +58,25 @@ public class BookApi {
 		for (Element r : tags) {
 			try {
 				if (r.text().contains("Parodies")) {
-					String ts = r.getElementsByClass("a").get(0).text();
-					if (ts.contains("(")) {
-						ts = ts.substring(0, ts.indexOf("(") - 1);
-					}
-					book.parodies = ts;
+					book.parodies = analysisTags(r.html()).get(0);
 				}
 				if (r.text().contains("Tags")) {
-					for (Element e : r.getElementsByClass("a")) {
-						String ts = e.text();
-						if (ts.contains("(")) {
-							ts = ts.substring(0, ts.indexOf("(") - 1);
-						}
-						book.tags.add(ts);
-					}
+					book.tags.addAll(analysisTags(r.html()));
 				}
 				if (r.text().contains("Language")) {
-					String ts = r.getElementsByClass("a").get(0).text();
-					if (ts.contains("(")) {
-						ts = ts.substring(0, ts.indexOf("(") - 1);
-					}
-					book.language = ts;
+					book.language = analysisTags(r.html()).get(0);
 				}
 				if (r.text().contains("Groups")) {
-					String ts = r.getElementsByClass("a").get(0).text();
-					if (ts.contains("(")) {
-						ts = ts.substring(0, ts.indexOf("(") - 1);
-					}
-					book.group = ts;
+					book.group = analysisTags(r.html()).get(0);
 				}
 				if (r.text().contains("Artists")) {
-					String ts = r.getElementsByClass("a").get(0).text();
-					if (ts.contains("(")) {
-						ts = ts.substring(0, ts.indexOf("(") - 1);
-					}
-					book.artist = ts;
+					book.artists.addAll(analysisTags(r.html()));
 				}
 				if (r.text().contains("Characters")) {
-					for (Element e : r.getElementsByClass("a")) {
-						String ts = e.text();
-						if (ts.contains("(")) {
-							ts = ts.substring(0, ts.indexOf("(") - 1);
-						}
-						book.characters.add(ts);
-					}
+					book.characters.addAll(analysisTags(r.html()));
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				Log.e(TAG, "Failed to analysis \"" + r.html() + "\"");
 			}
 		}
@@ -158,6 +132,18 @@ public class BookApi {
 		result.setData(book);
 
 		return result;
+	}
+
+	private static ArrayList<String> analysisTags(String originHtml) {
+		ArrayList<String> temp = new ArrayList<>();
+		while (originHtml.contains("a href=")) {
+			Log.i(TAG, "origin=" + originHtml);
+			String href = originHtml.substring(originHtml.indexOf("href=\"") + 7, originHtml.indexOf("\" class") - 1);
+			Log.i(TAG, "href=" + href);
+			originHtml = originHtml.substring(originHtml.indexOf("\" class") + 7, originHtml.length());
+			temp.add(href.substring(href.lastIndexOf("/") + 1).replaceAll("-", " "));
+		}
+		return temp;
 	}
 	
 	public static Bitmap getCover(Context context, Book book) {

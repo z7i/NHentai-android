@@ -106,7 +106,7 @@ public class BookDetailsActivity extends AbsActivity {
 			fromPosition = -1;
 			isFromExternal = true;
 		} else {
-			book = new Gson().fromJson(intent.getStringExtra(EXTRA_BOOK_DATA), Book.class);
+			book = Book.toBookFromJson(intent.getStringExtra(EXTRA_BOOK_DATA));
 			fromPosition = intent.getIntExtra(EXTRA_POSITION, 0);
 
 			collapsingToolbar.setTitle(book.title);
@@ -358,7 +358,7 @@ public class BookDetailsActivity extends AbsActivity {
 		}
 
 		// Add Artist Tag
-		if (!TextUtils.isEmpty(book.artist)) {
+		if (!book.artists.isEmpty()) {
 			LinearLayout tagGroupLayout = new LinearLayout(this);
 			tagGroupLayout.setOrientation(LinearLayout.HORIZONTAL);
 			AutoWrapLayout tagLayout = new AutoWrapLayout(this);
@@ -373,20 +373,22 @@ public class BookDetailsActivity extends AbsActivity {
 			lp.width = min_width;
 			tagGroupLayout.addView(groupNameView, lp);
 
-			TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
-			tagView.setText(book.artist);
-			tagView.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					CategoryActivity.launch(
-							BookDetailsActivity.this,
-							new Category(Category.Type.ARTIST, book.artist)
-					);
-				}
-			});
-			AutoWrapLayout.LayoutParams alp = new AutoWrapLayout.LayoutParams();
-			alp.setMargins(x, y, x, y);
-			tagLayout.addView(tagView, alp);
+			for (final String artist : book.artists) {
+				TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
+				tagView.setText(artist);
+				tagView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						CategoryActivity.launch(
+								BookDetailsActivity.this,
+								new Category(Category.Type.ARTIST, artist)
+						);
+					}
+				});
+				AutoWrapLayout.LayoutParams alp = new AutoWrapLayout.LayoutParams();
+				alp.setMargins(x, y, x, y);
+				tagLayout.addView(tagView, alp);
+			}
 			tagGroupLayout.addView(tagLayout);
 			mTagsLayout.addView(tagGroupLayout);
 		}
@@ -822,7 +824,7 @@ public class BookDetailsActivity extends AbsActivity {
 						Notification n = new NotificationCompat.Builder(BookDetailsActivity.this)
 								.setContentTitle(getString(R.string.dialog_download_notification_title))
 								.setTicker(getString(R.string.dialog_download_notification_title))
-								.setContentInfo(book.getAvailableTitle())
+								.setContentText(book.getAvailableTitle())
 								.setContentIntent(
 										PendingIntent.getActivity(
 												getApplicationContext(),
