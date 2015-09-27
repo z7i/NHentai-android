@@ -63,7 +63,7 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 			Snackbar.make(
 				mDrawerLayout, R.string.celebrate_mid_autumn, Snackbar.LENGTH_INDEFINITE
 			).setAction(R.string.snack_action_get_it, new View.OnClickListener() {
-				/** Èç¹û´Ë´¦ÓÃ null ×ö listener ²ÎÊıÔò²»»áÏÔÊ¾°´Å¥ */
+				/** å¦‚æœæ­¤å¤„ç”¨ null åš listener å‚æ•°åˆ™ä¸ä¼šæ˜¾ç¤ºæŒ‰é’® */
 				@Override
 				public void onClick(View view) {
 					mSets.putInt(Settings.KEY_CELEBRATE, 1);

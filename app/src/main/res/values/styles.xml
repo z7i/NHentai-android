@@ -74,4 +74,8 @@
 
 	<style name="Theme.NHBooks.Dark.Translucent" parent="Theme.NHBooks.Dark"/>
 
+	<style name="Theme.NHBooks.Light.NewHome" parent="Theme.NHBooks.Light.DarkActionBar">
+		<item name="android:windowBackground">@color/deep_purple_500</item>
+	</style>
+
 </resources>

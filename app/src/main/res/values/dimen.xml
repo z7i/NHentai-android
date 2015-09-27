@@ -16,4 +16,16 @@
 
 	<dimen name="gallery_book_page_number_size">64dp</dimen>
 
+	<!-- New Home Design Value -->
+	<dimen name="search_bar_height">56dp</dimen>
+	<dimen name="title_bar_height">64dp</dimen>
+	<dimen name="title_bar_content_margin_bottom">8dp</dimen>
+	<dimen name="background_over_height">24dp</dimen>
+	<dimen name="background_min_height">218dp</dimen>
+	<dimen name="list_margin_top">120dp</dimen>
+
+	<dimen name="logo_fade_out_translation_y">48dp</dimen>
+	<dimen name="widget_fade_in_translation_y_s">12dp</dimen>
+	<dimen name="widget_fade_in_translation_y_m">24dp</dimen>
+
 </resources>
