@@ -45,6 +45,7 @@ public class FavoritesManager {
 		}
 
 		books = new Gson().fromJson(json, MyArray.class);
+		books.updateBooksData();
 	}
 
 	public Book get(int position) {
@@ -139,6 +140,12 @@ public class FavoritesManager {
 
 		public void remove(int position) {
 			data.remove(position);
+		}
+
+		public void updateBooksData() {
+			for (Book book : data) {
+				book.updateDataFromOldData();
+			}
 		}
 
 	}

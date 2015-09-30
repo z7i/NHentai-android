@@ -319,7 +319,7 @@ public class FileCacheManager {
 							ins.read(b);
 							ins.close();
 
-							Book book = new Gson().fromJson(new String(b), Book.class);
+							Book book = Book.toBookFromJson(new String(b));
 							Log.i(TAG, "Found external bookId: " + book.bookId);
 							result.add(book);
 						} catch (Exception e) {

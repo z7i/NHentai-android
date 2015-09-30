@@ -50,11 +50,21 @@ public class Book {
 		return new Gson().toJson(this);
 	}
 
+	public void updateDataFromOldData() {
+		if (this.artist != null && !this.artist.trim().isEmpty()) {
+			this.artists.add(this.artist);
+		}
+		if (this.bigCoverImageUrl.contains("i.nhentai")) {
+			this.bigCoverImageUrl = this.bigCoverImageUrl.replace("i.nhentai", "t.nhentai");
+		}
+		if (this.previewImageUrl.contains("i.nhentai")) {
+			this.previewImageUrl = this.previewImageUrl.replace("i.nhentai", "t.nhentai");
+		}
+	}
+
 	public static Book toBookFromJson(String json) {
 		Book book = new Gson().fromJson(json, Book.class);
-		if (book.artist != null && !book.artist.trim().isEmpty()) {
-			book.artists.add(book.artist);
-		}
+		book.updateDataFromOldData();
 		return book;
 	}
 
