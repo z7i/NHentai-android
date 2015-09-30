@@ -1,30 +1,43 @@
 package moe.feng.nhentai.ui;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.DimenRes;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AnticipateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.ArrayList;
 
@@ -38,13 +51,27 @@ import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
+import moe.feng.nhentai.ui.fragment.main.DownloadManagerFragment;
+import moe.feng.nhentai.ui.fragment.main.FavoriteCategoryFragment;
+import moe.feng.nhentai.ui.fragment.main.FavoriteFragment;
 import moe.feng.nhentai.util.AsyncTask;
 import moe.feng.nhentai.util.Settings;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+	// View states
+	private int mShowingSection = 0;
+	private static final int SECTION_HOME = 0, SECTION_DOWNLOADED = 1,
+			SECTION_FAV_BOOKS = 2, SECTION_FAV_CATEGORIES = 3;
+	private boolean finishLaunchAnimation = false;
+
+	// Header View
+	private float mHeaderTranslationYStart;
+	private boolean isFABShowing = true, isSearchBoxShowing = true;
+	private int currentY = 0;
+
 	// List
-	private RecyclerView mRecyclerView;
+	private ObservableRecyclerView mRecyclerView;
 	private BookListRecyclerAdapter mAdapter;
 	private StaggeredGridLayoutManager mLayoutManager;
 	private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -55,7 +82,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	// Search Bar
 	private RevealFrameLayout mSearchBar;
 	private CardView mSearchBarCard;
-	private ImageView mSearchBarOtherBtn;
+	private ImageButton mSearchBarOtherBtn;
 
 	// Title Bar
 	private LinearLayout mTitleBarLayout;
@@ -69,28 +96,37 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	// Drawer
 	private DrawerLayout mDrawerLayout;
 	private NavigationView mNavigationView;
+	private ActionBarDrawerToggle mDrawerToggle;
 
+	// Views
 	private View mBackgroundView;
-	private FrameLayout mParentLayout, mMainLayout;
+	private FrameLayout mParentLayout, mMainLayout, mFragmentLayout;
 	private Toolbar mToolbar;
 	private ActionBar mActionBar;
+	private FloatingActionButton mLuckyFAB;
 
+	// Fragments
+	private DownloadManagerFragment mFragmentDownload;
+	private FavoriteFragment mFragmentFavBooks;
+	private FavoriteCategoryFragment mFragmentFavCategory;
+
+	// Utils
 	private FavoritesManager mFM;
-
 	private Settings mSets;
 
 	private Handler mHandler = new Handler();
+
+	public static final String TAG = HomeActivity.class.getSimpleName();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		mSets = Settings.getInstance(getApplicationContext());
 
 		/** Set up translucent status bar */
-		if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-			getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-		}
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			getWindow().setStatusBarColor(getResources().getColor(R.color.deep_purple_800));
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			getWindow().getDecorView().setSystemUiVisibility(
+					View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+			);
 		}
 
 		super.onCreate(savedInstanceState);
@@ -126,8 +162,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			public void run() {
 				mSplashLayout.setVisibility(View.GONE);
 
+				mHeaderTranslationYStart = -(mParentLayout.getHeight() - getResources().getDimension(R.dimen.background_max_height));
 				mBackgroundView.animate()
-						.translationY(-(mParentLayout.getHeight() - getResources().getDimension(R.dimen.background_min_height)))
+						.translationY(mHeaderTranslationYStart)
 						.setDuration(700)
 						.setInterpolator(new OvershootInterpolator(0.6f))
 						.start();
@@ -173,6 +210,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 						.setDuration(150)
 						.setStartDelay(200)
 						.start();
+
+				mHandler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						finishLaunchAnimation = true;
+					}
+				}, 200);
 			}
 		}, 300);
 	}
@@ -183,8 +227,40 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		mFM.save();
 	}
 
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		mDrawerToggle.syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		mDrawerToggle.onConfigurationChanged(newConfig);
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			SettingsActivity.launchActivity(this, SettingsActivity.FLAG_MAIN);
+			return true;
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
+
 	private void initViews() {
-		if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			$(R.id.status_bar_header).setVisibility(View.VISIBLE);
 		}
 
@@ -194,12 +270,23 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 		mDrawerLayout = $(R.id.drawer_layout);
 		mNavigationView = $(R.id.navigation_view);
+		mDrawerToggle = new MyDrawerToggle();
 		mNavigationView.setNavigationItemSelectedListener(this);
 		mNavigationView.setBackgroundResource(R.color.background_material_light);
+		mDrawerLayout.setDrawerListener(new MyDrawerListener());
+		mDrawerLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				mDrawerToggle.syncState();
+			}
+		});
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		mBackgroundView = $(R.id.bg_view);
 		mParentLayout = $(R.id.parent_layout);
 		mMainLayout = $(R.id.main_layout);
+		mFragmentLayout = $(R.id.fragment_layout);
+		mLuckyFAB = $(R.id.fab);
 		mSplashIvLogo = $(R.id.iv_nh_logo);
 		mSplashTvLogo = $(R.id.tv_nh_logo);
 		mSplashLayout = $(R.id.splash_layout);
@@ -214,6 +301,55 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		mRecyclerView.setHasFixedSize(true);
+		mRecyclerView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+			@Override
+			public void onScrollChanged(int i, boolean b, boolean b1) {
+				currentY = i + getResources().getDimensionPixelSize(R.dimen.list_margin_top);
+				Log.i(TAG, "obScroll " + currentY);
+
+				if (!finishLaunchAnimation) return;
+				
+				int headerDeltaY = Math.min(currentY, getResources().getDimensionPixelSize(R.dimen.background_delta_height));
+				mBackgroundView.setTranslationY(mHeaderTranslationYStart - headerDeltaY);
+
+				int titleBarDistance = calcDimens(R.dimen.title_bar_height);
+				float titleAlpha = Math.min(currentY, titleBarDistance);
+				titleAlpha /= (float) titleBarDistance;
+				mTitleBarLayout.setAlpha(1 - titleAlpha);
+			}
+
+			@Override
+			public void onDownMotionEvent() {
+
+			}
+
+			@Override
+			public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+
+			}
+		});
+		mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			@Override
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+				super.onScrolled(recyclerView, dx, dy);
+				int deltaY = -dy;
+
+				if (deltaY > 0 != isSearchBoxShowing) {
+					if (deltaY >= 0) {
+						showSearchBox();
+					} else {
+						hideSearchBox();
+					}
+				}
+				if (deltaY > 0 != isFABShowing) {
+					if (deltaY >= 0) {
+						showFAB();
+					} else {
+						hideFAB();
+					}
+				}
+			}
+		});
 
 		mBooks = new ArrayList<>();
 		mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM);
@@ -223,13 +359,23 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				R.color.deep_purple_500, R.color.pink_500, R.color.orange_500, R.color.brown_500,
 				R.color.indigo_500, R.color.blue_500, R.color.teal_500, R.color.green_500
 		);
+		mSwipeRefreshLayout.setProgressViewOffset(
+				true,
+				getResources().getDimensionPixelSize(R.dimen.search_bar_height),
+				getResources().getDimensionPixelSize(R.dimen.search_bar_height) +
+						getResources().getDimensionPixelSize(R.dimen.title_bar_height) +
+						getResources().getDimensionPixelSize(R.dimen.title_bar_content_margin_bottom) +
+						getResources().getDimensionPixelSize(R.dimen.background_over_height)
+		);
 		mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 			@Override
 			public void onRefresh() {
 				if (!mSwipeRefreshLayout.isRefreshing()) {
 					mSwipeRefreshLayout.setRefreshing(true);
 				}
-
+				if (mAdapter.getItemCount() >= 1) {
+					mRecyclerView.smoothScrollToPosition(0);
+				}
 				mBooks = new ArrayList<>();
 				mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM);
 				setRecyclerAdapter(mAdapter);
@@ -245,6 +391,52 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		});
 	}
 
+	private void showFAB() {
+		if (!finishLaunchAnimation) return;
+		isFABShowing = true;
+		mLuckyFAB.animate()
+				.scaleX(1f)
+				.scaleY(1f)
+				.setInterpolator(new OvershootInterpolator())
+				.setDuration(300)
+				.start();
+	}
+
+	private void hideFAB() {
+		if (!finishLaunchAnimation) return;
+		isFABShowing = false;
+		mLuckyFAB.animate()
+				.scaleX(0f)
+				.scaleY(0f)
+				.setInterpolator(new AnticipateInterpolator())
+				.setDuration(300)
+				.start();
+	}
+
+	private void showSearchBox() {
+		if (!finishLaunchAnimation) return;
+		isSearchBoxShowing = true;
+		mSearchBar.setTranslationY(-calcDimens(R.dimen.logo_fade_out_translation_y));
+		mSearchBar.animate()
+				.translationY(0)
+				.alpha(1f)
+				.setDuration(200)
+				.start();
+	}
+
+	private void hideSearchBox() {
+		if (currentY > calcDimens(R.dimen.background_delta_height)) {
+			if (!finishLaunchAnimation) return;
+			isSearchBoxShowing = false;
+			mSearchBar.setTranslationY(0);
+			mSearchBar.animate()
+					.translationY(-calcDimens(R.dimen.logo_fade_out_translation_y))
+					.alpha(0f)
+					.setDuration(200)
+					.start();
+		}
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == BookDetailsActivity.REQUEST_MAIN) {
@@ -257,17 +449,41 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 	@Override
 	public boolean onNavigationItemSelected(MenuItem item) {
-		return false;
-	}
+		mDrawerLayout.closeDrawers();
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
-			this.onBackPressed();
-			return true;
+		int id = item.getItemId();
+		switch (id) {
+			case R.id.navigation_item_home:
+				mActionBar.setTitle(R.string.app_name);
+				mFragmentLayout.setVisibility(View.GONE);
+				return true;
+			case R.id.navigation_item_download:
+				mActionBar.setTitle(R.string.item_download);
+				mFragmentLayout.setVisibility(View.VISIBLE);
+				if (mFragmentDownload == null) mFragmentDownload = new DownloadManagerFragment();
+				getFragmentManager().beginTransaction()
+						.replace(R.id.fragment_layout, mFragmentDownload)
+						.commit();
+				return true;
+			case R.id.navigation_item_fav_books:
+				mActionBar.setTitle(R.string.item_favorite_books);
+				mFragmentLayout.setVisibility(View.VISIBLE);
+				if (mFragmentFavBooks == null) mFragmentFavBooks = new FavoriteFragment();
+				getFragmentManager().beginTransaction()
+						.replace(R.id.fragment_layout, mFragmentFavBooks)
+						.commit();
+				return true;
+			case R.id.navigation_item_fav_categories:
+				mActionBar.setTitle(R.string.item_favorite_categories);
+				mFragmentLayout.setVisibility(View.VISIBLE);
+				if (mFragmentFavCategory == null) mFragmentFavCategory = new FavoriteCategoryFragment();
+				getFragmentManager().beginTransaction()
+						.replace(R.id.fragment_layout, mFragmentFavCategory)
+						.commit();
+				return true;
 		}
 
-		return super.onOptionsItemSelected(item);
+		return false;
 	}
 
 	private void setRecyclerAdapter(BookListRecyclerAdapter adapter) {
@@ -281,6 +497,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		adapter.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
 			public void onScrolled(RecyclerView rv, int dx, int dy) {
+				super.onScrolled(rv, dx, dy);
 				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[2])[1] >= mAdapter.getItemCount() - 2) {
 					mSwipeRefreshLayout.setRefreshing(true);
 					new PageGetTask().execute(++mNowPage);
@@ -301,6 +518,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		animator.setInterpolator(new AccelerateDecelerateInterpolator());
 		animator.setDuration(200);
 		animator.start();
+	}
+
+	private int calcDimens(@DimenRes int... dimenIds) {
+		int result = 0;
+		for (int dimenId : dimenIds) {
+			result += getResources().getDimensionPixelSize(dimenId);
+		}
+		return result;
 	}
 
 	private <T extends View> T $(int id) {
@@ -345,6 +570,58 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 					).show();
 				}
 			}
+		}
+
+	}
+
+	private class MyDrawerListener implements DrawerLayout.DrawerListener {
+
+		@Override
+		public void onDrawerOpened(View drawerView) {
+			mDrawerToggle.onDrawerOpened(drawerView);
+		}
+
+		@Override
+		public void onDrawerClosed(View drawerView) {
+			mDrawerToggle.onDrawerClosed(drawerView);
+		}
+
+		@Override
+		public void onDrawerSlide(View drawerView, float slideOffset) {
+			mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
+		}
+
+		@Override
+		public void onDrawerStateChanged(int newState) {
+			mDrawerToggle.onDrawerStateChanged(newState);
+		}
+
+	}
+
+	private class MyDrawerToggle extends ActionBarDrawerToggle {
+
+		public MyDrawerToggle() {
+			super(HomeActivity.this, mDrawerLayout,
+					mToolbar,
+					R.string.abc_action_bar_home_description,
+					R.string.abc_action_bar_home_description
+			);
+		}
+
+		public MyDrawerToggle(Activity activity, DrawerLayout drawerLayout, Toolbar toolbar, int openDrawerContentDescRes, int closeDrawerContentDescRes) {
+			super(activity, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes);
+		}
+
+		@Override
+		public void onDrawerClosed(View drawerView) {
+			super.onDrawerClosed(drawerView);
+			invalidateOptionsMenu();
+		}
+
+		@Override
+		public void onDrawerOpened(View drawerView) {
+			super.onDrawerOpened(drawerView);
+			invalidateOptionsMenu();
 		}
 
 	}

@@ -11,6 +11,9 @@
 	<string name="title_bar_sub_recent">Get the latest books updated recently</string>
 
     <string name="item_home">Home</string>
+    <string name="item_download">Saved books</string>
+    <string name="item_favorite_books">Favorite books</string>
+    <string name="item_favorite_categories">Favorite categories</string>
     <string name="item_tag">Tags</string>
     <string name="item_character">Characters</string>
 	<string name="item_open_nhentai">Open NHentai.net</string>

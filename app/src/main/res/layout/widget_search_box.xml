@@ -43,7 +43,7 @@
                 android:textColor="#565656"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/btn_search_bar_other"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

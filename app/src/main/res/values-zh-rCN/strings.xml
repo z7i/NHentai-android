@@ -6,6 +6,9 @@
     <string name="action_search">搜索</string>
 
     <string name="item_home">主页</string>
+    <string name="item_download">已下载</string>
+    <string name="item_favorite_books">已收藏的本子</string>
+    <string name="item_favorite_categories">已收藏的分类</string>
     <string name="item_tag">标签</string>
     <string name="item_character">人物</string>
     <string name="item_open_nhentai">打开 NHentai 网站</string>

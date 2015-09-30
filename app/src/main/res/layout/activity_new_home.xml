@@ -11,12 +11,13 @@
 		android:layout_height="match_parent"
 		android:orientation="vertical">
 
+		<!-- Status Bar Tint Background -->
 		<moe.feng.nhentai.view.StatusBarHeaderView
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			android:visibility="gone"
 			android:id="@+id/status_bar_header"
-			android:background="@color/deep_purple_500"/>
+			android:background="@color/status_bar_tint_color"/>
 
 		<FrameLayout
 			android:layout_width="match_parent"
@@ -50,6 +51,7 @@
 					android:layout_height="wrap_content"
 					android:layout_marginTop="?attr/actionBarSize">
 
+					<!-- Title Bar -->
 					<LinearLayout
 						android:layout_width="match_parent"
 						android:layout_height="@dimen/title_bar_height"
@@ -88,6 +90,7 @@
 
 					</LinearLayout>
 
+					<!-- RecyclerView List -->
 					<android.support.v4.widget.SwipeRefreshLayout
 						android:layout_width="match_parent"
 						android:layout_height="match_parent"
@@ -95,7 +98,7 @@
 						android:layout_marginRight="8dp"
 						android:id="@+id/swipe_refresh_layout">
 
-						<android.support.v7.widget.RecyclerView
+						<com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView
 							android:layout_width="match_parent"
 							android:layout_height="match_parent"
 							android:id="@+id/recycler_view"
@@ -106,7 +109,27 @@
 
 					</android.support.v4.widget.SwipeRefreshLayout>
 
+					<!-- Include search box -->
 					<include layout="@layout/widget_search_box"/>
+
+					<android.support.design.widget.FloatingActionButton
+						android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:id="@+id/fab"
+					    android:layout_gravity="right|bottom"
+					    android:layout_margin="16dp"
+					    app:borderWidth="0dp"
+						app:elevation="5dp"/>
+
+				</FrameLayout>
+
+				<FrameLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="?attr/actionBarSize"
+					android:id="@+id/fragment_layout"
+					android:background="@color/background_material_light"
+					android:visibility="gone">
 
 				</FrameLayout>
 

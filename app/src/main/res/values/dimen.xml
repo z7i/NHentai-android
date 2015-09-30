@@ -21,7 +21,8 @@
 	<dimen name="title_bar_height">64dp</dimen>
 	<dimen name="title_bar_content_margin_bottom">8dp</dimen>
 	<dimen name="background_over_height">24dp</dimen>
-	<dimen name="background_min_height">218dp</dimen>
+	<dimen name="background_delta_height">164dp</dimen>
+	<dimen name="background_max_height">218dp</dimen>
 	<dimen name="list_margin_top">120dp</dimen>
 
 	<dimen name="logo_fade_out_translation_y">48dp</dimen>

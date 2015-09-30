@@ -185,7 +185,7 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 		mSearchBox.setSearchables(mSearchHistoryManager.getSearchResults());
 		mSearchBox.setSearchString("");
 
-		mSearchBox.revealFromMenuItem(R.id.action_search, this);
+		// mSearchBox.revealFromMenuItem(R.id.action_search, this);
 	}
 
 	private void closeSearchBox() {
@@ -233,10 +233,6 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 		}
 
 		int id = item.getItemId();
-		if (id == R.id.action_search) {
-			openSearchBox();
-			return true;
-		}
 		if (id == R.id.action_settings) {
 			SettingsActivity.launchActivity(this, SettingsActivity.FLAG_MAIN);
 			return true;
@@ -261,10 +257,6 @@ public class MainActivity extends AbsActivity implements NavigationView.OnNaviga
 			// TODO Update page
 			case R.id.navigation_item_home:
 				menuItem.setChecked(true);
-				return true;
-			case R.id.navigation_item_tag:
-				return true;
-			case R.id.navigation_item_character:
 				return true;
 			case R.id.navigation_item_open_nhentai:
 				Uri uri = Uri.parse("http://nhentai.net");

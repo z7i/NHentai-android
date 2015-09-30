@@ -8,13 +8,16 @@
 		      android:icon="@drawable/ic_home_black_24dp"
 		      android:title="@string/item_home"/>
 
-		<item android:id="@+id/navigation_item_tag"
+		<item android:id="@+id/navigation_item_download"
 		      android:icon="@drawable/ic_style_black_24dp"
-		      android:title="@string/item_tag"/>
+		      android:title="@string/item_download"/>
 
-		<item android:id="@+id/navigation_item_character"
+		<item android:id="@+id/navigation_item_fav_books"
 		      android:icon="@drawable/ic_face_unlock_black_24dp"
-		      android:title="@string/item_character"/>
+		      android:title="@string/item_favorite_books"/>
+
+		<item android:id="@+id/navigation_item_fav_categories"
+		      android:title="@string/item_favorite_categories"/>
 
 	</group>
 
