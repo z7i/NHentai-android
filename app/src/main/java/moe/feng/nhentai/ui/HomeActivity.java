@@ -12,6 +12,7 @@ import android.support.annotation.DimenRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -183,6 +184,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 						.setDuration(200)
 						.setStartDelay(100)
 						.start();
+				mLuckyFAB.setScaleX(0);
+				mLuckyFAB.setScaleY(0);
+				mLuckyFAB.animate()
+						.scaleX(1f)
+						.scaleY(1f)
+						.setInterpolator(new OvershootInterpolator())
+						.setDuration(200)
+						.setStartDelay(100)
+						.start();
 				mHandler.postDelayed(new Runnable() {
 					@Override
 					public void run() {
@@ -307,15 +317,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				currentY = i + getResources().getDimensionPixelSize(R.dimen.list_margin_top);
 				Log.i(TAG, "obScroll " + currentY);
 
-				if (!finishLaunchAnimation) return;
-				
-				int headerDeltaY = Math.min(currentY, getResources().getDimensionPixelSize(R.dimen.background_delta_height));
-				mBackgroundView.setTranslationY(mHeaderTranslationYStart - headerDeltaY);
-
-				int titleBarDistance = calcDimens(R.dimen.title_bar_height);
-				float titleAlpha = Math.min(currentY, titleBarDistance);
-				titleAlpha /= (float) titleBarDistance;
-				mTitleBarLayout.setAlpha(1 - titleAlpha);
+				updateTranslation(currentY);
 			}
 
 			@Override
@@ -360,12 +362,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				R.color.indigo_500, R.color.blue_500, R.color.teal_500, R.color.green_500
 		);
 		mSwipeRefreshLayout.setProgressViewOffset(
-				true,
-				getResources().getDimensionPixelSize(R.dimen.search_bar_height),
-				getResources().getDimensionPixelSize(R.dimen.search_bar_height) +
-						getResources().getDimensionPixelSize(R.dimen.title_bar_height) +
-						getResources().getDimensionPixelSize(R.dimen.title_bar_content_margin_bottom) +
-						getResources().getDimensionPixelSize(R.dimen.background_over_height)
+				false,
+				calcDimens(R.dimen.search_bar_height),
+				calcDimens(R.dimen.search_bar_height, R.dimen.title_bar_height,
+						R.dimen.title_bar_content_margin_bottom, R.dimen.background_over_height)
 		);
 		mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 			@Override
@@ -389,6 +389,25 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				// TODO Start search activity
 			}
 		});
+	}
+
+	private void updateTranslation(int currentY) {
+		if (!finishLaunchAnimation) return;
+
+		int headerDeltaY = Math.min(currentY, calcDimens(R.dimen.background_delta_height));
+		mBackgroundView.setTranslationY(mHeaderTranslationYStart - headerDeltaY * 1.5f);
+
+		int titleBarDistance = calcDimens(R.dimen.title_bar_height);
+		float titleAlpha = Math.min(currentY, titleBarDistance);
+		titleAlpha /= (float) titleBarDistance;
+		mTitleBarLayout.setAlpha(1 - titleAlpha);
+		mSearchBarCard.setCardElevation(titleAlpha * calcDimens(R.dimen.searchbar_elevation_raised));
+
+		if (currentY * 1.5f + 5 >= calcDimens(R.dimen.background_delta_height)) {
+			ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
+		} else {
+			ViewCompat.setElevation(mToolbar, 0f);
+		}
 	}
 
 	private void showFAB() {
@@ -416,17 +435,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	private void showSearchBox() {
 		if (!finishLaunchAnimation) return;
 		isSearchBoxShowing = true;
-		mSearchBar.setTranslationY(-calcDimens(R.dimen.logo_fade_out_translation_y));
-		mSearchBar.animate()
-				.translationY(0)
-				.alpha(1f)
-				.setDuration(200)
-				.start();
+		if (currentY < 10) {
+			mSearchBar.setTranslationY(0);
+		} else {
+			mSearchBar.setTranslationY(-calcDimens(R.dimen.logo_fade_out_translation_y));
+			mSearchBar.animate()
+					.translationY(0)
+					.alpha(1f)
+					.setDuration(200)
+					.start();
+		}
 	}
 
 	private void hideSearchBox() {
+		if (!finishLaunchAnimation) return;
 		if (currentY > calcDimens(R.dimen.background_delta_height)) {
-			if (!finishLaunchAnimation) return;
 			isSearchBoxShowing = false;
 			mSearchBar.setTranslationY(0);
 			mSearchBar.animate()
@@ -456,10 +479,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			case R.id.navigation_item_home:
 				mActionBar.setTitle(R.string.app_name);
 				mFragmentLayout.setVisibility(View.GONE);
+				if (currentY >= calcDimens(R.dimen.background_delta_height)) {
+					ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
+				} else {
+					ViewCompat.setElevation(mToolbar, 0f);
+				}
 				return true;
 			case R.id.navigation_item_download:
 				mActionBar.setTitle(R.string.item_download);
 				mFragmentLayout.setVisibility(View.VISIBLE);
+				ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
 				if (mFragmentDownload == null) mFragmentDownload = new DownloadManagerFragment();
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentDownload)
@@ -468,6 +497,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			case R.id.navigation_item_fav_books:
 				mActionBar.setTitle(R.string.item_favorite_books);
 				mFragmentLayout.setVisibility(View.VISIBLE);
+				ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
 				if (mFragmentFavBooks == null) mFragmentFavBooks = new FavoriteFragment();
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentFavBooks)
@@ -476,6 +506,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			case R.id.navigation_item_fav_categories:
 				mActionBar.setTitle(R.string.item_favorite_categories);
 				mFragmentLayout.setVisibility(View.VISIBLE);
+				ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
 				if (mFragmentFavCategory == null) mFragmentFavCategory = new FavoriteCategoryFragment();
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentFavCategory)

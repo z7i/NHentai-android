@@ -4,6 +4,7 @@
 	<dimen name="fab_transition_z">5dp</dimen>
 	<dimen name="touch_raise">6dp</dimen>
 	<dimen name="appbar_elevation">5dp</dimen>
+	<dimen name="searchbar_elevation_raised">5dp</dimen>
 
 	<dimen name="navigation_view_width">256dp</dimen>
 
