@@ -143,8 +143,10 @@ public class FavoritesManager {
 		}
 
 		public void updateBooksData() {
-			for (Book book : data) {
-				book.updateDataFromOldData();
+			if (data != null) {
+				for (Book book : data) {
+					book.updateDataFromOldData();
+				}
 			}
 		}
 

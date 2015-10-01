@@ -5,6 +5,13 @@
     <string name="action_settings">設置</string>
     <string name="action_search">搜尋</string>
 
+    <!-- New Home Design -->
+    <string name="search_bar_hint">在這裡搜尋本子....</string>
+    <string name="title_bar_main_recent">最新本子</string>
+    <string name="title_bar_updated_time_just_now">剛剛更新</string>
+    <string name="title_bar_updated_time_at">更新於 %s</string>
+	<string name="title_bar_updated_time_null">下拉獲取最新資料</string>
+
     <string name="item_home">主頁</string>
     <string name="item_download">已下載</string>
     <string name="item_favorite_books">已收藏的本子</string>

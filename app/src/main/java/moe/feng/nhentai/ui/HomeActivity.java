@@ -40,7 +40,9 @@ import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
@@ -48,6 +50,7 @@ import io.codetail.widget.RevealFrameLayout;
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.PageApi;
 import moe.feng.nhentai.dao.FavoritesManager;
+import moe.feng.nhentai.dao.LatestBooksKeeper;
 import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
@@ -61,9 +64,8 @@ import moe.feng.nhentai.util.Settings;
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 	// View states
-	private int mShowingSection = 0;
-	private static final int SECTION_HOME = 0, SECTION_DOWNLOADED = 1,
-			SECTION_FAV_BOOKS = 2, SECTION_FAV_CATEGORIES = 3;
+	private int mSectionType = SECTION_LATEST;
+	private static final int SECTION_LATEST = 0, SECTION_FAV_TAB = 1, SECTION_FOLLOWING_ARTISTS = 2;
 	private boolean finishLaunchAnimation = false;
 
 	// Header View
@@ -113,6 +115,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 	// Utils
 	private FavoritesManager mFM;
+	private LatestBooksKeeper mListKeeper;
 	private Settings mSets;
 
 	private Handler mHandler = new Handler();
@@ -131,19 +134,32 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		}
 
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_new_home);
 
 		mFM = FavoritesManager.getInstance(getApplicationContext());
+		mListKeeper = LatestBooksKeeper.getInstance(getApplicationContext());
 
-		setContentView(R.layout.activity_new_home);
 		initViews();
 
 		getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.background_material_light)));
 
-		new PageGetTask().execute(mNowPage);
+		if (mListKeeper.getData() != null && mListKeeper.getUpdatedMiles() != -1) {
+			mBooks = mListKeeper.getData();
+			mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM);
+			setRecyclerAdapter(mAdapter);
+			isFirstLoad = false;
+		} else {
+			mBooks = new ArrayList<>();
+			mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM);
+			setRecyclerAdapter(mAdapter);
+			new PageGetTask().execute(mNowPage);
+		}
 		mHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
 				startSplashFinishToMain();
+				mRecyclerView.invalidate();
+				mAdapter.notifyDataSetChanged();
 			}
 		}, 1000);
 	}
@@ -201,12 +217,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 						revealFrom(cx, cy, mSearchBarCard);
 						if (!isFirstLoad) {
 							mRecyclerView.setVisibility(View.VISIBLE);
-							mRecyclerView.setAlpha(0.75f);
+							mRecyclerView.setAlpha(0f);
 							mRecyclerView.setTranslationY(getResources().getDimension(R.dimen.logo_fade_out_translation_y));
 							mRecyclerView.animate()
 									.translationY(0f)
 									.alpha(1.0f)
-									.setDuration(150)
+									.setDuration(100)
+									.setInterpolator(new OvershootInterpolator(0.5f))
 									.setStartDelay(200)
 									.start();
 						}
@@ -310,13 +327,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		mRecyclerView = $(R.id.recycler_view);
 		mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
 		mRecyclerView.setLayoutManager(mLayoutManager);
-		mRecyclerView.setHasFixedSize(true);
+		mRecyclerView.setHasFixedSize(false);
 		mRecyclerView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
 			@Override
 			public void onScrollChanged(int i, boolean b, boolean b1) {
-				currentY = i + getResources().getDimensionPixelSize(R.dimen.list_margin_top);
-				Log.i(TAG, "obScroll " + currentY);
-
+				currentY = i + getResources().getDimensionPixelOffset(R.dimen.list_margin_top);
 				updateTranslation(currentY);
 			}
 
@@ -353,10 +368,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			}
 		});
 
-		mBooks = new ArrayList<>();
-		mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM);
-		setRecyclerAdapter(mAdapter);
-
 		mSwipeRefreshLayout.setColorSchemeResources(
 				R.color.deep_purple_500, R.color.pink_500, R.color.orange_500, R.color.brown_500,
 				R.color.indigo_500, R.color.blue_500, R.color.teal_500, R.color.green_500
@@ -376,9 +387,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				if (mAdapter.getItemCount() >= 1) {
 					mRecyclerView.smoothScrollToPosition(0);
 				}
-				mBooks = new ArrayList<>();
-				mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM);
-				setRecyclerAdapter(mAdapter);
+				mBooks.clear();
+				mAdapter.notifyDataSetChanged();
 				new PageGetTask().execute(mNowPage = 1);
 			}
 		});
@@ -389,6 +399,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				// TODO Start search activity
 			}
 		});
+
+		updateTitleBar(SECTION_LATEST);
 	}
 
 	private void updateTranslation(int currentY) {
@@ -407,6 +419,33 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
 		} else {
 			ViewCompat.setElevation(mToolbar, 0f);
+		}
+	}
+
+	private void updateTitleBar(int type) {
+		switch (type) {
+			case SECTION_LATEST:
+				mTitleMain.setText(R.string.title_bar_main_recent);
+				if (mListKeeper.getUpdatedMiles() != -1) {
+					if (System.currentTimeMillis() - mListKeeper.getUpdatedMiles() < 1 * 60 * 1000) {
+						mTitleSub.setText(R.string.title_bar_updated_time_just_now);
+					} else {
+						Calendar c = Calendar.getInstance();
+						c.setTimeInMillis(mListKeeper.getUpdatedMiles());
+						SimpleDateFormat format = new SimpleDateFormat("yyyy/M/d H:mm:ss");
+						String result;
+						try {
+							result = format.format(c.getTime());
+						} catch (Exception e) {
+							e.printStackTrace();
+							result = "null";
+						}
+						mTitleSub.setText(getString(R.string.title_bar_updated_time_at, result));
+					}
+				} else {
+					mTitleSub.setText(R.string.title_bar_updated_time_null);
+				}
+				break;
 		}
 	}
 
@@ -537,6 +576,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		});
 
 		mRecyclerView.setAdapter(adapter);
+		adapter.notifyDataSetChanged();
 	}
 
 	private void revealFrom(int cx, int cy, View root) {
@@ -578,13 +618,31 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				if (msg.getCode() == 0 && msg.getData() != null) {
 					if (!((ArrayList<Book>) msg.getData()).isEmpty()) {
 						mBooks.addAll((ArrayList<Book>) msg.getData());
-						mAdapter.notifyDataSetChanged();
+
+						mListKeeper.setData(mBooks);
+						mListKeeper.setUpdatedMiles(System.currentTimeMillis());
+						new Thread() {
+							@Override
+							public void run() {
+								mListKeeper.save();
+							}
+						}.start();
+
+						updateTitleBar(mSectionType);
+						mHandler.postDelayed(new Runnable() {
+							@Override
+							public void run() {
+								mAdapter.notifyDataSetChanged();
+							}
+						}, 500);
 						if (!isFirstLoad) {
 							mRecyclerView.setVisibility(View.VISIBLE);
 						}
 						isFirstLoad = false;
 					}
 				} else if (mNowPage == 1) {
+					mListKeeper.setData(new ArrayList<Book>());
+					mListKeeper.setUpdatedMiles(-1);
 					Snackbar.make(
 							mRecyclerView,
 							R.string.tips_network_error,

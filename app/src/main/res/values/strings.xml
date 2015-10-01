@@ -8,7 +8,9 @@
     <!-- New Home Design -->
     <string name="search_bar_hint">Search books here....</string>
 	<string name="title_bar_main_recent">Latest books</string>
-	<string name="title_bar_sub_recent">Get the latest books updated recently</string>
+	<string name="title_bar_updated_time_just_now">Updated just now</string>
+    <string name="title_bar_updated_time_at">Updated at %s</string>
+	<string name="title_bar_updated_time_null">Pull down to get the latest information</string>
 
     <string name="item_home">Home</string>
     <string name="item_download">Saved books</string>

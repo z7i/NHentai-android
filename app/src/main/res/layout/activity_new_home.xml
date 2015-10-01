@@ -82,7 +82,6 @@
 								android:layout_height="wrap_content"
 								android:id="@+id/tv_title_sub"
 								android:layout_marginTop="2dp"
-								android:text="@string/title_bar_sub_recent"
 								android:textSize="14dp"
 								android:textColor="@android:color/white"/>
 
@@ -169,7 +168,6 @@
 		android:layout_width="@dimen/navigation_view_width"
 		android:id="@+id/navigation_view"
 		android:layout_gravity="left"
-		app:headerLayout="@layout/navigation_header"
 		app:menu="@menu/navigation_menu"
 		app:itemTextColor="@color/drawer_item_color"
 		app:itemIconTint="@color/drawer_item_color"/>
