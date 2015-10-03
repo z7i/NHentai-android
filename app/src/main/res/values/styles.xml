@@ -1,5 +1,10 @@
 <resources>
 
+	<style name="Base.Theme.NHBooks.Light.DarkActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+		<item name="windowActionBar">false</item>
+		<item name="windowNoTitle">true</item>
+	</style>
+
 	<style name="Base.Theme.NHBooks.Light" parent="Theme.AppCompat.Light.DarkActionBar">
 		<item name="windowActionBar">false</item>
 		<item name="windowNoTitle">true</item>
@@ -10,7 +15,15 @@
 		<item name="windowNoTitle">true</item>
 	</style>
 
-	<style name="Theme.NHBooks.Light.DarkActionBar" parent="Base.Theme.NHBooks.Light">
+	<style name="Theme.NHBooks.Light" parent="Base.Theme.NHBooks.Light">
+		<item name="windowActionBar">false</item>
+		<item name="windowNoTitle">true</item>
+		<item name="colorPrimary">@color/deep_purple_500</item>
+		<item name="colorPrimaryDark">@color/deep_purple_800</item>
+		<item name="colorAccent">@color/pink_500</item>
+	</style>
+
+	<style name="Theme.NHBooks.Light.DarkActionBar" parent="Base.Theme.NHBooks.Light.DarkActionBar">
 		<item name="windowActionBar">false</item>
 		<item name="windowNoTitle">true</item>
 		<item name="colorPrimary">@color/deep_purple_500</item>

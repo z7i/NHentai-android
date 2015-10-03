@@ -18,5 +18,6 @@
 	<color name="app_bar_translucent_black">#6F000000</color>
 
 	<color name="status_bar_tint_color">@color/deep_purple_500</color>
+	<color name="status_bar_translucent_color">@android:color/transparent</color>
 	
 </resources>

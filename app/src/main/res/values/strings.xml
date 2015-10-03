@@ -77,6 +77,10 @@
 	<string name="action_save_failed">The current image hasn\'t been downloaded. Please wait for finishing.</string>
 	<string name="action_save_unknown">Failed to save images for unknown error.</string>
 
+    <string name="activity_search">Search books</string>
+	<string name="search_text_hint">Enter book name....</string>
+	<string name="tips_search_text_empty">Please input the name of book!</string>
+
     <string name="activity_search_result">Search result</string>
     <string name="title_search_result">Search result: %s</string>
     <string name="tips_no_result">No result.</string>

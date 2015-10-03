@@ -2,5 +2,6 @@
 <resources>
 
 	<color name="status_bar_tint_color">@color/deep_purple_800</color>
+	<color name="status_bar_translucent_color">#1e000000</color>
 
 </resources>

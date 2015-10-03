@@ -1,1 +1,1 @@
-include ':app', ':libraries:PersistentSearch'
+include ':app'

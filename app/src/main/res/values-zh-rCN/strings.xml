@@ -77,6 +77,10 @@
     <string name="action_save_failed">当前图片尚未下载完毕，请耐心等待！</string>
     <string name="action_save_unknown">由于未知原因保存失败。</string>
 
+    <string name="activity_search">搜索本子</string>
+	<string name="search_text_hint">输入本子名称....</string>
+	<string name="tips_search_text_empty">请输入你要找的本子名称！</string>
+
     <string name="activity_search_result">搜索结果</string>
     <string name="title_search_result">搜索结果: %s</string>
     <string name="tips_no_result">没有结果。</string>

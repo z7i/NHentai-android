@@ -77,6 +77,10 @@
 	<string name="action_save_failed">當前圖像尚未下載完成，請耐心等待！</string>
 	<string name="action_save_unknown">由於未知原因儲存失敗。</string>
 
+    <string name="activity_search">搜尋本子</string>
+    <string name="search_text_hint">鍵入本子名....</string>
+    <string name="tips_search_text_empty">請鍵入你要找的本子名！</string>
+
     <string name="activity_search_result">搜尋結果</string>
     <string name="title_search_result">搜尋結果: %s</string>
     <string name="tips_no_result">沒有結果。</string>

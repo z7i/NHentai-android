@@ -2,8 +2,6 @@ package moe.feng.nhentai.dao;
 
 import android.content.Context;
 
-import com.quinny898.library.persistentsearch.SearchResult;
-
 import java.util.ArrayList;
 
 import moe.feng.nhentai.R;
@@ -89,15 +87,6 @@ public class SearchHistoryManager {
 			histories[i] = (String) mDB.get("history_" + i);
 		}
 		return histories;
-	}
-
-	public ArrayList<SearchResult> getSearchResults() {
-		ArrayList<SearchResult> results = new ArrayList<>();
-		for (String history : getAll()) {
-			if (history == null) continue;
-			results.add(new SearchResult(history, R.drawable.ic_history));
-		}
-		return results;
 	}
 
 	private static class Instance {

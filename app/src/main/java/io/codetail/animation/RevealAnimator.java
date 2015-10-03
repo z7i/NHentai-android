@@ -9,8 +9,6 @@ import com.nineoldandroids.animation.Animator;
 
 import java.lang.ref.WeakReference;
 
-import static io.codetail.animation.ViewAnimationUtils.SimpleAnimationListener;
-
 /**
  * @hide
  */
@@ -28,7 +26,7 @@ public interface RevealAnimator{
 
     public void invalidate(Rect bounds);
 
-    static class RevealFinishedGingerbread extends SimpleAnimationListener {
+    static class RevealFinishedGingerbread extends ViewAnimationUtils.SimpleAnimationListener {
         WeakReference<RevealAnimator> mReference;
         volatile Rect mInvalidateBounds;
 
@@ -54,7 +52,7 @@ public interface RevealAnimator{
         }
     }
 
-    static class RevealFinishedIceCreamSandwich extends SimpleAnimationListener {
+    static class RevealFinishedIceCreamSandwich extends ViewAnimationUtils.SimpleAnimationListener {
         WeakReference<RevealAnimator> mReference;
         volatile Rect mInvalidateBounds;
 
@@ -94,7 +92,7 @@ public interface RevealAnimator{
         }
     }
 
-    static class RevealFinishedJellyBeanMr1 extends SimpleAnimationListener {
+    static class RevealFinishedJellyBeanMr1 extends ViewAnimationUtils.SimpleAnimationListener {
         WeakReference<RevealAnimator> mReference;
         volatile Rect mInvalidateBounds;
 

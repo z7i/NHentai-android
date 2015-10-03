@@ -23,7 +23,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -396,7 +395,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		mSearchBarCard.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				// TODO Start search activity
+				SearchActivity.launch(HomeActivity.this, mSearchBarCard);
 			}
 		});
 
@@ -554,6 +553,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		}
 
 		return false;
+	}
+
+	public FavoritesManager getFavoritesManager() {
+		return mFM == null ? mFM = FavoritesManager.getInstance(getApplicationContext()) : mFM;
 	}
 
 	private void setRecyclerAdapter(BookListRecyclerAdapter adapter) {
