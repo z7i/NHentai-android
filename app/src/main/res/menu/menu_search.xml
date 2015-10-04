@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+	<item android:id="@+id/action_clear"
+	      android:title="@string/action_clear"
+	      android:icon="@drawable/ic_clear_black_24dp"
+	      app:showAsAction="always"/>
+
+	<item android:id="@+id/action_load_next_page"
+	      android:title="@string/action_next_page"
+	      app:showAsAction="never"/>
+
+</menu>

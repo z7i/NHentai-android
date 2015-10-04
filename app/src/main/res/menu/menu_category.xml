@@ -8,6 +8,10 @@
 	      android:icon="@drawable/ic_favorite_outline_white_24dp"
 	      app:showAsAction="ifRoom"/>
 
+	<item android:id="@+id/action_load_next_page"
+	      android:title="@string/action_next_page"
+	      app:showAsAction="never"/>
+
 	<item android:id="@+id/action_share"
 	      android:title="@string/action_share"
 	      android:orderInCategory="1"

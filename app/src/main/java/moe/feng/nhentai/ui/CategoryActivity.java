@@ -189,6 +189,10 @@ public class CategoryActivity extends AbsActivity {
 			).show();
 			invalidateOptionsMenu();
 			return true;
+		} else if (id == R.id.action_load_next_page) {
+			mSwipeRefreshLayout.setRefreshing(true);
+			new PageGetTask().execute(++mNowPage);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

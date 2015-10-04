@@ -59,15 +59,6 @@
         </activity>
 
         <activity
-            android:name=".ui.SearchResultActivity"
-            android:label="@string/activity_search_result"
-            android:theme="@style/Theme.NHBooks.Light.DarkActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-
-        <activity
             android:name=".ui.CategoryActivity"
             android:label="@string/activity_search_result"
             android:theme="@style/Theme.NHBooks.Light.DarkActionBar">

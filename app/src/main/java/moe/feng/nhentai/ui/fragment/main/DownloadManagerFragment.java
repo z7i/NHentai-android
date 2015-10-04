@@ -1,7 +1,6 @@
 package moe.feng.nhentai.ui.fragment.main;
 
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -34,7 +33,7 @@ public class DownloadManagerFragment extends LazyFragment {
 
 	@Override
 	public int getLayoutResId() {
-		return R.layout.fragment_home;
+		return R.layout.fragment_home_recycler;
 	}
 
 	@Override

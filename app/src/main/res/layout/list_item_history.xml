@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/search_history_item_height"
+              android:paddingStart="8dp"
+              android:paddingEnd="8dp"
+              android:clickable="true"
+              android:background="?attr/selectableItemBackground"
+              android:gravity="center_vertical">
+
+	<ImageView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="16dp"
+		android:layout_marginEnd="16dp"
+		android:src="@drawable/ic_history_black_24dp"
+		android:alpha="0.75"/>
+
+	<android.support.v7.widget.AppCompatTextView
+		android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+		android:layout_weight="1"
+	    android:id="@+id/history_title"
+	    tools:text="Test Title"
+	    android:textColor="@color/primary_text_default_material_light"
+		android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+
+	<ImageButton
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:id="@+id/btn_add"
+		android:paddingStart="16dp"
+		android:paddingEnd="16dp"
+		android:src="@drawable/ic_reply_black_24dp"
+		android:background="?attr/selectableItemBackgroundBorderless"
+		android:alpha="0.75"/>
+
+</LinearLayout>

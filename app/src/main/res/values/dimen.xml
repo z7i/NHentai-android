@@ -30,4 +30,6 @@
 	<dimen name="widget_fade_in_translation_y_s">12dp</dimen>
 	<dimen name="widget_fade_in_translation_y_m">24dp</dimen>
 
+	<dimen name="search_history_item_height">48dp</dimen>
+
 </resources>

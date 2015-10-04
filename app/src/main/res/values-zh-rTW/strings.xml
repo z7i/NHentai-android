@@ -4,6 +4,7 @@
     <string name="app_name">NH 本子</string>
     <string name="action_settings">設置</string>
     <string name="action_search">搜尋</string>
+    <string name="action_next_page">加載下一頁</string>
 
     <!-- New Home Design -->
     <string name="search_bar_hint">在這裡搜尋本子....</string>
@@ -84,6 +85,7 @@
     <string name="activity_search_result">搜尋結果</string>
     <string name="title_search_result">搜尋結果: %s</string>
     <string name="tips_no_result">沒有結果。</string>
+    <string name="action_clear">清除文本</string>
 
     <string name="settings_main">設置</string>
     <string name="category_about">關於</string>

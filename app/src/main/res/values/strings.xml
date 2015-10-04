@@ -4,6 +4,7 @@
     <string name="app_name">NHBooks</string>
     <string name="action_settings">Settings</string>
     <string name="action_search">Search</string>
+    <string name="action_next_page">Load next page</string>
 
     <!-- New Home Design -->
     <string name="search_bar_hint">Search books here....</string>
@@ -80,6 +81,7 @@
     <string name="activity_search">Search books</string>
 	<string name="search_text_hint">Enter book name....</string>
 	<string name="tips_search_text_empty">Please input the name of book!</string>
+    <string name="action_clear">Clear text</string>
 
     <string name="activity_search_result">Search result</string>
     <string name="title_search_result">Search result: %s</string>

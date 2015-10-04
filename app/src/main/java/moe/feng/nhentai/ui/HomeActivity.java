@@ -130,6 +130,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			getWindow().getDecorView().setSystemUiVisibility(
 					View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 			);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				getWindow().setNavigationBarColor(getResources().getColor(R.color.deep_purple_800));
+			}
 		}
 
 		super.onCreate(savedInstanceState);
@@ -264,6 +267,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		super.onConfigurationChanged(newConfig);
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -280,6 +284,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		if (id == R.id.action_settings) {
 			SettingsActivity.launchActivity(this, SettingsActivity.FLAG_MAIN);
 			return true;
+		} else if (id == R.id.action_load_next_page) {
+			mSwipeRefreshLayout.setRefreshing(true);
+			new PageGetTask().execute(++mNowPage);
+			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -293,6 +301,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		mToolbar = $(R.id.toolbar);
 		setSupportActionBar(mToolbar);
 		mActionBar = getSupportActionBar();
+		mToolbar.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (mAdapter.getItemCount() > 0) {
+					mRecyclerView.smoothScrollToPosition(0);
+				}
+			}
+		});
 
 		mDrawerLayout = $(R.id.drawer_layout);
 		mNavigationView = $(R.id.navigation_view);
@@ -405,7 +421,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	private void updateTranslation(int currentY) {
 		if (!finishLaunchAnimation) return;
 
-		int headerDeltaY = Math.min(currentY, calcDimens(R.dimen.background_delta_height));
+		int headerDeltaY = Math.max(Math.min(currentY, calcDimens(R.dimen.background_delta_height)), 0);
 		mBackgroundView.setTranslationY(mHeaderTranslationYStart - headerDeltaY * 1.5f);
 
 		int titleBarDistance = calcDimens(R.dimen.title_bar_height);

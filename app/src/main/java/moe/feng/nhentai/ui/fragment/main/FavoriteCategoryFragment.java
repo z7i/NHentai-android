@@ -26,7 +26,7 @@ public class FavoriteCategoryFragment extends LazyFragment {
 
 	@Override
 	public int getLayoutResId() {
-		return R.layout.fragment_home;
+		return R.layout.fragment_home_recycler;
 	}
 
 	@Override
