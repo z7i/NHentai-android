@@ -85,6 +85,7 @@
     <string name="activity_search_result">搜尋結果</string>
     <string name="title_search_result">搜尋結果: %s</string>
     <string name="tips_no_result">沒有結果。</string>
+    <string name="tips_no_more_results">這已經是最後一頁了。</string>
     <string name="action_clear">清除文本</string>
 
     <string name="settings_main">設置</string>
