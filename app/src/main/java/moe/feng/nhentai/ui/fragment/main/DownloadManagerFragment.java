@@ -80,10 +80,11 @@ public class DownloadManagerFragment extends LazyFragment {
 		});
 	}
 
-	public void onDataUpdate() {
-		mAdapter.notifyDataSetChanged();
+	public void scrollToTop() {
+		if (mAdapter.getItemCount() > 0) {
+			mRecyclerView.smoothScrollToPosition(0);
+		}
 	}
-
 
 	private class BooksGetTask extends AsyncTask<Void, Void, ArrayList<Book>> {
 

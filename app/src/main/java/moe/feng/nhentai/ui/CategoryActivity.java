@@ -13,6 +13,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.gson.Gson;
 
@@ -48,10 +49,13 @@ public class CategoryActivity extends AbsActivity {
 
 	private int mNowPage = 1;
 	private Category category;
+	private boolean isAllowToLoadNextPage = true;
 
 	private boolean isFavorite = false;
 
 	private static final String EXTRA_CATEGORY_JSON = "category_json";
+
+	private static final int MSG_CODE_NO_MORE_RESULTS = 1;
 
 	public static final String TAG = CategoryActivity.class.getSimpleName();
 
@@ -128,6 +132,7 @@ public class CategoryActivity extends AbsActivity {
 					mSwipeRefreshLayout.setRefreshing(true);
 				}
 
+				isAllowToLoadNextPage = true;
 				mBooks = new ArrayList<>();
 				mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM);
 				setRecyclerViewAdapter(mAdapter);
@@ -209,6 +214,7 @@ public class CategoryActivity extends AbsActivity {
 			@Override
 			public void onScrolled(RecyclerView rv, int dx, int dy) {
 				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[2])[1] >= mAdapter.getItemCount() - 2) {
+					if (!isAllowToLoadNextPage) return;
 					mSwipeRefreshLayout.setRefreshing(true);
 					new PageGetTask().execute(++mNowPage);
 				}
@@ -223,25 +229,65 @@ public class CategoryActivity extends AbsActivity {
 		@Override
 		protected BaseMessage doInBackground(Integer... params) {
 			mFM.reload();
-			return PageApi.getPageList(NHentaiUrl.getCategoryUrl(category) + "/?page=" + mNowPage);
+			BaseMessage msg = PageApi.getPageList(NHentaiUrl.getCategoryUrl(category) + "/?page=" + mNowPage);
+			if (msg.getCode() == 0 && msg.getData() != null) {
+				ArrayList<Book> temp = msg.getData();
+				if (temp.isEmpty()) {
+					msg.setCode(MSG_CODE_NO_MORE_RESULTS);
+				} else {
+					Book firstBook = temp.get(0);
+					boolean hasExist = false;
+					for (int i = 0; i < mBooks.size() && !hasExist; i++) {
+						hasExist = mBooks.get(i).bookId.equals(firstBook.bookId);
+					}
+					if (hasExist) {
+						msg.setCode(MSG_CODE_NO_MORE_RESULTS);
+					}
+				}
+			}
+			return msg;
 		}
 
 		@Override
 		protected void onPostExecute(BaseMessage msg) {
 			mSwipeRefreshLayout.setRefreshing(false);
 			if (msg != null) {
-				if (msg.getCode() == 0 && msg.getData() != null) {
-					if (!((ArrayList<Book>) msg.getData()).isEmpty()) {
-						mBooks.addAll((ArrayList<Book>) msg.getData());
-						mAdapter.notifyDataSetChanged();
-						if (mNowPage == 1) {
-							mRecyclerView.setAdapter(mAdapter);
+				switch (msg.getCode()) {
+					case 0:
+						if (msg.getData() != null) {
+							if (!((ArrayList<Book>) msg.getData()).isEmpty()) {
+								mBooks.addAll((ArrayList<Book>) msg.getData());
+								mAdapter.notifyDataSetChanged();
+								if (mNowPage == 1) {
+									isAllowToLoadNextPage = true;
+									mRecyclerView.setAdapter(mAdapter);
+								}
+							} else {
+								Snackbar.make(mRecyclerView, R.string.tips_no_result, Snackbar.LENGTH_LONG).show();
+							}
 						}
-					} else {
-						Snackbar.make(mRecyclerView, R.string.tips_no_result, Snackbar.LENGTH_LONG).show();
-					}
-				} else if (mNowPage == 1) {
-					Snackbar.make(mRecyclerView, R.string.tips_no_result, Snackbar.LENGTH_LONG).show();
+						break;
+					case MSG_CODE_NO_MORE_RESULTS:
+						isAllowToLoadNextPage = false;
+						Snackbar.make(mRecyclerView, R.string.tips_no_more_results, Snackbar.LENGTH_LONG).show();
+						break;
+					default:
+						if (mNowPage == 1) {
+							Snackbar.make(
+									mRecyclerView,
+									R.string.tips_network_error,
+									Snackbar.LENGTH_LONG
+							).setAction(
+									R.string.snack_action_try_again,
+									new View.OnClickListener() {
+										@Override
+										public void onClick(View view) {
+											mSwipeRefreshLayout.setRefreshing(true);
+											new PageGetTask().execute(mNowPage);
+										}
+									}
+							).show();
+						}
 				}
 			}
 		}

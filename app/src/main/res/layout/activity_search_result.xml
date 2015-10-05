@@ -4,11 +4,11 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <View
+    <moe.feng.nhentai.view.StatusBarHeaderView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:id="@+id/status_bar_header"
-        android:background="?attr/colorPrimaryDark"/>
+        android:background="@color/status_bar_tint_color"/>
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"

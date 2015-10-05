@@ -66,6 +66,12 @@ public class FavoriteCategoryFragment extends LazyFragment {
 		});
 	}
 
+	public void scrollToTop() {
+		if (mAdapter.getItemCount() > 0) {
+			mRecyclerView.smoothScrollToPosition(0);
+		}
+	}
+
 	private class FavoritesRefreshTask extends AsyncTask<Void, Void, Void> {
 
 		@Override

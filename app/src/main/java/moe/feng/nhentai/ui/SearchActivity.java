@@ -215,12 +215,12 @@ public class SearchActivity extends AbsActivity {
 	private void startSearchTask(String k){
 		this.keyword = k;
 
+		imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
 		mActionBar.setTitle(keyword);
 		mActionBar.setDisplayShowCustomEnabled(false);
 		mActionBar.setDisplayShowTitleEnabled(true);
-
-		imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
 		mHM.add(keyword);
 		mHistoryAdapter.notifyDataSetChanged();

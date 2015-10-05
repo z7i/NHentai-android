@@ -6,6 +6,7 @@
 		<item name="windowNoTitle">true</item>
 		<item name="android:windowDrawsSystemBarBackgrounds">true</item>
 		<item name="android:statusBarColor">@android:color/transparent</item>
+		<item name="android:navigationBarColor">?attr/colorPrimaryDark</item>
 	</style>
 
 	<style name="Base.Theme.NHBooks.Light" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -13,6 +14,7 @@
 		<item name="windowNoTitle">true</item>
 		<item name="android:windowDrawsSystemBarBackgrounds">true</item>
 		<item name="android:statusBarColor">@android:color/transparent</item>
+		<item name="android:navigationBarColor">?attr/colorPrimaryDark</item>
 	</style>
 
 	<style name="Base.Theme.NHBooks.Dark" parent="Theme.AppCompat">
@@ -20,6 +22,20 @@
 		<item name="windowNoTitle">true</item>
 		<item name="android:windowDrawsSystemBarBackgrounds">true</item>
 		<item name="android:statusBarColor">@android:color/transparent</item>
+		<item name="android:navigationBarColor">?attr/colorPrimaryDark</item>
+	</style>
+
+	<style name="Theme.NHBooks.Dark.Translucent" parent="Theme.NHBooks.Dark">
+	</style>
+
+	<style name="Theme.NHBooks.Light.Translucent" parent="Theme.NHBooks.Light">
+	</style>
+
+	<style name="Theme.NHBooks.Light.DarkActionBar.Translucent" parent="Theme.NHBooks.Light.DarkActionBar">
+	</style>
+
+	<style name="Theme.NHBooks.Light.NewHome" parent="Theme.NHBooks.Light.DarkActionBar">
+		<item name="android:windowBackground">@color/deep_purple_500</item>
 	</style>
 
 </resources>

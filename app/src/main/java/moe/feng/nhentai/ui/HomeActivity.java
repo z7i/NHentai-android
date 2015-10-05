@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -131,6 +132,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 					View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 			);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				getWindow().setStatusBarColor(Color.TRANSPARENT);
 				getWindow().setNavigationBarColor(getResources().getColor(R.color.deep_purple_800));
 			}
 		}
@@ -428,7 +430,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		float titleAlpha = Math.min(currentY, titleBarDistance);
 		titleAlpha /= (float) titleBarDistance;
 		mTitleBarLayout.setAlpha(1 - titleAlpha);
-		mSearchBarCard.setCardElevation(titleAlpha * calcDimens(R.dimen.searchbar_elevation_raised));
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			mSearchBarCard.setCardElevation(titleAlpha * calcDimens(R.dimen.searchbar_elevation_raised));
+		}
 
 		if (currentY * 1.5f + 5 >= calcDimens(R.dimen.background_delta_height)) {
 			ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
@@ -538,6 +542,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				} else {
 					ViewCompat.setElevation(mToolbar, 0f);
 				}
+				mToolbar.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						if (mAdapter.getItemCount() > 0) {
+							mRecyclerView.smoothScrollToPosition(0);
+						}
+					}
+				});
 				return true;
 			case R.id.navigation_item_download:
 				mActionBar.setTitle(R.string.item_download);
@@ -547,6 +559,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentDownload)
 						.commit();
+				mToolbar.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						if (mAdapter.getItemCount() > 0) {
+							mFragmentDownload.scrollToTop();
+						}
+					}
+				});
 				return true;
 			case R.id.navigation_item_fav_books:
 				mActionBar.setTitle(R.string.item_favorite_books);
@@ -556,6 +576,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentFavBooks)
 						.commit();
+				mToolbar.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						if (mAdapter.getItemCount() > 0) {
+							mFragmentFavBooks.scrollToTop();
+						}
+					}
+				});
 				return true;
 			case R.id.navigation_item_fav_categories:
 				mActionBar.setTitle(R.string.item_favorite_categories);
@@ -565,6 +593,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentFavCategory)
 						.commit();
+				mToolbar.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						if (mAdapter.getItemCount() > 0) {
+							mFragmentFavCategory.scrollToTop();
+						}
+					}
+				});
 				return true;
 		}
 

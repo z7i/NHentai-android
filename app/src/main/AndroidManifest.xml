@@ -28,7 +28,7 @@
         <activity
             android:name=".ui.BookDetailsActivity"
             android:label="@string/activity_details"
-            android:theme="@style/Theme.NHBooks.Light.DarkActionBar" >
+            android:theme="@style/Theme.NHBooks.Light.DarkActionBar.Translucent" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -52,7 +52,7 @@
         <activity
             android:name=".ui.SearchActivity"
             android:label="@string/activity_search"
-            android:theme="@style/Theme.NHBooks.Light">
+            android:theme="@style/Theme.NHBooks.Light.Translucent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -61,7 +61,7 @@
         <activity
             android:name=".ui.CategoryActivity"
             android:label="@string/activity_search_result"
-            android:theme="@style/Theme.NHBooks.Light.DarkActionBar">
+            android:theme="@style/Theme.NHBooks.Light.DarkActionBar.Translucent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -70,7 +70,7 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/settings_main"
-            android:theme="@style/Theme.NHBooks.Light.DarkActionBar.Fix">
+            android:theme="@style/Theme.NHBooks.Light.DarkActionBar.Translucent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

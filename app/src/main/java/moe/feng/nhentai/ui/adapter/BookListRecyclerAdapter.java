@@ -79,6 +79,7 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 				vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 					@Override
 					public void onGlobalLayout() {
+						if (data.size() < position + 1) return;
 						int thumbWidth = data.get(position).thumbWidth;
 						int thumbHeight = data.get(position).thumbHeight;
 						if (thumbWidth > 0 && thumbHeight > 0) {

@@ -1,20 +1,18 @@
 package moe.feng.nhentai.ui;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.GridLayoutManager;
@@ -26,11 +24,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -53,18 +53,24 @@ import moe.feng.nhentai.util.TextDrawable;
 import moe.feng.nhentai.util.Utility;
 import moe.feng.nhentai.util.task.PageDownloader;
 import moe.feng.nhentai.view.AutoWrapLayout;
+import moe.feng.nhentai.view.ObservableScrollView;
 import moe.feng.nhentai.view.WheelProgressView;
 
-public class BookDetailsActivity extends AbsActivity {
+public class BookDetailsActivity extends AbsActivity implements ObservableScrollView.OnScrollChangeListener {
 
+	private ObservableScrollView mScrollView;
+	private FrameLayout mAppBarContainer;
 	private ImageView mImageView;
-	private CollapsingToolbarLayout collapsingToolbar;
 	private FloatingActionButton mFAB;
 	private TextView mTitleText;
 	private LinearLayout mTagsLayout;
-	private LinearLayout mContentView;
+	private LinearLayout mContentView, mAppBarBackground;
 	private WheelProgressView mProgressWheel;
 	private RecyclerView mPreviewList;
+
+	private boolean isPlayingFABAnimation = false;
+
+	private int APP_BAR_HEIGHT, TOOLBAR_HEIGHT, STATUS_BAR_HEIGHT = 0, minHeight = 0;
 
 	private MenuItem mActionDownload;
 	private ShareActionProvider mShareActionProvider;
@@ -76,7 +82,6 @@ public class BookDetailsActivity extends AbsActivity {
 	private boolean isDownloaded = false;
 
 	private final static String EXTRA_BOOK_DATA = "book_data", EXTRA_POSITION = "item_position";
-	private final static String TRANSITION_NAME_IMAGE = "BookDetailsActivity:image";
 
 	public final static int REQUEST_MAIN = 1001, RESULT_HAVE_FAV = 100;
 	public final static int NOTIFICATION_ID_FINISH = 10000;
@@ -90,10 +95,13 @@ public class BookDetailsActivity extends AbsActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_book_details);
 
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		collapsingToolbar = $(R.id.collapsing_toolbar);
+		APP_BAR_HEIGHT = getResources().getDimensionPixelSize(R.dimen.appbar_parallax_max_height);
+		TOOLBAR_HEIGHT = getResources().getDimensionPixelSize(R.dimen.abc_action_bar_default_height_material);
+		if (Build.VERSION.SDK_INT >= 19) {
+			STATUS_BAR_HEIGHT = Utility.getStatusBarHeight(getApplicationContext());
+		}
+		minHeight = APP_BAR_HEIGHT - TOOLBAR_HEIGHT - STATUS_BAR_HEIGHT;
 
 		Intent intent = getIntent();
 		if (Intent.ACTION_VIEW.equals(intent.getAction())) {
@@ -108,26 +116,15 @@ public class BookDetailsActivity extends AbsActivity {
 		} else {
 			book = Book.toBookFromJson(intent.getStringExtra(EXTRA_BOOK_DATA));
 			fromPosition = intent.getIntExtra(EXTRA_POSITION, 0);
-
-			collapsingToolbar.setTitle(book.title);
 		}
 
 		mFileCacheManager = FileCacheManager.getInstance(getApplicationContext());
 
 		isFavorite = originFavorite = FavoritesManager.getInstance(getApplicationContext()).contains(book.bookId);
 
-		mImageView = $(R.id.app_bar_background);
-		ViewCompat.setTransitionName(mImageView, TRANSITION_NAME_IMAGE);
+		setContentView(R.layout.activity_book_details);
 
-		mFAB = $(R.id.fab);
-		mTitleText = $(R.id.tv_title);
-		mTagsLayout = $(R.id.book_tags_layout);
-		mContentView = $(R.id.book_content);
-		mProgressWheel = $(R.id.wheel_progress);
-		mPreviewList = $(R.id.preview_list);
-
-		mPreviewList.setHasFixedSize(true);
-		mPreviewList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2, LinearLayoutManager.HORIZONTAL, false));
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		FileCacheManager cm = FileCacheManager.getInstance(getApplicationContext());
 		if (book.galleryId != null) {
@@ -191,24 +188,55 @@ public class BookDetailsActivity extends AbsActivity {
 
 	@Override
 	protected void setUpViews() {
+		mAppBarContainer = $(R.id.appbar_container);
+		mAppBarBackground = $(R.id.appbar_background);
+		mImageView = $(R.id.preview_image);
+		mFAB = $(R.id.fab);
+		mTitleText = $(R.id.tv_title);
+		mTagsLayout = $(R.id.book_tags_layout);
+		mContentView = $(R.id.book_content);
+		mProgressWheel = $(R.id.wheel_progress);
+		mPreviewList = $(R.id.preview_list);
+		mScrollView = $(R.id.scroll_view);
 
+		mPreviewList.setHasFixedSize(true);
+		mPreviewList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2, LinearLayoutManager.HORIZONTAL, false));
+
+		mFAB.setTranslationY(-getResources().getDimension(R.dimen.floating_action_button_size_half));
+		mScrollView.addOnScrollChangeListener(this);
+	}
+
+	@Override
+	public void onScrollChanged(ObservableScrollView view, int x, int y, int oldx, int oldy) {
+		setViewsTranslation(Math.min(minHeight, y));
+	}
+
+	private void setViewsTranslation(int target) {
+		mAppBarContainer.setTranslationY(-target);
+		mAppBarBackground.setTranslationY(target);
+		float alpha = Math.min(1, -mAppBarContainer.getTranslationY() / (float) minHeight);
+		mAppBarBackground.setAlpha(alpha);
+
+		mFAB.setTranslationY(-getResources().getDimension(R.dimen.floating_action_button_size_half)-target);
+		if (alpha > 0.8f && !isPlayingFABAnimation) {
+			hideFAB();
+		} else if (alpha < 0.65f && !isPlayingFABAnimation) {
+			showFAB();
+		}
+
+		mImageView.setTranslationY(target * 0.7f);
 	}
 
 	public static void launch(Activity activity, ImageView imageView, Book book, int fromPosition) {
-		ActivityOptionsCompat options = ActivityOptionsCompat
-				.makeSceneTransitionAnimation(activity, imageView, TRANSITION_NAME_IMAGE);
 		Intent intent = new Intent(activity, BookDetailsActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		intent.putExtra(EXTRA_BOOK_DATA, book.toJSONString());
 		intent.putExtra(EXTRA_POSITION, fromPosition);
-		ActivityCompat.startActivityForResult(activity, intent, REQUEST_MAIN, options.toBundle());
+		activity.startActivityForResult(intent, REQUEST_MAIN);
 	}
 
 	private void updateUIContent() {
-		collapsingToolbar.setTitle(book.title);
-		collapsingToolbar.invalidate();
 		$(R.id.toolbar).invalidate();
-		$(R.id.appbar).invalidate();
 
 		mFAB.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -846,6 +874,66 @@ public class BookDetailsActivity extends AbsActivity {
 				});
 			}
 		}.start();
+	}
+
+	private void showFAB() {
+		mFAB.animate().scaleX(1f).scaleY(1f)
+				.setInterpolator(new OvershootInterpolator())
+				.setListener(new Animator.AnimatorListener() {
+					@Override
+					public void onAnimationStart(Animator animator) {
+						isPlayingFABAnimation = true;
+					}
+
+					@Override
+					public void onAnimationEnd(Animator animator) {
+						isPlayingFABAnimation = false;
+						if (mAppBarBackground.getAlpha() > 0.8f) {
+							hideFAB();
+						}
+					}
+
+					@Override
+					public void onAnimationCancel(Animator animator) {
+						isPlayingFABAnimation = false;
+					}
+
+					@Override
+					public void onAnimationRepeat(Animator animator) {
+
+					}
+				})
+				.start();
+	}
+
+	private void hideFAB() {
+		mFAB.animate().scaleX(0f).scaleY(0f)
+				.setInterpolator(new AnticipateInterpolator())
+				.setListener(new Animator.AnimatorListener() {
+					@Override
+					public void onAnimationStart(Animator animator) {
+						isPlayingFABAnimation = true;
+					}
+
+					@Override
+					public void onAnimationEnd(Animator animator) {
+						isPlayingFABAnimation = false;
+						if (mAppBarBackground.getAlpha() < 0.65f) {
+							showFAB();
+						}
+					}
+
+					@Override
+					public void onAnimationCancel(Animator animator) {
+						isPlayingFABAnimation = false;
+					}
+
+					@Override
+					public void onAnimationRepeat(Animator animator) {
+
+					}
+				})
+				.start();
 	}
 
 	private class BookGetTask extends AsyncTask<String, Void, BaseMessage> {
