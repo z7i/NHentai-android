@@ -5,4 +5,17 @@
 		<item name="android:windowTranslucentStatus">true</item>
 	</style>
 
+	<style name="Theme.NHBooks.Light.Translucent" parent="Theme.NHBooks.Light">
+		<item name="android:windowTranslucentStatus">true</item>
+	</style>
+
+	<style name="Theme.NHBooks.Light.DarkActionBar.Translucent" parent="Theme.NHBooks.Light.DarkActionBar">
+		<item name="android:windowTranslucentStatus">true</item>
+	</style>
+
+	<style name="Theme.NHBooks.Light.NewHome" parent="Theme.NHBooks.Light.DarkActionBar">
+		<item name="android:windowTranslucentStatus">true</item>
+		<item name="android:windowBackground">@color/deep_purple_500</item>
+	</style>
+
 </resources>
