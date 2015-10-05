@@ -44,6 +44,7 @@
 					android:background="?attr/colorPrimary"
 					android:id="@+id/toolbar"
 					android:alpha="0"
+					app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
 					app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
 				<FrameLayout

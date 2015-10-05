@@ -105,7 +105,8 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:id="@+id/appbar_background"
-			android:background="?attr/colorPrimary">
+			android:background="?attr/colorPrimary"
+			android:alpha="0">
 
 			<moe.feng.nhentai.view.StatusBarHeaderView
 				android:layout_width="match_parent"
@@ -129,6 +130,7 @@
 			android:id="@+id/toolbar"
 			android:layout_width="match_parent"
 			android:layout_height="?attr/actionBarSize"
+			app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
 			app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 		
 	</LinearLayout>

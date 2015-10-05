@@ -30,11 +30,6 @@
 		<item name="colorPrimaryDark">@color/deep_purple_800</item>
 		<item name="colorAccent">@color/pink_500</item>
 		<item name="colorControlNormal">@android:color/white</item>
-		<item name="android:textColorPrimary">@android:color/white</item>
-	</style>
-
-	<style name="Theme.NHBooks.Light.DarkActionBar.Fix" parent="Theme.NHBooks.Light.DarkActionBar">
-		<item name="android:textColorPrimary">@color/primary_text_default_material_light</item>
 	</style>
 
 	<style name="Theme.NHBooks.Dark" parent="Base.Theme.NHBooks.Dark">

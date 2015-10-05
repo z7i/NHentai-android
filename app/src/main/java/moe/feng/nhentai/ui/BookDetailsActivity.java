@@ -11,11 +11,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.GridLayoutManager;
@@ -85,7 +82,6 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	private boolean isDownloaded = false;
 
 	private final static String EXTRA_BOOK_DATA = "book_data", EXTRA_POSITION = "item_position";
-	private final static String TRANSITION_NAME_IMAGE = "BookDetailsActivity:image";
 
 	public final static int REQUEST_MAIN = 1001, RESULT_HAVE_FAV = 100;
 	public final static int NOTIFICATION_ID_FINISH = 10000;
@@ -129,7 +125,6 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		setContentView(R.layout.activity_book_details);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		ViewCompat.setTransitionName(mImageView, TRANSITION_NAME_IMAGE);
 
 		FileCacheManager cm = FileCacheManager.getInstance(getApplicationContext());
 		if (book.galleryId != null) {
@@ -233,13 +228,11 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	}
 
 	public static void launch(Activity activity, ImageView imageView, Book book, int fromPosition) {
-		ActivityOptionsCompat options = ActivityOptionsCompat
-				.makeSceneTransitionAnimation(activity, imageView, TRANSITION_NAME_IMAGE);
 		Intent intent = new Intent(activity, BookDetailsActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		intent.putExtra(EXTRA_BOOK_DATA, book.toJSONString());
 		intent.putExtra(EXTRA_POSITION, fromPosition);
-		ActivityCompat.startActivityForResult(activity, intent, REQUEST_MAIN, options.toBundle());
+		activity.startActivityForResult(intent, REQUEST_MAIN);
 	}
 
 	private void updateUIContent() {
