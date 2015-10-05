@@ -542,6 +542,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				} else {
 					ViewCompat.setElevation(mToolbar, 0f);
 				}
+				mToolbar.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						if (mAdapter.getItemCount() > 0) {
+							mRecyclerView.smoothScrollToPosition(0);
+						}
+					}
+				});
 				return true;
 			case R.id.navigation_item_download:
 				mActionBar.setTitle(R.string.item_download);
@@ -551,6 +559,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentDownload)
 						.commit();
+				mToolbar.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						if (mAdapter.getItemCount() > 0) {
+							mFragmentDownload.scrollToTop();
+						}
+					}
+				});
 				return true;
 			case R.id.navigation_item_fav_books:
 				mActionBar.setTitle(R.string.item_favorite_books);
@@ -560,6 +576,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentFavBooks)
 						.commit();
+				mToolbar.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						if (mAdapter.getItemCount() > 0) {
+							mFragmentFavBooks.scrollToTop();
+						}
+					}
+				});
 				return true;
 			case R.id.navigation_item_fav_categories:
 				mActionBar.setTitle(R.string.item_favorite_categories);
@@ -569,6 +593,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentFavCategory)
 						.commit();
+				mToolbar.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						if (mAdapter.getItemCount() > 0) {
+							mFragmentFavCategory.scrollToTop();
+						}
+					}
+				});
 				return true;
 		}
 
