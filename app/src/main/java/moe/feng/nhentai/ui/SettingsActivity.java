@@ -8,6 +8,7 @@ import android.support.v4.view.ViewCompat;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.ui.common.AbsActivity;
+import moe.feng.nhentai.ui.fragment.settings.SettingsAppearance;
 import moe.feng.nhentai.ui.fragment.settings.SettingsLicense;
 import moe.feng.nhentai.ui.fragment.settings.SettingsMain;
 
@@ -38,6 +39,9 @@ public class SettingsActivity extends AbsActivity {
 		switch (flag) {
 			case FLAG_MAIN:
 				mFragment = new SettingsMain();
+				break;
+			case FLAG_GUI:
+				mFragment = new SettingsAppearance();
 				break;
 			case FLAG_LICENSE:
 				mFragment = new SettingsLicense();

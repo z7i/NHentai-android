@@ -40,6 +40,8 @@ import moe.feng.nhentai.ui.adapter.HistoryRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsActivity;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.util.AsyncTask;
+import moe.feng.nhentai.util.Settings;
+import moe.feng.nhentai.util.Utility;
 
 public class SearchActivity extends AbsActivity {
 
@@ -54,11 +56,12 @@ public class SearchActivity extends AbsActivity {
 	private LinearLayoutManager mHistoryLayoutManager;
 
 	private ArrayList<Book> mBooks;
-	private int mNowPage = 1;
+	private int mNowPage = 1, mHorCardCount = 2;
 	private String keyword;
 
 	private FavoritesManager mFM;
 	private SearchHistoryManager mHM;
+	private Settings mSets;
 
 	private InputMethodManager imm;
 
@@ -70,6 +73,7 @@ public class SearchActivity extends AbsActivity {
 
 		mFM = FavoritesManager.getInstance(getApplicationContext());
 		mHM = SearchHistoryManager.getInstance(getApplicationContext(), "all");
+		mSets = Settings.getInstance(getApplicationContext());
 		imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		setContentView(R.layout.activity_search);
@@ -105,7 +109,11 @@ public class SearchActivity extends AbsActivity {
 		setHistoryListAdapter(mHistoryAdapter);
 
 		/** Init Result List */
-		mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+		if ((mHorCardCount = mSets.getInt(Settings.KEY_CARDS_COUNT, -1)) < 1) {
+			mHorCardCount = Utility.getHorizontalCardCountInScreen(this);
+		}
+
+		mLayoutManager = new StaggeredGridLayoutManager(mHorCardCount, StaggeredGridLayoutManager.VERTICAL);
 		mResultList.setLayoutManager(mLayoutManager);
 		mResultList.setHasFixedSize(true);
 
@@ -191,7 +199,7 @@ public class SearchActivity extends AbsActivity {
 		adapter.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
 			public void onScrolled(RecyclerView rv, int dx, int dy) {
-				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[2])[1] >= mAdapter.getItemCount() - 2) {
+				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[mHorCardCount])[1] >= mAdapter.getItemCount() - 2) {
 					mSwipeRefreshLayout.setRefreshing(true);
 					new PageGetTask().execute(++mNowPage);
 				}

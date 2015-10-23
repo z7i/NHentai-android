@@ -60,6 +60,7 @@ import moe.feng.nhentai.ui.fragment.main.FavoriteCategoryFragment;
 import moe.feng.nhentai.ui.fragment.main.FavoriteFragment;
 import moe.feng.nhentai.util.AsyncTask;
 import moe.feng.nhentai.util.Settings;
+import moe.feng.nhentai.util.Utility;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -79,7 +80,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	private StaggeredGridLayoutManager mLayoutManager;
 	private SwipeRefreshLayout mSwipeRefreshLayout;
 	private ArrayList<Book> mBooks;
-	private int mNowPage = 1;
+	private int mNowPage = 1, mHorCardCount = 2;
 	private boolean isFirstLoad = true;
 
 	// Search Bar
@@ -342,7 +343,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		mTitleSub = $(R.id.tv_title_sub);
 		mSwipeRefreshLayout = $(R.id.swipe_refresh_layout);
 		mRecyclerView = $(R.id.recycler_view);
-		mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+
+		if ((mHorCardCount = mSets.getInt(Settings.KEY_CARDS_COUNT, -1)) < 1) {
+			mHorCardCount = Utility.getHorizontalCardCountInScreen(this);
+		}
+
+		mLayoutManager = new StaggeredGridLayoutManager(mHorCardCount, StaggeredGridLayoutManager.VERTICAL);
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		mRecyclerView.setHasFixedSize(false);
 		mRecyclerView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
@@ -623,7 +629,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			@Override
 			public void onScrolled(RecyclerView rv, int dx, int dy) {
 				super.onScrolled(rv, dx, dy);
-				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[2])[1] >= mAdapter.getItemCount() - 2) {
+				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[mHorCardCount])[1] >= mAdapter.getItemCount() - 2) {
 					mSwipeRefreshLayout.setRefreshing(true);
 					new PageGetTask().execute(++mNowPage);
 				}

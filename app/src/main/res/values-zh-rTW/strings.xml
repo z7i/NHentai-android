@@ -89,11 +89,10 @@
     <string name="action_clear">清除文本</string>
 
     <string name="settings_main">設置</string>
+    <string name="category_options">應用程式設定</string>
     <string name="category_about">關於</string>
     <string name="set_title_app_version">應用程式版本</string>
     <string name="settings_license">開源項目許可協議</string>
-    <string name="set_title_weibo">新浪微博</string>
-    <string name="set_title_weibo_summary">\@某燒餅</string>
     <string name="set_title_google_plus">Google+</string>
     <string name="set_title_google_plus_summary">+Fung Jichun</string>
     <string name="set_title_github">Github 開源項目</string>
@@ -102,5 +101,16 @@
     <string name="set_title_telegram_link">"https://telegram.me/joinchat/0668165200bd194d0a89b8995057e330"</string>
     <string name="set_title_alipay">捐贈支持(支付寶)</string>
     <string name="set_title_alipay_address">316643843\@qq.com</string>
+    <string name="category_ui">介面樣式</string>
+    <string name="set_title_cards_count">橫向卡片數量</string>
+    <string name="set_title_cards_count_summary">當前值: %s</string>
+    <string-array name="set_cards_count_options">
+        <item>自動適應數量</item>
+        <item>自訂</item>
+    </string-array>
+    <string-array name="set_cards_count_options_value">
+        <item>-1</item>
+        <item>0</item>
+    </string-array>
 
 </resources>

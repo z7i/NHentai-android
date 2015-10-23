@@ -13,6 +13,8 @@ import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.ui.common.LazyFragment;
 import moe.feng.nhentai.util.AsyncTask;
+import moe.feng.nhentai.util.Settings;
+import moe.feng.nhentai.util.Utility;
 
 public class FavoriteFragment extends LazyFragment {
 
@@ -31,7 +33,13 @@ public class FavoriteFragment extends LazyFragment {
 	public void finishCreateView(Bundle state) {
 		mSwipeRefreshLayout = $(R.id.swipe_refresh_layout);
 		mRecyclerView = $(R.id.recycler_view);
-		mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+
+		int mHorCardCount;
+		if ((mHorCardCount = Settings.getInstance(getApplicationContext()).getInt(Settings.KEY_CARDS_COUNT, -1)) < 1) {
+			mHorCardCount = Utility.getHorizontalCardCountInScreen(getActivity());
+		}
+
+		mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(mHorCardCount, StaggeredGridLayoutManager.VERTICAL));
 		mRecyclerView.setHasFixedSize(false);
 
 		mAdapter = new BookListRecyclerAdapter(mRecyclerView, getFavoritesManager());
@@ -80,8 +88,7 @@ public class FavoriteFragment extends LazyFragment {
 		@Override
 		protected void onPostExecute(Void result) {
 			mSwipeRefreshLayout.setRefreshing(false);
-			mAdapter = new BookListRecyclerAdapter(mRecyclerView, getFavoritesManager());
-			setRecyclerViewAdapter(mAdapter);
+			mAdapter.notifyDataSetChanged();
 		}
 
 	}

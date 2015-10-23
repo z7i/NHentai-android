@@ -36,6 +36,7 @@
 
 	<style name="Theme.NHBooks.Light.NewHome" parent="Theme.NHBooks.Light.DarkActionBar">
 		<item name="android:windowBackground">@color/deep_purple_500</item>
+		<item name="android:statusBarColor">?attr/colorPrimaryDark</item>
 	</style>
 
 </resources>

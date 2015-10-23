@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.SeekBar;
 
 import com.google.gson.Gson;
 
@@ -25,7 +27,6 @@ import moe.feng.nhentai.ui.common.AbsActivity;
 import moe.feng.nhentai.util.FullScreenHelper;
 import moe.feng.nhentai.util.Utility;
 import moe.feng.nhentai.util.task.PageDownloader;
-import moe.feng.nhentai.view.SeekBar;
 
 public class GalleryActivity extends AbsActivity {
 
@@ -35,7 +36,7 @@ public class GalleryActivity extends AbsActivity {
 	private ViewPager mPager;
 	private GalleryPagerAdapter mPagerAdpater;
 	private View mAppBar, mBottomBar;
-	private SeekBar mSeekBar;
+	private AppCompatSeekBar mSeekBar;
 	private AppCompatTextView mTotalPagesText;
 
 	private FullScreenHelper mFullScreenHelper;
@@ -145,7 +146,7 @@ public class GalleryActivity extends AbsActivity {
 
 			@Override
 			public void onPageSelected(int position) {
-				mSeekBar.setValue(position + 1, true);
+				mSeekBar.setProgress(position);
 				mDownloader.setCurrentPosition(position);
 			}
 
@@ -156,17 +157,28 @@ public class GalleryActivity extends AbsActivity {
 		});
 
 		mTotalPagesText.setText(String.format(getString(R.string.info_total_pages), book.pageCount));
-		mSeekBar.setValueRange(1, book.pageCount, false);
-		mSeekBar.setValue(page_num + 1, false);
-		mSeekBar.setOnTouchListener(new View.OnTouchListener() {
-			// TODO Maybe it will cause some problems if using OnPositionChangedListener.
+		mSeekBar.setKeyProgressIncrement(1);
+		mSeekBar.setMax(book.pageCount - 1);
+		mSeekBar.setProgress(page_num);
+		mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+			int progress = 0;
+
 			@Override
-			public boolean onTouch(View view, MotionEvent motionEvent) {
-				if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-					mPager.setCurrentItem(mSeekBar.getValue() - 1, false);
-				}
-				return view.onTouchEvent(motionEvent);
+			public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+				progress = i;
 			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+
+			}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				mPager.setCurrentItem(progress, false);
+			}
+
 		});
 	}
 
@@ -210,6 +222,7 @@ public class GalleryActivity extends AbsActivity {
 		public void onFinish(int position, int progress) {
 			if (mPagerAdpater != null) {
 				mPagerAdpater.notifyPageImageLoaded(position, true);
+				mSeekBar.setSecondaryProgress(position);
 			}
 		}
 

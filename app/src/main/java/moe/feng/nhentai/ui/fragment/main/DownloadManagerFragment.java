@@ -18,6 +18,8 @@ import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.ui.common.LazyFragment;
 import moe.feng.nhentai.util.AsyncTask;
+import moe.feng.nhentai.util.Settings;
+import moe.feng.nhentai.util.Utility;
 
 public class DownloadManagerFragment extends LazyFragment {
 
@@ -40,7 +42,13 @@ public class DownloadManagerFragment extends LazyFragment {
 	public void finishCreateView(Bundle state) {
 		mSwipeRefreshLayout = $(R.id.swipe_refresh_layout);
 		mRecyclerView = $(R.id.recycler_view);
-		mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+
+		int mHorCardCount;
+		if ((mHorCardCount = Settings.getInstance(getApplicationContext()).getInt(Settings.KEY_CARDS_COUNT, -1)) < 1) {
+			mHorCardCount = Utility.getHorizontalCardCountInScreen(getActivity());
+		}
+
+		mLayoutManager = new StaggeredGridLayoutManager(mHorCardCount, StaggeredGridLayoutManager.VERTICAL);
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		mRecyclerView.setHasFixedSize(true);
 
@@ -97,11 +105,9 @@ public class DownloadManagerFragment extends LazyFragment {
 		@Override
 		protected void onPostExecute(ArrayList<Book> books) {
 			mSwipeRefreshLayout.setRefreshing(false);
-			mBooks = books;
-			if (!mBooks.isEmpty()) {
-				mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, getFavoritesManager());
-				setRecyclerViewAdapter(mAdapter);
-			}
+			mBooks.clear();
+			mBooks.addAll(books);
+			mAdapter.notifyDataSetChanged();
 		}
 
 	}

@@ -22,9 +22,9 @@
             <moe.feng.nhentai.view.WheelProgressView
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:layout_gravity="center"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="48dp"
-                android:layout_marginBottom="128dp"
+                android:layout_marginBottom="48dp"
                 android:id="@+id/wheel_progress"
                 app:matProg_barColor="@color/pink_500"
                 app:matProg_barWidth="4dp"/>
@@ -83,11 +83,24 @@
 		android:background="?attr/colorPrimary"
 		android:id="@+id/appbar_container">
 
-		<ImageView
+		<FrameLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:id="@+id/preview_image"
-			android:scaleType="centerCrop"/>
+			android:id="@+id/image_container">
+
+			<ImageView
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:id="@+id/preview_placeholder"
+				android:scaleType="centerCrop"/>
+
+			<ImageView
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:id="@+id/preview_image"
+				android:scaleType="centerCrop"/>
+
+		</FrameLayout>
 
 		<View
 			android:layout_width="match_parent"

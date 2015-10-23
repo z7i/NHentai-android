@@ -59,8 +59,8 @@ import moe.feng.nhentai.view.WheelProgressView;
 public class BookDetailsActivity extends AbsActivity implements ObservableScrollView.OnScrollChangeListener {
 
 	private ObservableScrollView mScrollView;
-	private FrameLayout mAppBarContainer;
-	private ImageView mImageView;
+	private FrameLayout mAppBarContainer, mImageContainer;
+	private ImageView mImageView, mImagePlaceholderView;
 	private FloatingActionButton mFAB;
 	private TextView mTitleText;
 	private LinearLayout mTagsLayout;
@@ -127,6 +127,11 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		FileCacheManager cm = FileCacheManager.getInstance(getApplicationContext());
+
+		int color = ColorGenerator.MATERIAL.getColor(book.title);
+		TextDrawable textDrawable = TextDrawable.builder().buildRect(Utility.getFirstCharacter(book.title), color);
+		mImagePlaceholderView.setImageDrawable(textDrawable);
+
 		if (book.galleryId != null) {
 			if (cm.cacheExistsUrl(Constants.CACHE_COVER, book.bigCoverImageUrl)) {
 				if (cm.cacheExistsUrl(Constants.CACHE_PAGE_IMG,
@@ -151,9 +156,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 							.centerCrop()
 							.into(mImageView);
 				} else {
-					int color = ColorGenerator.MATERIAL.getColor(book.title);
-					TextDrawable drawable = TextDrawable.builder().buildRect(book.title.substring(0, 1), color);
-					mImageView.setImageDrawable(drawable);
+					mImageView.setImageDrawable(textDrawable);
 				}
 				new CoverTask().execute(book);
 			}
@@ -190,7 +193,9 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	protected void setUpViews() {
 		mAppBarContainer = $(R.id.appbar_container);
 		mAppBarBackground = $(R.id.appbar_background);
+		mImageContainer = $(R.id.image_container);
 		mImageView = $(R.id.preview_image);
+		mImagePlaceholderView = $(R.id.preview_placeholder);
 		mFAB = $(R.id.fab);
 		mTitleText = $(R.id.tv_title);
 		mTagsLayout = $(R.id.book_tags_layout);
@@ -202,7 +207,11 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mPreviewList.setHasFixedSize(true);
 		mPreviewList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2, LinearLayoutManager.HORIZONTAL, false));
 
-		mFAB.setTranslationY(-getResources().getDimension(R.dimen.floating_action_button_size_half));
+		float fabTranslationY = -getResources().getDimension(R.dimen.floating_action_button_size_half);
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+			fabTranslationY -= getResources().getDimension(R.dimen.fab_transition_z) * 2;
+		}
+		mFAB.setTranslationY(fabTranslationY);
 		mScrollView.addOnScrollChangeListener(this);
 	}
 
@@ -224,7 +233,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			showFAB();
 		}
 
-		mImageView.setTranslationY(target * 0.7f);
+		mImageContainer.setTranslationY(target * 0.7f);
 	}
 
 	public static void launch(Activity activity, ImageView imageView, Book book, int fromPosition) {

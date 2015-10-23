@@ -3,6 +3,7 @@ package moe.feng.nhentai.util;
 import android.content.Context;
 import android.os.Build;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -106,6 +107,23 @@ public class Utility {
 
 	public static int calcProgress(int progress, int max) {
 		return (int) (((float) progress)/((float) max) * 100);
+	}
+
+	public static int getHorizontalCardCountInScreen(Context context) {
+		WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		DisplayMetrics dm = new DisplayMetrics();
+		wm.getDefaultDisplay().getMetrics(dm);
+
+		float scale = context.getResources().getDisplayMetrics().density;
+		int widthDps = (int) (dm.widthPixels / scale + 0.5f);
+		int count = 2;
+
+		Log.i("CardCount", "widthDps:" + widthDps);
+
+		while (widthDps / count > 260) count++;
+		while (widthDps / count < 180) count--;
+
+		return count;
 	}
 
 }

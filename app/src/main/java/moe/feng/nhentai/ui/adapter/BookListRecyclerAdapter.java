@@ -38,7 +38,7 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 	public static final String TAG = BookListRecyclerAdapter.class.getSimpleName();
 
 	public BookListRecyclerAdapter(RecyclerView recyclerView, FavoritesManager fm) {
-		this(recyclerView, fm.toArray(), fm);
+		this(recyclerView, null, fm);
 	}
 
 	public BookListRecyclerAdapter(RecyclerView recyclerView, ArrayList<Book> data, FavoritesManager fm) {
@@ -65,6 +65,7 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 	public void onBindViewHolder(ClickableViewHolder holder, final int position) {
 		super.onBindViewHolder(holder, position);
 		if (holder instanceof ViewHolder) {
+			ArrayList<Book> data = this.data == null ? fm.toArray() : this.data;
 			final ViewHolder mHolder = (ViewHolder) holder;
 			mHolder.mTitleTextView.setText(data.get(position).title);
 			String previewImageUrl = data.get(position).previewImageUrl;
@@ -79,6 +80,8 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 				vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 					@Override
 					public void onGlobalLayout() {
+						ArrayList<Book> data = BookListRecyclerAdapter.this.data == null ?
+								fm.toArray() : BookListRecyclerAdapter.this.data;
 						if (data.size() < position + 1) return;
 						int thumbWidth = data.get(position).thumbWidth;
 						int thumbHeight = data.get(position).thumbHeight;
@@ -108,6 +111,7 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 
 	@Override
 	public int getItemCount() {
+		ArrayList<Book> data = this.data == null ? fm.toArray() : this.data;
 		return data.size();
 	}
 
