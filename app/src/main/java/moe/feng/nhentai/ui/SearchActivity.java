@@ -61,7 +61,6 @@ public class SearchActivity extends AbsActivity {
 
 	private FavoritesManager mFM;
 	private SearchHistoryManager mHM;
-	private Settings mSets;
 
 	private InputMethodManager imm;
 
@@ -73,7 +72,6 @@ public class SearchActivity extends AbsActivity {
 
 		mFM = FavoritesManager.getInstance(getApplicationContext());
 		mHM = SearchHistoryManager.getInstance(getApplicationContext(), "all");
-		mSets = Settings.getInstance(getApplicationContext());
 		imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		setContentView(R.layout.activity_search);
@@ -118,7 +116,7 @@ public class SearchActivity extends AbsActivity {
 		mResultList.setHasFixedSize(true);
 
 		mBooks = new ArrayList<>();
-		mAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM);
+		mAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM, mSets);
 		setResultListAdapter(mAdapter);
 
 		mSwipeRefreshLayout.setColorSchemeResources(
@@ -133,7 +131,7 @@ public class SearchActivity extends AbsActivity {
 				}
 
 				mBooks = new ArrayList<>();
-				mAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM);
+				mAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM, mSets);
 				setResultListAdapter(mAdapter);
 				new PageGetTask().execute(mNowPage = 1);
 			}
@@ -239,7 +237,7 @@ public class SearchActivity extends AbsActivity {
 
 		mSwipeRefreshLayout.setRefreshing(true);
 		mBooks = new ArrayList<>();
-		mAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM);
+		mAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM, mSets);
 		setResultListAdapter(mAdapter);
 		new PageGetTask().execute(mNowPage = 1);
 

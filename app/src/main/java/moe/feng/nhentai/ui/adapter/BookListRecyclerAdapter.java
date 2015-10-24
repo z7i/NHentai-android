@@ -25,6 +25,7 @@ import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.util.AsyncTask;
 import moe.feng.nhentai.util.ColorGenerator;
+import moe.feng.nhentai.util.Settings;
 import moe.feng.nhentai.util.TextDrawable;
 import moe.feng.nhentai.util.Utility;
 
@@ -32,19 +33,21 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 
 	private ArrayList<Book> data;
 	private FavoritesManager fm;
+	private Settings sets;
 
 	private ColorGenerator mColorGenerator;
 
 	public static final String TAG = BookListRecyclerAdapter.class.getSimpleName();
 
-	public BookListRecyclerAdapter(RecyclerView recyclerView, FavoritesManager fm) {
-		this(recyclerView, null, fm);
+	public BookListRecyclerAdapter(RecyclerView recyclerView, FavoritesManager fm, Settings sets) {
+		this(recyclerView, null, fm, sets);
 	}
 
-	public BookListRecyclerAdapter(RecyclerView recyclerView, ArrayList<Book> data, FavoritesManager fm) {
+	public BookListRecyclerAdapter(RecyclerView recyclerView, ArrayList<Book> data, FavoritesManager fm, Settings sets) {
 		super(recyclerView);
 		this.data = data;
 		this.fm = fm;
+		this.sets = sets;
 		mColorGenerator = ColorGenerator.MATERIAL;
 	}
 
@@ -126,7 +129,8 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 			if (v != null && !TextUtils.isEmpty(book.previewImageUrl)) {
 				ImageView imgView = h.mPreviewImageView;
 
-				File img = BookApi.getThumbFile(getContext(), book);
+				boolean useHdImage = sets != null && sets.getBoolean(Settings.KEY_LIST_HD_IMAGE, false);
+				File img = useHdImage ? BookApi.getCoverFile(getContext(), book) : BookApi.getThumbFile(getContext(), book);
 
 				if (img != null) {
 					publishProgress(new Object[]{v, img, imgView, book});

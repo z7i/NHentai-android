@@ -89,6 +89,8 @@
     <string name="action_clear">清除文本</string>
 
     <string name="settings_main">設置</string>
+    <string name="snackbar_need_restart">你需要重新啟動程式以應用變更。</string>
+    <string name="snackbar_need_restart_action">現在重啟</string>
     <string name="category_options">應用程式設定</string>
     <string name="category_about">關於</string>
     <string name="set_title_app_version">應用程式版本</string>
@@ -102,6 +104,9 @@
     <string name="set_title_alipay">捐贈支持(支付寶)</string>
     <string name="set_title_alipay_address">316643843\@qq.com</string>
     <string name="category_ui">介面樣式</string>
+    <string name="category_list">列表</string>
+    <string name="set_title_hd_image">載入高質量預覽圖像</string>
+    <string name="set_title_hd_image_summary">這會消耗更多的流量與內存</string>
     <string name="set_title_cards_count">橫向卡片數量</string>
     <string name="set_title_cards_count_summary">當前值: %s</string>
     <string-array name="set_cards_count_options">

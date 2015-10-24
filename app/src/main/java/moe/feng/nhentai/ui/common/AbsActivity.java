@@ -13,12 +13,14 @@ import android.view.MenuItem;
 import android.view.View;
 
 import moe.feng.nhentai.R;
+import moe.feng.nhentai.util.Settings;
 import moe.feng.nhentai.util.Utility;
 
 public abstract class AbsActivity extends AppCompatActivity {
 
 	protected Toolbar mToolbar;
 	protected ActionBar mActionBar;
+	protected Settings mSets;
 
 	protected int statusBarHeight = 0;
 
@@ -40,6 +42,8 @@ public abstract class AbsActivity extends AppCompatActivity {
 		}
 
 		super.onCreate(savedInstanceState);
+
+		mSets = Settings.getInstance(getApplicationContext());
 	}
 
 	protected abstract void setUpViews();

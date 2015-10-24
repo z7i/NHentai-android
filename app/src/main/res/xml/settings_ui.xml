@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<PreferenceCategory android:key="ui" android:title="@string/category_ui">
+	<PreferenceCategory android:key="ui" android:title="@string/category_list">
+
+		<moe.feng.nhentai.view.pref.SwitchPreference
+			android:key="hd_image"
+		    android:title="@string/set_title_hd_image"
+		    android:summary="@string/set_title_hd_image_summary"/>
 
 		<moe.feng.nhentai.view.pref.Preference
 			android:key="card_count"

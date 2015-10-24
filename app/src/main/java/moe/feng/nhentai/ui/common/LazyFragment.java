@@ -10,11 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import moe.feng.nhentai.util.Settings;
+
 public abstract class LazyFragment extends Fragment {
 
 	private View parentView;
 	private Activity activity;
 	protected Handler mHandler;
+	protected Settings mSets;
 
 	public abstract @LayoutRes int getLayoutResId();
 
@@ -22,6 +25,7 @@ public abstract class LazyFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
 		parentView = inflater.inflate(getLayoutResId(), container, false);
 		activity = getActivity();
+		mSets = Settings.getInstance(getApplicationContext());
 		finishCreateView(state);
 		return parentView;
 	}
@@ -32,6 +36,9 @@ public abstract class LazyFragment extends Fragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		this.activity = activity;
+		if (mSets == null) {
+			mSets = Settings.getInstance(getApplicationContext());
+		}
 	}
 
 	@Override

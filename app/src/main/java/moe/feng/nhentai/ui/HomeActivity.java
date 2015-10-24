@@ -150,12 +150,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 		if (mListKeeper.getData() != null && mListKeeper.getUpdatedMiles() != -1) {
 			mBooks = mListKeeper.getData();
-			mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM);
+			mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
 			setRecyclerAdapter(mAdapter);
 			isFirstLoad = false;
 		} else {
 			mBooks = new ArrayList<>();
-			mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM);
+			mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
 			setRecyclerAdapter(mAdapter);
 			new PageGetTask().execute(mNowPage);
 		}

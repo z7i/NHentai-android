@@ -38,7 +38,6 @@ public class CategoryActivity extends AbsActivity {
 
 	private FavoritesManager mFM;
 	private FavoriteCategoriesManager mFCM;
-	private Settings mSets;
 
 	private RecyclerView mRecyclerView;
 	private BookListRecyclerAdapter mAdapter;
@@ -71,7 +70,6 @@ public class CategoryActivity extends AbsActivity {
 
 		mFM = FavoritesManager.getInstance(getApplicationContext());
 		mFCM = FavoriteCategoriesManager.getInstance(getApplicationContext());
-		mSets = Settings.getInstance(getApplicationContext());
 
 		isFavorite = mFCM.contains(category);
 
@@ -126,7 +124,7 @@ public class CategoryActivity extends AbsActivity {
 		mRecyclerView.setHasFixedSize(true);
 
 		mBooks = new ArrayList<>();
-		mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM);
+		mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
 		setRecyclerViewAdapter(mAdapter);
 
 		mSwipeRefreshLayout.setColorSchemeResources(
@@ -142,7 +140,7 @@ public class CategoryActivity extends AbsActivity {
 
 				isAllowToLoadNextPage = true;
 				mBooks = new ArrayList<>();
-				mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM);
+				mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
 				setRecyclerViewAdapter(mAdapter);
 				new PageGetTask().execute(mNowPage = 1);
 			}

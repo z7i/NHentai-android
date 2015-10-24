@@ -42,7 +42,7 @@ public class FavoriteFragment extends LazyFragment {
 		mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(mHorCardCount, StaggeredGridLayoutManager.VERTICAL));
 		mRecyclerView.setHasFixedSize(false);
 
-		mAdapter = new BookListRecyclerAdapter(mRecyclerView, getFavoritesManager());
+		mAdapter = new BookListRecyclerAdapter(mRecyclerView, getFavoritesManager(), mSets);
 		setRecyclerViewAdapter(mAdapter);
 
 		mSwipeRefreshLayout.setColorSchemeResources(

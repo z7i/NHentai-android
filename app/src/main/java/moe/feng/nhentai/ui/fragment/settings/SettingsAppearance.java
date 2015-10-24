@@ -2,7 +2,6 @@ package moe.feng.nhentai.ui.fragment.settings;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.AppCompatTextView;
@@ -14,21 +13,25 @@ import android.widget.SeekBar;
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.util.Settings;
 import moe.feng.nhentai.view.pref.Preference;
+import moe.feng.nhentai.view.pref.SwitchPreference;
 
-public class SettingsAppearance extends PreferenceFragment implements Preference.OnPreferenceClickListener {
+public class SettingsAppearance extends PreferenceFragment implements Preference.OnPreferenceClickListener, android.preference.Preference.OnPreferenceChangeListener {
 
 	private Preference mCardCountPref;
-
-	private Settings mSets;
+	private SwitchPreference mHDImagePref;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.settings_ui);
 
-		mSets = Settings.getInstance(getActivity());
+		getActivity().setTitle(R.string.category_ui);
+
 
 		mCardCountPref = (Preference) findPreference("card_count");
+		mHDImagePref = (SwitchPreference) findPreference("hd_image");
+
+
 		int cardCount = mSets.getInt(Settings.KEY_CARDS_COUNT, -1);
 		mCardCountPref.setSummary(
 				getString(
@@ -38,8 +41,10 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 								String.valueOf(cardCount)
 				)
 		);
+		mHDImagePref.setChecked(mSets.getBoolean(Settings.KEY_LIST_HD_IMAGE, false));
 
 		mCardCountPref.setOnPreferenceClickListener(this);
+		mHDImagePref.setOnPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -64,6 +69,7 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 											getResources().getStringArray(R.array.set_cards_count_options)[0]
 									)
 							);
+							showRestartTips();
 						} else {
 							showCardCountCustomDialog();
 						}
@@ -123,9 +129,22 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 										String.valueOf(seekBar.getProgress() + 1)
 								)
 						);
+						showRestartTips();
 					}
 				})
 				.show();
+	}
+
+	@Override
+	public boolean onPreferenceChange(android.preference.Preference pref, Object o) {
+		if (pref == mHDImagePref) {
+			Boolean b = (Boolean) o;
+			mSets.putBoolean(Settings.KEY_LIST_HD_IMAGE, b);
+			mHDImagePref.setChecked(b);
+			showRestartTips();
+			return true;
+		}
+		return false;
 	}
 
 }

@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
+import android.view.View;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.ui.common.AbsActivity;
@@ -52,6 +54,21 @@ public class SettingsActivity extends AbsActivity {
 				.commit();
 	}
 
+	public void showRestartTips() {
+		Snackbar.make(
+				$(R.id.container),
+				R.string.snackbar_need_restart,
+				Snackbar.LENGTH_LONG
+		).setAction(R.string.snackbar_need_restart_action, new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
+				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(i);
+				finish();
+			}
+		}).show();
+	}
 
 	public static void launchActivity(Activity mActivity, int flag) {
 		Intent intent = new Intent(mActivity, SettingsActivity.class);

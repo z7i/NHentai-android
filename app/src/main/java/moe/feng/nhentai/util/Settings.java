@@ -8,7 +8,8 @@ public class Settings {
 
 	public static final String PREFERENCES_NAME = "settings";
 
-	public static final String KEY_CELEBRATE = "celebrate", KEY_CARDS_COUNT = "cards_count";
+	public static final String KEY_CELEBRATE = "celebrate", KEY_CARDS_COUNT = "cards_count",
+			KEY_LIST_HD_IMAGE = "list_hd_image";
 
 	private static Settings sInstance;
 

@@ -1,9 +1,6 @@
 package moe.feng.nhentai.ui.fragment.settings;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.ui.SettingsActivity;
@@ -70,11 +67,6 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 			return true;
 		}
 		return false;
-	}
-
-	private void openWebUrl(String url) {
-		Uri uri = Uri.parse(url);
-		startActivity(new Intent(Intent.ACTION_VIEW, uri));
 	}
 
 }

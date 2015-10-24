@@ -53,7 +53,7 @@ public class DownloadManagerFragment extends LazyFragment {
 		mRecyclerView.setHasFixedSize(true);
 
 		mBooks = new ArrayList<>();
-		mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, getFavoritesManager());
+		mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, getFavoritesManager(), mSets);
 		setRecyclerViewAdapter(mAdapter);
 
 		mSwipeRefreshLayout.setColorSchemeResources(
