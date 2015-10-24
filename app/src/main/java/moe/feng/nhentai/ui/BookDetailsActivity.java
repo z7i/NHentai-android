@@ -295,6 +295,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			AutoWrapLayout tagLayout = new AutoWrapLayout(this);
 
 			TextView groupNameView = new TextView(this);
+			groupNameView.setPadding(0, y, 0, y);
 			groupNameView.setMinWidth(min_width);
 			groupNameView.setText(R.string.tag_type_parodies);
 			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -329,6 +330,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			AutoWrapLayout tagLayout = new AutoWrapLayout(this);
 
 			TextView groupNameView = new TextView(this);
+			groupNameView.setPadding(0, y, 0, y);
 			groupNameView.setMinWidth(min_width);
 			groupNameView.setText(R.string.tag_type_characters);
 			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -365,6 +367,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			AutoWrapLayout tagLayout = new AutoWrapLayout(this);
 
 			TextView groupNameView = new TextView(this);
+			groupNameView.setPadding(0, y, 0, y);
 			groupNameView.setMinWidth(min_width);
 			groupNameView.setText(R.string.tag_type_tag);
 			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -401,6 +404,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			AutoWrapLayout tagLayout = new AutoWrapLayout(this);
 
 			TextView groupNameView = new TextView(this);
+			groupNameView.setPadding(0, y, 0, y);
 			groupNameView.setMinWidth(min_width);
 			groupNameView.setText(R.string.tag_type_artists);
 			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -437,6 +441,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			AutoWrapLayout tagLayout = new AutoWrapLayout(this);
 
 			TextView groupNameView = new TextView(this);
+			groupNameView.setPadding(0, y, 0, y);
 			groupNameView.setMinWidth(min_width);
 			groupNameView.setText(R.string.tag_type_group);
 			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -471,6 +476,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			AutoWrapLayout tagLayout = new AutoWrapLayout(this);
 
 			TextView groupNameView = new TextView(this);
+			groupNameView.setPadding(0, y, 0, y);
 			groupNameView.setText(R.string.tag_type_language);
 			LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
 					LinearLayout.LayoutParams.WRAP_CONTENT,
