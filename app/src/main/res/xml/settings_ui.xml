@@ -14,4 +14,13 @@
 
 	</PreferenceCategory>
 
+	<PreferenceCategory android:key="info_page" android:title="@string/category_details">
+
+		<moe.feng.nhentai.view.pref.SwitchPreference
+			android:key="full_image_preview"
+			android:title="@string/set_title_full_image_in_details"
+			android:summary="@string/set_title_full_image_in_details_summary"/>
+
+	</PreferenceCategory>
+
 </PreferenceScreen>

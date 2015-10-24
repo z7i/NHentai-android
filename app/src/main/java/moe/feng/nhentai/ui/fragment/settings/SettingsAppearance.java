@@ -18,7 +18,7 @@ import moe.feng.nhentai.view.pref.SwitchPreference;
 public class SettingsAppearance extends PreferenceFragment implements Preference.OnPreferenceClickListener, android.preference.Preference.OnPreferenceChangeListener {
 
 	private Preference mCardCountPref;
-	private SwitchPreference mHDImagePref;
+	private SwitchPreference mHDImagePref, mFullHDPreviewPref;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -27,10 +27,9 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 
 		getActivity().setTitle(R.string.category_ui);
 
-
 		mCardCountPref = (Preference) findPreference("card_count");
 		mHDImagePref = (SwitchPreference) findPreference("hd_image");
-
+		mFullHDPreviewPref = (SwitchPreference) findPreference("full_image_preview");
 
 		int cardCount = mSets.getInt(Settings.KEY_CARDS_COUNT, -1);
 		mCardCountPref.setSummary(
@@ -42,9 +41,11 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 				)
 		);
 		mHDImagePref.setChecked(mSets.getBoolean(Settings.KEY_LIST_HD_IMAGE, false));
+		mFullHDPreviewPref.setChecked(mSets.getBoolean(Settings.KEY_FULL_IMAGE_PREVIEW, false));
 
 		mCardCountPref.setOnPreferenceClickListener(this);
 		mHDImagePref.setOnPreferenceChangeListener(this);
+		mFullHDPreviewPref.setOnPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -142,6 +143,12 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 			mSets.putBoolean(Settings.KEY_LIST_HD_IMAGE, b);
 			mHDImagePref.setChecked(b);
 			showRestartTips();
+			return true;
+		}
+		if (pref == mFullHDPreviewPref) {
+			Boolean b = (Boolean) o;
+			mSets.putBoolean(Settings.KEY_FULL_IMAGE_PREVIEW, b);
+			mFullHDPreviewPref.setChecked(b);
 			return true;
 		}
 		return false;

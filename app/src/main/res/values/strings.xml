@@ -117,5 +117,8 @@
         <item>-1</item>
         <item>0</item>
     </string-array>
+	<string name="category_details">Info page</string>
+	<string name="set_title_full_image_in_details">Load Full HD images as preview</string>
+	<string name="set_title_full_image_in_details_summary">It will consume plenty of data usage and memory.</string>
 
 </resources>

@@ -117,6 +117,8 @@
         <item>-1</item>
         <item>0</item>
     </string-array>
-
+    <string name="category_details">信息页面</string>
+    <string name="set_title_full_image_in_details">加载全高清图片作预览图</string>
+    <string name="set_title_full_image_in_details_summary">这样会消耗大量流量和内存（壕任性选项）</string>
 
 </resources>

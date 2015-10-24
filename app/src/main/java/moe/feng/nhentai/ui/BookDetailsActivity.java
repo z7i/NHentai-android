@@ -37,6 +37,7 @@ import java.io.File;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.BookApi;
+import moe.feng.nhentai.api.PageApi;
 import moe.feng.nhentai.api.common.NHentaiUrl;
 import moe.feng.nhentai.cache.common.Constants;
 import moe.feng.nhentai.cache.file.FileCacheManager;
@@ -49,6 +50,7 @@ import moe.feng.nhentai.ui.common.AbsActivity;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.util.AsyncTask;
 import moe.feng.nhentai.util.ColorGenerator;
+import moe.feng.nhentai.util.Settings;
 import moe.feng.nhentai.util.TextDrawable;
 import moe.feng.nhentai.util.Utility;
 import moe.feng.nhentai.util.task.PageDownloader;
@@ -147,6 +149,9 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 							.fit()
 							.centerCrop()
 							.into(mImageView);
+					if (mSets.getBoolean(Settings.KEY_FULL_IMAGE_PREVIEW, false)) {
+						new CoverTask().execute(book);
+					}
 				}
 			} else {
 				if (cm.cacheExistsUrl(Constants.CACHE_THUMB, book.previewImageUrl)) {
@@ -988,11 +993,16 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 		@Override
 		protected File doInBackground(Book... params) {
-			return BookApi.getCoverFile(BookDetailsActivity.this, params[0]);
+			if (mSets.getBoolean(Settings.KEY_FULL_IMAGE_PREVIEW, false)) {
+				return PageApi.getPageOriginImageFile(BookDetailsActivity.this, params[0], 1);
+			} else {
+				return BookApi.getCoverFile(BookDetailsActivity.this, params[0]);
+			}
 		}
 
 		@Override
 		protected void onPostExecute(File result) {
+			mImageView.setImageBitmap(null);
 			Picasso.with(getApplicationContext())
 					.load(result)
 					.into(mImageView);

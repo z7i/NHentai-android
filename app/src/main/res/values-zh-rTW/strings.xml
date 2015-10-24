@@ -117,5 +117,8 @@
         <item>-1</item>
         <item>0</item>
     </string-array>
+    <string name="category_details">資料頁面</string>
+    <string name="set_title_full_image_in_details">載入原圖作預覽圖像</string>
+    <string name="set_title_full_image_in_details_summary">這會消耗大量流量和內存（壕任性選項）</string>
 
 </resources>
