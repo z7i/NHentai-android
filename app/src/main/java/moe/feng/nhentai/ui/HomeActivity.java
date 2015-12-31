@@ -66,6 +66,7 @@ import moe.feng.nhentai.ui.fragment.main.DownloadManagerFragment;
 import moe.feng.nhentai.ui.fragment.main.FavoriteCategoryFragment;
 import moe.feng.nhentai.ui.fragment.main.FavoriteFragment;
 import moe.feng.nhentai.util.AsyncTask;
+import moe.feng.nhentai.util.CrashHandler;
 import moe.feng.nhentai.util.FilesUtil;
 import moe.feng.nhentai.util.Settings;
 import moe.feng.nhentai.util.Utility;
@@ -136,6 +137,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		mSets = Settings.getInstance(getApplicationContext());
+		CrashHandler.init(getApplicationContext());
+		CrashHandler.register();
 
 		/** Set up translucent status bar */
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

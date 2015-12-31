@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nvanbenschoten.motion.ParallaxImageView;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -62,7 +63,8 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 	private ObservableScrollView mScrollView;
 	private FrameLayout mAppBarContainer, mImageContainer;
-	private ImageView mImageView, mImagePlaceholderView;
+	private ImageView mImagePlaceholderView;
+	private ParallaxImageView mImageView;
 	private FloatingActionButton mFAB;
 	private TextView mTitleText;
 	private LinearLayout mTagsLayout;
@@ -226,6 +228,18 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		mImageView.registerSensorManager(10);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		mImageView.unregisterSensorManager();
+	}
+
+	@Override
 	public void onScrollChanged(ObservableScrollView view, int x, int y, int oldx, int oldy) {
 		setViewsTranslation(Math.min(minHeight, y));
 	}
@@ -258,6 +272,12 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		$(R.id.toolbar).invalidate();
 
 		mFAB.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				GalleryActivity.launch(BookDetailsActivity.this, book, 0);
+			}
+		});
+		$(R.id.appbar_container).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				GalleryActivity.launch(BookDetailsActivity.this, book, 0);
