@@ -6,6 +6,11 @@
     <string name="action_search">搜索</string>
     <string name="action_next_page">加载下一页</string>
 
+    <!-- Initial -->
+    <string name="dialog_permission_title">权限需要</string>
+    <string name="dialog_permission_msg">NH 本子需要读写储存权限以缓存图片。缺少权限可能会导致本应用无法正常工作。</string>
+    <string name="snack_permission_failed">权限请求被拒绝了QAQ</string>
+
     <!-- New Home Design -->
     <string name="search_bar_hint">在这里搜索本子....</string>
     <string name="title_bar_main_recent">最新本子</string>

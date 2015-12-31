@@ -6,6 +6,11 @@
     <string name="action_search">搜尋</string>
     <string name="action_next_page">加載下一頁</string>
 
+    <!-- Initial -->
+    <string name="dialog_permission_title">權限請求</string>
+    <string name="dialog_permission_msg">NH 本子需要讀寫儲存權限以生成圖片快取。缺少權限可能會導致本應用程式無法正常運作。</string>
+	<string name="snack_permission_failed">權限請求被拒絕了QAQ</string>
+
     <!-- New Home Design -->
     <string name="search_bar_hint">在這裡搜尋本子....</string>
     <string name="title_bar_main_recent">最新本子</string>

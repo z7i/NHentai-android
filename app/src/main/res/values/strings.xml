@@ -6,7 +6,12 @@
     <string name="action_search">Search</string>
     <string name="action_next_page">Load next page</string>
 
-    <!-- New Home Design -->
+	<!-- Initial -->
+	<string name="dialog_permission_title">Permission is needed</string>
+	<string name="dialog_permission_msg">NHBooks needs the permission of reading and writing external storage to cache images. Without them, this app could not work well.</string>
+	<string name="snack_permission_failed">The request of permissions is denied!</string>
+
+	<!-- New Home Design -->
     <string name="search_bar_hint">Search books here....</string>
 	<string name="title_bar_main_recent">Latest books</string>
 	<string name="title_bar_updated_time_just_now">Updated just now</string>

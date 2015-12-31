@@ -1,7 +1,10 @@
 package moe.feng.nhentai.ui;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -13,11 +16,14 @@ import android.support.annotation.DimenRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.CardView;
@@ -123,6 +129,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 	public static final String TAG = HomeActivity.class.getSimpleName();
 
+	private static final int REQUEST_CODE_PERMISSION_GET = 101;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		mSets = Settings.getInstance(getApplicationContext());
@@ -159,6 +167,35 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			setRecyclerAdapter(mAdapter);
 			new PageGetTask().execute(mNowPage);
 		}
+
+		if (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+			onLoadMain();
+		} else {
+			new AlertDialog.Builder(this)
+					.setTitle(R.string.dialog_permission_title)
+					.setMessage(R.string.dialog_permission_msg)
+					.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							ActivityCompat.requestPermissions(HomeActivity.this,
+									new String[]{
+											Manifest.permission.WRITE_EXTERNAL_STORAGE,
+											Manifest.permission.READ_EXTERNAL_STORAGE
+									},
+									REQUEST_CODE_PERMISSION_GET);
+						}
+					})
+					.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialogInterface, int i) {
+							onLoadMain();
+						}
+					})
+			.show();
+		}
+	}
+
+	private void onLoadMain() {
 		mHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
@@ -294,6 +331,42 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+		if (requestCode == REQUEST_CODE_PERMISSION_GET) {
+			if (grantResults.length > 0) {
+				for (int i : grantResults) {
+					if (i == PackageManager.PERMISSION_DENIED) {
+						showPermissionDeniedSnackbar();
+						break;
+					}
+				}
+			} else {
+				showPermissionDeniedSnackbar();
+			}
+			onLoadMain();
+		}
+	}
+
+	private void showPermissionDeniedSnackbar() {
+		Snackbar.make(
+				mRecyclerView,
+				R.string.snack_permission_failed,
+				Snackbar.LENGTH_INDEFINITE)
+				.setAction(R.string.snack_action_try_again, new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						ActivityCompat.requestPermissions(HomeActivity.this,
+								new String[]{
+										Manifest.permission.WRITE_EXTERNAL_STORAGE,
+										Manifest.permission.READ_EXTERNAL_STORAGE
+								},
+								REQUEST_CODE_PERMISSION_GET);
+					}
+				})
+				.show();
 	}
 
 	private void initViews() {
