@@ -293,6 +293,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 					@Override
 					public void run() {
 						finishLaunchAnimation = true;
+						if (mSets.getInt(Settings.KEY_CELEBRATE, -1) != 2) {
+							Snackbar.make(
+									mDrawerLayout, R.string.celebrate_2016, Snackbar.LENGTH_INDEFINITE
+							).setAction(R.string.snack_action_get_it, new View.OnClickListener() {
+								@Override
+								public void onClick(View view) {
+									mSets.putInt(Settings.KEY_CELEBRATE, 2);
+								}
+							}).show();
+						}
 					}
 				}, 200);
 			}
