@@ -65,6 +65,7 @@ import moe.feng.nhentai.ui.fragment.main.DownloadManagerFragment;
 import moe.feng.nhentai.ui.fragment.main.FavoriteCategoryFragment;
 import moe.feng.nhentai.ui.fragment.main.FavoriteFragment;
 import moe.feng.nhentai.util.AsyncTask;
+import moe.feng.nhentai.util.FilesUtil;
 import moe.feng.nhentai.util.Settings;
 import moe.feng.nhentai.util.Utility;
 
@@ -170,6 +171,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		}
 
 		if (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+			if (mSets.getBoolean(Settings.KEY_NO_MEDIA, true)) {
+				FilesUtil.createNewFile(FilesUtil.NOMEDIA_FILE);
+			}
 			onLoadMain();
 		} else {
 			new AlertDialog.Builder(this)
@@ -338,11 +342,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 		if (requestCode == REQUEST_CODE_PERMISSION_GET) {
 			if (grantResults.length > 0) {
+				boolean b = true;
 				for (int i : grantResults) {
 					if (i == PackageManager.PERMISSION_DENIED) {
 						showPermissionDeniedSnackbar();
+						b = false;
 						break;
 					}
+				}
+				if (b && mSets.getBoolean(Settings.KEY_NO_MEDIA, true)) {
+					FilesUtil.createNewFile(FilesUtil.NOMEDIA_FILE);
 				}
 			} else {
 				showPermissionDeniedSnackbar();

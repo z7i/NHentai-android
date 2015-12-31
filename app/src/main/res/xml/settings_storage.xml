@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory android:key="ui" android:title="@string/category_folder">
+
+		<moe.feng.nhentai.view.pref.SwitchPreference
+			android:key="no_media"
+			android:title="@string/set_title_nomedia"
+			android:summary="@string/set_title_nomedia_summary"/>
+
+	</PreferenceCategory>
+
+</PreferenceScreen>

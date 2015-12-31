@@ -13,6 +13,7 @@ import moe.feng.nhentai.ui.common.AbsActivity;
 import moe.feng.nhentai.ui.fragment.settings.SettingsAppearance;
 import moe.feng.nhentai.ui.fragment.settings.SettingsLicense;
 import moe.feng.nhentai.ui.fragment.settings.SettingsMain;
+import moe.feng.nhentai.ui.fragment.settings.SettingsStorage;
 
 public class SettingsActivity extends AbsActivity {
 
@@ -20,7 +21,7 @@ public class SettingsActivity extends AbsActivity {
 	private int flag;
 
 	public static final String EXTRA_FLAG = "flag";
-	public static final int FLAG_MAIN = 0, FLAG_LICENSE = 1, FLAG_GUI = 2, FLAG_NETWORK = 3;
+	public static final int FLAG_MAIN = 0, FLAG_LICENSE = 1, FLAG_GUI = 2, FLAG_NETWORK = 3, FLAG_STORAGE = 4;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,8 @@ public class SettingsActivity extends AbsActivity {
 		setContentView(R.layout.activity_settings);
 
 		mActionBar.setDisplayHomeAsUpEnabled(true);
+
+		ViewCompat.setElevation($(R.id.appbar_container), getResources().getDimensionPixelSize(R.dimen.appbar_elevation));
 	}
 
 	@Override
@@ -47,6 +50,9 @@ public class SettingsActivity extends AbsActivity {
 				break;
 			case FLAG_LICENSE:
 				mFragment = new SettingsLicense();
+				break;
+			case FLAG_STORAGE:
+				mFragment = new SettingsStorage();
 				break;
 		}
 		getFragmentManager().beginTransaction()

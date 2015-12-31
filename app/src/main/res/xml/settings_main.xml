@@ -7,6 +7,10 @@
 			android:key="ui"
 			android:title="@string/category_ui"/>
 
+		<moe.feng.nhentai.view.pref.Preference
+			android:key="storage"
+			android:title="@string/settings_storage"/>
+
 	</PreferenceCategory>
 
 	<PreferenceCategory android:key="about" android:title="@string/category_about">

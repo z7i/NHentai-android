@@ -4,18 +4,26 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <moe.feng.nhentai.view.StatusBarHeaderView
+    <LinearLayout
+	    android:id="@+id/appbar_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:id="@+id/status_bar_header"
-        android:background="@color/status_bar_tint_color"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="?attr/colorPrimary">
 
-    <android.support.v7.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:id="@+id/toolbar"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+        <moe.feng.nhentai.view.StatusBarHeaderView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/status_bar_header"
+            android:background="@color/status_bar_tint_color"/>
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:id="@+id/toolbar"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

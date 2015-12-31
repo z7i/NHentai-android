@@ -125,5 +125,9 @@
     <string name="category_details">資料頁面</string>
     <string name="set_title_full_image_in_details">載入原圖作預覽圖像</string>
     <string name="set_title_full_image_in_details_summary">這會消耗大量流量和內存（壕任性選項）</string>
+	<string name="settings_storage">存儲</string>
+	<string name="category_folder">資料夾</string>
+	<string name="set_title_nomedia">在系統畫廊中隱藏已儲存的本子</string>
+	<string name="set_title_nomedia_summary">通過在資料夾內生成 \".nomedia\" 保護你的私隱</string>
 
 </resources>
