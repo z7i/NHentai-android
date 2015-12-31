@@ -22,12 +22,21 @@
 
 	</group>
 
-	<item android:title="">
+	<item android:title="@string/item_group_other">
+
 		<menu>
+			<item android:id="@+id/navigation_item_settings"
+			      android:title="@string/item_settings"/>
+
+			<item android:id="@+id/navigation_item_donate"
+			      android:title="@string/set_title_alipay"/>
+
 			<item android:id="@+id/navigation_item_open_nhentai"
 			      android:icon="@drawable/ic_open_in_new_black_24dp"
 			      android:title="@string/item_open_nhentai"/>
+
 		</menu>
+
 	</item>
 
 </menu>

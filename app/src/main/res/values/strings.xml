@@ -24,6 +24,8 @@
     <string name="item_favorite_categories">Favorite categories</string>
     <string name="item_tag">Tags</string>
     <string name="item_character">Characters</string>
+	<string name="item_group_other">Other</string>
+	<string name="item_settings">Settings</string>
 	<string name="item_open_nhentai">Open NHentai.net</string>
 
     <string name="title_page_latest">Latest</string>
@@ -129,5 +131,10 @@
 	<string name="category_folder">Folder</string>
 	<string name="set_title_nomedia">Do not show saved books in gallery</string>
 	<string name="set_title_nomedia_summary">Protect your secret gardens by creating \".nomedia\" in directory</string>
+
+	<!-- Donate -->
+	<string name="dialog_donate_title">Donate us</string>
+	<string name="dialog_donate_message">A nice application needs time, energy and your support.
+		If you love NHBooks very much and you\'re willing to donate us, please send your support to here (Alipay):316643843\@qq.com</string>
 
 </resources>

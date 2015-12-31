@@ -24,7 +24,9 @@
     <string name="item_favorite_categories">已收藏的分类</string>
     <string name="item_tag">标签</string>
     <string name="item_character">人物</string>
+	<string name="item_group_other">其它</string>
     <string name="item_open_nhentai">打开 NHentai 网站</string>
+	<string name="item_settings">设置</string>
 
     <string name="title_page_latest">最新</string>
     <string name="title_page_download">已保存的本子</string>
@@ -129,5 +131,10 @@
 	<string name="category_folder">文件夹</string>
 	<string name="set_title_nomedia">在系统图库中隐藏已保存的本子</string>
 	<string name="set_title_nomedia_summary">通过在目录生成 \".nomedia\" 保护你的秘密</string>
+
+	<!-- Donate -->
+	<string name="dialog_donate_title">捐助我们</string>
+	<string name="dialog_donate_message">一个好的应用需要时间、精力和你们的支持。
+		如果你非常喜欢 NH 本子并且乐意捐助我们，请发送到支付宝：316643843\@qq.com</string>
 
 </resources>

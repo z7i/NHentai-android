@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -326,10 +327,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		}
 
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			SettingsActivity.launchActivity(this, SettingsActivity.FLAG_MAIN);
-			return true;
-		} else if (id == R.id.action_load_next_page) {
+		if (id == R.id.action_load_next_page) {
 			mSwipeRefreshLayout.setRefreshing(true);
 			new PageGetTask().execute(++mNowPage);
 			return true;
@@ -690,6 +688,25 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 						}
 					}
 				});
+				return true;
+			case R.id.navigation_item_settings:
+				SettingsActivity.launchActivity(this, SettingsActivity.FLAG_MAIN);
+				return true;
+			case R.id.navigation_item_donate:
+				new AlertDialog.Builder(this)
+						.setTitle(R.string.dialog_donate_title)
+						.setMessage(R.string.dialog_donate_message)
+						.setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialogInterface, int i) {
+
+							}
+						})
+						.show();
+				return true;
+			case R.id.navigation_item_open_nhentai:
+				Uri uri = Uri.parse("http://nhentai.net");
+				startActivity(new Intent(Intent.ACTION_VIEW, uri));
 				return true;
 		}
 

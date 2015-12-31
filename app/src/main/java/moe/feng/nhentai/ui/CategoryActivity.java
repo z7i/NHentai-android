@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -112,6 +113,8 @@ public class CategoryActivity extends AbsActivity {
 
 	@Override
 	protected void setUpViews() {
+		ViewCompat.setElevation($(R.id.appbar_container), getResources().getDimensionPixelSize(R.dimen.appbar_elevation));
+
 		mRecyclerView = $(R.id.recycler_view);
 		mSwipeRefreshLayout = $(R.id.swipe_refresh_layout);
 
