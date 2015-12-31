@@ -53,7 +53,7 @@ import moe.feng.nhentai.util.ColorGenerator;
 import moe.feng.nhentai.util.Settings;
 import moe.feng.nhentai.util.TextDrawable;
 import moe.feng.nhentai.util.Utility;
-import moe.feng.nhentai.util.task.PageDownloader;
+import moe.feng.nhentai.util.task.BookDownloader;
 import moe.feng.nhentai.view.AutoWrapLayout;
 import moe.feng.nhentai.view.ObservableScrollView;
 import moe.feng.nhentai.view.WheelProgressView;
@@ -91,7 +91,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	private AlertDialog mDialogDel, mDialogDownload, mDialogDelOrDownload;
 	private ProgressDialog mDialogDownloading;
 
-	private PageDownloader mDownloader;
+	private BookDownloader mDownloader;
 	private FileCacheManager mFileCacheManager;
 
 	@Override
@@ -733,9 +733,9 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	private void startDownload(int progress) {
 		progress = Math.max(0, progress);
 		if (mDownloader == null) {
-			mDownloader = new PageDownloader(getApplicationContext(), book);
+			mDownloader = new BookDownloader(getApplicationContext(), book);
 			mDownloader.setCurrentPosition(0);
-			mDownloader.setOnDownloadListener(new PageDownloader.OnDownloadListener() {
+			mDownloader.setOnDownloadListener(new BookDownloader.OnDownloadListener() {
 				@Override
 				public void onFinish(int position, final int progress) {
 					if (mDialogDownloading == null) return;
@@ -763,7 +763,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				@Override
 				public void onStateChange(int state, final int progress) {
 					switch (state) {
-						case PageDownloader.STATE_STOP:
+						case BookDownloader.STATE_STOP:
 							if (mDialogDownloading == null) return;
 							runOnUiThread(new Runnable() {
 								@Override
@@ -772,7 +772,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 								}
 							});
 							break;
-						case PageDownloader.STATE_PAUSE:
+						case BookDownloader.STATE_PAUSE:
 							if (mDialogDownloading == null) return;
 							runOnUiThread(new Runnable() {
 								@Override
@@ -788,8 +788,42 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 								}
 							});
 							break;
-						case PageDownloader.STATE_ALL_OK:
-							startCopyToExternal();
+						case BookDownloader.STATE_ALL_OK:
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									isDownloaded = true;
+									invalidateOptionsMenu();
+
+									NotificationManagerCompat nm = NotificationManagerCompat.from(getApplicationContext());
+
+									Intent intent = new Intent(getApplicationContext(), BookDetailsActivity.class);
+									intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+									intent.putExtra(EXTRA_BOOK_DATA, book.toJSONString());
+
+									Notification n = new NotificationCompat.Builder(BookDetailsActivity.this)
+											.setContentTitle(getString(R.string.dialog_download_notification_title))
+											.setTicker(getString(R.string.dialog_download_notification_title))
+											.setSubText(book.getAvailableTitle())
+											.setContentIntent(
+													PendingIntent.getActivity(
+															getApplicationContext(),
+															0,
+															intent,
+															PendingIntent.FLAG_CANCEL_CURRENT
+													)
+											)
+											.setAutoCancel(true)
+											.setSmallIcon(R.drawable.ic_file_download_white_24dp)
+											.setPriority(Notification.PRIORITY_MAX)
+											.build();
+
+									nm.notify(NOTIFICATION_ID_FINISH, n);
+
+									if (mDialogDownloading == null) return;
+									mDialogDownloading.dismiss();
+								}
+							});
 							break;
 					}
 				}
@@ -844,61 +878,6 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mDialogDownloading.show();
 		mFileCacheManager.saveBookDataToExternalPath(book);
 		mDownloader.start();
-	}
-
-	private void startCopyToExternal() {
-		runOnUiThread(
-			new Runnable() {
-				@Override
-				public void run() {
-					mDialogDownloading.setMessage(getString(R.string.dialog_download_copying));
-				}
-			}
-		);
-		new Thread() {
-			@Override
-			public void run() {
-				for (int i = 0; i < book.pageCount; i++) {
-					mDialogDownloading.setIndeterminate(true);
-					mFileCacheManager.saveToExternalPath(book, i + 1);
-				}
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						isDownloaded = true;
-						invalidateOptionsMenu();
-
-						NotificationManagerCompat nm = NotificationManagerCompat.from(getApplicationContext());
-
-						Intent intent = new Intent(getApplicationContext(), BookDetailsActivity.class);
-						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						intent.putExtra(EXTRA_BOOK_DATA, book.toJSONString());
-
-						Notification n = new NotificationCompat.Builder(BookDetailsActivity.this)
-								.setContentTitle(getString(R.string.dialog_download_notification_title))
-								.setTicker(getString(R.string.dialog_download_notification_title))
-								.setContentText(book.getAvailableTitle())
-								.setContentIntent(
-										PendingIntent.getActivity(
-												getApplicationContext(),
-												0,
-												intent,
-												PendingIntent.FLAG_CANCEL_CURRENT
-										)
-								)
-								.setAutoCancel(true)
-								.setSmallIcon(R.drawable.ic_file_download_white_24dp)
-								.setPriority(Notification.PRIORITY_MAX)
-								.build();
-
-						nm.notify(NOTIFICATION_ID_FINISH, n);
-
-						if (mDialogDownloading == null) return;
-						mDialogDownloading.dismiss();
-					}
-				});
-			}
-		}.start();
 	}
 
 	private void showFAB() {
