@@ -130,8 +130,13 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 		FileCacheManager cm = FileCacheManager.getInstance(getApplicationContext());
 
-		int color = ColorGenerator.MATERIAL.getColor(book.title);
-		TextDrawable textDrawable = TextDrawable.builder().buildRect(Utility.getFirstCharacter(book.title), color);
+		TextDrawable textDrawable;
+		if (book.title != null) {
+			int color = ColorGenerator.MATERIAL.getColor(book.title);
+			textDrawable = TextDrawable.builder().buildRect(Utility.getFirstCharacter(book.title), color);
+		} else {
+			textDrawable = TextDrawable.builder().buildRect("", getResources().getColor(R.color.deep_purple_500));
+		}
 		mImagePlaceholderView.setImageDrawable(textDrawable);
 
 		if (book.galleryId != null) {
