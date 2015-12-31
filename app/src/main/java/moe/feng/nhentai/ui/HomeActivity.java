@@ -156,8 +156,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 		getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.background_material_light)));
 
-		if (mListKeeper.getData() != null && mListKeeper.getUpdatedMiles() != -1) {
+		if (mListKeeper.getData() != null && !mListKeeper.getData().isEmpty() && mListKeeper.getUpdatedMiles() != -1) {
 			mBooks = mListKeeper.getData();
+			mNowPage = mListKeeper.getNowPage();
 			mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
 			setRecyclerAdapter(mAdapter);
 			isFirstLoad = false;
@@ -755,6 +756,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 						mListKeeper.setData(mBooks);
 						mListKeeper.setUpdatedMiles(System.currentTimeMillis());
+						mListKeeper.setNowPage(mNowPage);
 						new Thread() {
 							@Override
 							public void run() {
@@ -777,6 +779,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				} else if (mNowPage == 1) {
 					mListKeeper.setData(new ArrayList<Book>());
 					mListKeeper.setUpdatedMiles(-1);
+					mListKeeper.setNowPage(1);
 					Snackbar.make(
 							mRecyclerView,
 							R.string.tips_network_error,

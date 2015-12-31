@@ -63,6 +63,14 @@ public class LatestBooksKeeper {
 		this.data.updatedMiles = updatedMiles;
 	}
 
+	public int getNowPage() {
+		return this.data.nowPage;
+	}
+
+	public void setNowPage(int nowPage) {
+		this.data.nowPage = nowPage;
+	}
+
 	public void save() {
 		try {
 			Utility.saveStringToFile(context, FILE_NAME, data.toJSONString());
@@ -75,6 +83,7 @@ public class LatestBooksKeeper {
 
 		public ArrayList<Book> books = new ArrayList<>();
 		public long updatedMiles = -1;
+		public int nowPage = 1;
 
 		public String toJSONString() {
 			return new Gson().toJson(this);
