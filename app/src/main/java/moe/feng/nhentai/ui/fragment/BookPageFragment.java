@@ -2,6 +2,7 @@ package moe.feng.nhentai.ui.fragment;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,32 +11,36 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
+import com.squareup.picasso.Callback;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.PageApi;
+import moe.feng.nhentai.api.common.NHentaiUrl;
+import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.GalleryActivity;
 import moe.feng.nhentai.ui.common.LazyFragment;
 import moe.feng.nhentai.util.AsyncTask;
+import moe.feng.nhentai.util.PicassoCache;
 import moe.feng.nhentai.util.task.PageDownloader;
 import moe.feng.nhentai.view.WheelProgressView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
+import static moe.feng.nhentai.cache.common.Constants.CACHE_PAGE_IMG;
+
 public class BookPageFragment extends LazyFragment {
 
+	public static final String TAG = BookPageFragment.class.getSimpleName();
+	public static final int MSG_FINISHED_LOADING = 1, MSG_ERROR_LOADING = 2;
+	private static final String ARG_BOOK_DATA = "arg_book_data", ARG_PAGE_NUM = "arg_page_num";
 	private Book book;
 	private int pageNum;
 	private ImageView mImageView;
 	private PhotoViewAttacher mPhotoViewAttacher;
 	private AppCompatTextView mPageNumText, mTipsText;
 	private WheelProgressView mWheelProgress;
-
 	private Bitmap mBitmap;
-
-	private static final String ARG_BOOK_DATA = "arg_book_data", ARG_PAGE_NUM = "arg_page_num";
-
-	public static final String TAG = BookPageFragment.class.getSimpleName();
-	public static final int MSG_FINISHED_LOADING = 1, MSG_ERROR_LOADING = 2;
+	private Callback onimageload;
 
 	public static BookPageFragment newInstance(Book book, int pageNum) {
 		BookPageFragment fragment = new BookPageFragment();
@@ -52,7 +57,35 @@ public class BookPageFragment extends LazyFragment {
 		Bundle data = getArguments();
 		book = new Gson().fromJson(data.getString(ARG_BOOK_DATA), Book.class);
 		pageNum = data.getInt(ARG_PAGE_NUM);
+		onimageload = new Callback() {
 
+			@Override
+			public void onSuccess() {
+				if (mPhotoViewAttacher != null) {
+					mPhotoViewAttacher.update();
+					mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+						@Override
+						public void onViewTap(View view, float v, float v1) {
+							((GalleryActivity) getActivity()).toggleControlBar();
+						}
+					});
+				} else {
+					mPhotoViewAttacher = new PhotoViewAttacher(mImageView);
+					mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+						@Override
+						public void onViewTap(View view, float v, float v1) {
+							((GalleryActivity) getActivity()).toggleControlBar();
+						}
+					});
+				}
+			}
+
+			@Override
+			public void onError() {
+				// TODO Auto-generated method stub
+
+			}
+		};
 		setHandler(new MyHandler());
 	}
 
@@ -82,6 +115,12 @@ public class BookPageFragment extends LazyFragment {
 	}
 
 	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		mPhotoViewAttacher.cleanup();
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
 
@@ -91,7 +130,11 @@ public class BookPageFragment extends LazyFragment {
 
 		try {
 			if (PageApi.isPageOriginImageLocalFileExist(getApplicationContext(), book, pageNum)) {
-				new DownloadTask().execute();
+				//new DownloadTask().execute();
+				String url = NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(pageNum));
+				PicassoCache.getPicassoInstance(getApplicationContext()).load(FileCacheManager.getInstance(getApplicationContext()).getCachedImage(CACHE_PAGE_IMG, url)).into(mImageView, onimageload);
+			} else {
+				PicassoCache.getPicassoInstance(getApplicationContext()).load(Uri.parse(NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(pageNum)))).into(mImageView, onimageload);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -145,26 +188,10 @@ public class BookPageFragment extends LazyFragment {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 				case MSG_FINISHED_LOADING:
-					Bitmap b;
 					if (PageApi.isPageOriginImageLocalFileExist(getApplicationContext(), book, pageNum)) {
-						b = PageApi.getPageOriginImage(getApplicationContext(), book, pageNum);
-						if (b != null) {
-							$(R.id.loading_content).setVisibility(View.GONE);
-							mBitmap = b;
-							if (mImageView != null) {
-								mImageView.setImageBitmap(mBitmap);
-								if (mPhotoViewAttacher != null) {
-									mPhotoViewAttacher.update();
-									mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
-										@Override
-										public void onViewTap(View view, float v, float v1) {
-											if (getActivity() instanceof GalleryActivity) {
-												((GalleryActivity) getActivity()).toggleControlBar();
-											}
-										}
-									});
-								}
-							}
+						if (mImageView != null) {
+							String url = NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(pageNum));
+							PicassoCache.getPicassoInstance(getApplicationContext()).load(FileCacheManager.getInstance(getApplicationContext()).getCachedImage(CACHE_PAGE_IMG, url)).into(mImageView, onimageload);
 						}
 					} else {
 						if (getActivity() != null && getActivity() instanceof GalleryActivity) {
@@ -175,11 +202,13 @@ public class BookPageFragment extends LazyFragment {
 									downloader.start();
 								}
 							} else {
-								new DownloadTask().execute();
+								//new DownloadTask().execute();
+								//PicassoCache.getPicassoInstance(getApplicationContext()).load(Uri.parse(NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(pageNum)))).into(mImageView);
 								return;
 							}
 						} else {
-							new DownloadTask().execute();
+							//new DownloadTask().execute();
+							//PicassoCache.getPicassoInstance(getApplicationContext()).load(Uri.parse(NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(pageNum)))).into(mImageView);
 						}
 					}
 					break;

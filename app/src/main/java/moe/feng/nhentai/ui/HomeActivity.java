@@ -73,16 +73,16 @@ import moe.feng.nhentai.util.Utility;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+	public static final String TAG = HomeActivity.class.getSimpleName();
+	private static final int SECTION_LATEST = 0, SECTION_FAV_TAB = 1, SECTION_FOLLOWING_ARTISTS = 2;
+	private static final int REQUEST_CODE_PERMISSION_GET = 101;
 	// View states
 	private int mSectionType = SECTION_LATEST;
-	private static final int SECTION_LATEST = 0, SECTION_FAV_TAB = 1, SECTION_FOLLOWING_ARTISTS = 2;
 	private boolean finishLaunchAnimation = false;
-
 	// Header View
 	private float mHeaderTranslationYStart;
 	private boolean isFABShowing = true, isSearchBoxShowing = true;
 	private int currentY = 0;
-
 	// List
 	private ObservableRecyclerView mRecyclerView;
 	private BookListRecyclerAdapter mAdapter;
@@ -91,48 +91,36 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	private ArrayList<Book> mBooks;
 	private int mNowPage = 1, mHorCardCount = 2;
 	private boolean isFirstLoad = true;
-
 	// Search Bar
 	private RevealFrameLayout mSearchBar;
 	private CardView mSearchBarCard;
 	private ImageButton mSearchBarOtherBtn;
-
 	// Title Bar
 	private LinearLayout mTitleBarLayout;
 	private AppCompatTextView mTitleMain, mTitleSub;
-
 	// Splash Screen
 	private ImageView mSplashIvLogo;
 	private AppCompatTextView mSplashTvLogo;
 	private FrameLayout mSplashLayout;
-
 	// Drawer
 	private DrawerLayout mDrawerLayout;
 	private NavigationView mNavigationView;
 	private ActionBarDrawerToggle mDrawerToggle;
-
 	// Views
 	private View mBackgroundView;
 	private FrameLayout mParentLayout, mMainLayout, mFragmentLayout;
 	private Toolbar mToolbar;
 	private ActionBar mActionBar;
 	private FloatingActionButton mLuckyFAB;
-
 	// Fragments
 	private DownloadManagerFragment mFragmentDownload;
 	private FavoriteFragment mFragmentFavBooks;
 	private FavoriteCategoryFragment mFragmentFavCategory;
-
 	// Utils
 	private FavoritesManager mFM;
 	private LatestBooksKeeper mListKeeper;
 	private Settings mSets;
-
 	private Handler mHandler = new Handler();
-
-	public static final String TAG = HomeActivity.class.getSimpleName();
-
-	private static final int REQUEST_CODE_PERMISSION_GET = 101;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -173,7 +161,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			setRecyclerAdapter(mAdapter);
 			new PageGetTask().execute(mNowPage);
 		}
-
 		if (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 			if (mSets.getBoolean(Settings.KEY_NO_MEDIA, true)) {
 				FilesUtil.createNewFile(FilesUtil.NOMEDIA_FILE);
