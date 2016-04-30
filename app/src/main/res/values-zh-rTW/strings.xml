@@ -95,6 +95,12 @@
     <string name="tips_no_more_results">這已經是最後一頁了。</string>
     <string name="action_clear">清除文本</string>
 
+    <!-- Category -->
+    <string-array name="category_tabs_title">
+        <item>最新</item>
+        <item>熱門</item>
+    </string-array>
+
     <string name="settings_main">設置</string>
     <string name="snackbar_need_restart">你需要重新啟動程式以應用變更。</string>
     <string name="snackbar_need_restart_action">現在重啟</string>

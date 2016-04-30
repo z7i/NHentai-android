@@ -95,6 +95,12 @@
     <string name="tips_no_more_results">这里已经是最后一页了。</string>
     <string name="action_clear">清除文字</string>
 
+    <!-- Category -->
+    <string-array name="category_tabs_title">
+        <item>最新</item>
+        <item>热门</item>
+    </string-array>
+
     <string name="settings_main">设置</string>
     <string name="snackbar_need_restart">你需要重新启动应用来应用更改。</string>
     <string name="snackbar_need_restart_action">现在重启</string>

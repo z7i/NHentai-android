@@ -114,12 +114,13 @@ public class NHentaiUrl {
 		return NHENTAI_HOME + "/language/" + targetName;
 	}
 
-	public static String getCategoryUrl(Category category) {
+	public static String getCategoryUrl(Category category, boolean isPopularType) {
 		String targetName = category.name;
 		if (targetName.contains(" ")) {
 			targetName = targetName.replaceAll(" ", "-");
 		}
-		return NHENTAI_HOME + "/" + category.type.toLowerCase() + "/" + targetName;
+		return NHENTAI_HOME + "/" + category.type.toLowerCase() + "/" + targetName +
+				(isPopularType ? "/popular" : "");
 	}
 
 	public static String getHomePageUrl(int page) {
