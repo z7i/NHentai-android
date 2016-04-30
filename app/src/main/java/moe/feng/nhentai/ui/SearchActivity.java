@@ -2,6 +2,7 @@ package moe.feng.nhentai.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -27,6 +28,13 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import moe.feng.nhentai.R;
@@ -58,11 +66,14 @@ public class SearchActivity extends AbsActivity {
 	private ArrayList<Book> mBooks;
 	private int mNowPage = 1, mHorCardCount = 2;
 	private String keyword;
+	private boolean isAllowToLoadNextPage = true;
 
 	private FavoritesManager mFM;
 	private SearchHistoryManager mHM;
 
 	private InputMethodManager imm;
+
+	private static final int MSG_CODE_NO_MORE_RESULTS = 1;
 
 	private static final String TRANSITION_NAME_CARD = "card_view";
 
@@ -130,6 +141,7 @@ public class SearchActivity extends AbsActivity {
 					mSwipeRefreshLayout.setRefreshing(true);
 				}
 
+				isAllowToLoadNextPage = true;
 				mBooks = new ArrayList<>();
 				mAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM, mSets);
 				setResultListAdapter(mAdapter);
@@ -262,6 +274,11 @@ public class SearchActivity extends AbsActivity {
 		invalidateOptionsMenu();
 	}
 
+	private boolean isEggKeyword(String keyword) {
+		return "most glorious".equalsIgnoreCase(keyword) || "劳动最光荣".equals(keyword) ||
+				"勞動最光榮".equals(keyword);
+	}
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
@@ -294,25 +311,102 @@ public class SearchActivity extends AbsActivity {
 		@Override
 		protected BaseMessage doInBackground(Integer... params) {
 			mFM.reload();
-			return PageApi.getSearchPageList(keyword, params[0]);
+			BaseMessage msg;
+			if (isEggKeyword(keyword)) {
+				msg = new BaseMessage();
+				msg.setCode(0);
+				InputStream in = null;
+				BufferedReader br = null;
+				StringBuffer sb = new StringBuffer();
+				sb.append("");
+				try {
+					in = getResources().openRawResource(R.raw.happylabor);
+					String str;
+					br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+					while ((str = br.readLine()) != null) {
+						sb.append(str);
+						sb.append("\n");
+					}
+				} catch (Resources.NotFoundException e) {
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						if (in != null) {
+							in.close();
+						}
+						if (br != null) {
+							br.close();
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				msg.setData(new Gson().fromJson(sb.toString(), ArrayList.class));
+			} else {
+				msg = PageApi.getSearchPageList(keyword, params[0]);
+				if (msg.getCode() == 0 && msg.getData() != null) {
+					ArrayList<Book> temp = msg.getData();
+					if (temp.isEmpty()) {
+						msg.setCode(MSG_CODE_NO_MORE_RESULTS);
+					} else {
+						Book firstBook = temp.get(0);
+						boolean hasExist = false;
+						for (int i = 0; i < mBooks.size() && !hasExist; i++) {
+							hasExist = mBooks.get(i).bookId.equals(firstBook.bookId);
+						}
+						if (hasExist) {
+							msg.setCode(MSG_CODE_NO_MORE_RESULTS);
+						}
+					}
+				}
+			}
+			return msg;
 		}
 
 		@Override
 		protected void onPostExecute(BaseMessage msg) {
 			mSwipeRefreshLayout.setRefreshing(false);
 			if (msg != null) {
-				if (msg.getCode() == 0 && msg.getData() != null) {
-					if (!((ArrayList<Book>) msg.getData()).isEmpty()) {
-						mBooks.addAll((ArrayList<Book>) msg.getData());
-						mAdapter.notifyDataSetChanged();
-						if (mNowPage == 1) {
-							mResultList.setAdapter(mAdapter);
+				switch (msg.getCode()) {
+					case 0:
+						if (msg.getData() != null) {
+							if (!((ArrayList<Book>) msg.getData()).isEmpty()) {
+								mBooks.addAll((ArrayList<Book>) msg.getData());
+								mAdapter.notifyDataSetChanged();
+								if (mNowPage == 1) {
+									isAllowToLoadNextPage = true;
+									mResultList.setAdapter(mAdapter);
+								}
+							} else {
+								Snackbar.make($(R.id.root_layout), R.string.tips_no_result, Snackbar.LENGTH_LONG).show();
+							}
 						}
-					} else {
-						Snackbar.make($(R.id.root_layout), R.string.tips_no_result, Snackbar.LENGTH_LONG).show();
-					}
-				} else if (mNowPage == 1) {
-					Snackbar.make($(R.id.root_layout), R.string.tips_no_result, Snackbar.LENGTH_LONG).show();
+						break;
+					case MSG_CODE_NO_MORE_RESULTS:
+						isAllowToLoadNextPage = false;
+						Snackbar.make($(R.id.root_layout), R.string.tips_no_more_results, Snackbar.LENGTH_LONG).show();
+						break;
+					default:
+						if (mNowPage == 1) {
+							Snackbar.make(
+									$(R.id.root_layout),
+									R.string.tips_network_error,
+									Snackbar.LENGTH_LONG
+							).setAction(
+									R.string.snack_action_try_again,
+									new View.OnClickListener() {
+										@Override
+										public void onClick(View view) {
+											mSwipeRefreshLayout.setRefreshing(true);
+											new PageGetTask().execute(mNowPage);
+										}
+									}
+							).show();
+						}
 				}
 			}
 		}
