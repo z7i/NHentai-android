@@ -48,10 +48,6 @@ public class PageListFragment extends LazyFragment {
 		return fragment;
 	}
 
-	private PageListFragment() {
-
-	}
-
 	@Override
 	public int getLayoutResId() {
 		return R.layout.fragment_category_page;

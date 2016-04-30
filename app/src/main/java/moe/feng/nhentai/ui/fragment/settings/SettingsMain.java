@@ -13,6 +13,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 	private Preference mGooglePlusPref;
 	private Preference mGithubPref;
 	private Preference mTelegreamPref;
+	private Preference mGoogleGroupPref;
 
 	private Preference mAppearancePref;
 	private Preference mStoragePref;
@@ -29,6 +30,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 		mTelegreamPref = (Preference) findPreference("telegram");
 		mAppearancePref = (Preference) findPreference("ui");
 		mStoragePref = (Preference) findPreference("storage");
+		mGoogleGroupPref = (Preference) findPreference("google_plus_group");
 
 		String version = "Unknown";
 		try {
@@ -45,6 +47,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 		mTelegreamPref.setOnPreferenceClickListener(this);
 		mAppearancePref.setOnPreferenceClickListener(this);
 		mStoragePref.setOnPreferenceClickListener(this);
+		mGoogleGroupPref.setOnPreferenceClickListener(this);
 	}
 
 	@Override
@@ -72,6 +75,9 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 		if (pref == mStoragePref) {
 			SettingsActivity.launchActivity(getActivity(), SettingsActivity.FLAG_STORAGE);
 			return true;
+		}
+		if (pref == mGoogleGroupPref) {
+			openWebUrl(getString(R.string.set_title_gpgroup_link));
 		}
 		return false;
 	}

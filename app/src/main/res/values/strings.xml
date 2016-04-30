@@ -112,6 +112,8 @@
     <string name="set_title_google_plus_summary">+Fung Jichun</string>
     <string name="set_title_github">Github Repo</string>
     <string name="set_title_github_website">"https://github.com/fython/NHentai-android"</string>
+	<string name="set_title_gpgroup">Google+ Group</string>
+	<string name="set_title_gpgroup_link">"https://plus.google.com/communities/106652485673516183999"</string>
     <string name="set_title_telegram">Telegram Group</string>
     <string name="set_title_telegram_link">"https://telegram.me/joinchat/0668165200bd194d0a89b8995057e330"</string>
 	<string name="set_title_alipay">Donate us by Alipay</string>
@@ -133,8 +135,6 @@
 	<string name="category_details">Info page</string>
 	<string name="set_title_full_image_in_details">Load Full HD images as preview</string>
 	<string name="set_title_full_image_in_details_summary">It will consume plenty of data usage and memory.</string>
-	<string name="category_view">View</string>
-	<string name="set_title_volmun_key_change_page">Volnum</string>
 	<string name="settings_storage">Storage</string>
 	<string name="category_folder">Folder</string>
 	<string name="set_title_nomedia">Do not show saved books in gallery</string>

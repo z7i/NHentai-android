@@ -314,38 +314,44 @@ public class SearchActivity extends AbsActivity {
 			BaseMessage msg;
 			if (isEggKeyword(keyword)) {
 				msg = new BaseMessage();
-				msg.setCode(0);
-				InputStream in = null;
-				BufferedReader br = null;
-				StringBuffer sb = new StringBuffer();
-				sb.append("");
-				try {
-					in = getResources().openRawResource(R.raw.happylabor);
-					String str;
-					br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-					while ((str = br.readLine()) != null) {
-						sb.append(str);
-						sb.append("\n");
-					}
-				} catch (Resources.NotFoundException e) {
-					e.printStackTrace();
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} finally {
+				if (mNowPage < 2) {
+					msg.setCode(0);
+					InputStream in = null;
+					BufferedReader br = null;
+					StringBuffer sb = new StringBuffer();
+					sb.append("");
 					try {
-						if (in != null) {
-							in.close();
+						in = getResources().openRawResource(R.raw.happylabor);
+						String str;
+						br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+						while ((str = br.readLine()) != null) {
+							sb.append(str);
+							sb.append("\n");
 						}
-						if (br != null) {
-							br.close();
-						}
+					} catch (Resources.NotFoundException e) {
+						e.printStackTrace();
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
 					} catch (IOException e) {
 						e.printStackTrace();
+					} finally {
+						try {
+							if (in != null) {
+								in.close();
+							}
+							if (br != null) {
+								br.close();
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
+					MyArray books = new Gson().fromJson(sb.toString(), MyArray.class);
+					books.updateBooksData();
+					msg.setData(books.data);
+				} else {
+					msg.setCode(MSG_CODE_NO_MORE_RESULTS);
 				}
-				msg.setData(new Gson().fromJson(sb.toString(), ArrayList.class));
 			} else {
 				msg = PageApi.getSearchPageList(keyword, params[0]);
 				if (msg.getCode() == 0 && msg.getData() != null) {
@@ -419,6 +425,48 @@ public class SearchActivity extends AbsActivity {
 		Intent intent = new Intent(activity, SearchActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		activity.startActivity(intent, options.toBundle());
+	}
+
+	private class MyArray {
+
+		public ArrayList<Book> data = new ArrayList<>();
+
+		public String toJSONString() {
+			return new Gson().toJson(this);
+		}
+
+		public Book get(int position) {
+			return data.get(position);
+		}
+
+		public int size() {
+			return data.size();
+		}
+
+		public Book set(int position, Book book) {
+			return data.set(position, book);
+		}
+
+		public boolean add(Book book) {
+			return data.add(book);
+		}
+
+		public void add(int position, Book book) {
+			data.add(position, book);
+		}
+
+		public void remove(int position) {
+			data.remove(position);
+		}
+
+		public void updateBooksData() {
+			if (data != null) {
+				for (Book book : data) {
+					book.updateDataFromOldData();
+				}
+			}
+		}
+
 	}
 
 }

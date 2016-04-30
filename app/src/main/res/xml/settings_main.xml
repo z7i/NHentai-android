@@ -43,6 +43,11 @@
 			android:title="@string/set_title_telegram"
 			android:summary="@string/set_title_telegram_link"/>
 
+		<moe.feng.nhentai.view.pref.Preference
+			android:key="google_plus_group"
+			android:title="@string/set_title_gpgroup"
+			android:summary="@string/set_title_gpgroup_link"/>
+
 	</PreferenceCategory>
 
 </PreferenceScreen>
