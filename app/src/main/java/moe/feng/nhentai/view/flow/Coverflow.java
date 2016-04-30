@@ -16,7 +16,7 @@ import moe.feng.nhentai.view.TwoWayGallery;
 /**
  * Created by HelloCsl(cslgogogo@gmail.com) on 2015/9/28 0028.
  */
-class CoverFlow extends TwoWayGallery {
+public class CoverFlow extends TwoWayGallery {
 
 	private final String TAG = this.getClass().getSimpleName();
 	private final boolean DEBUG = true;
