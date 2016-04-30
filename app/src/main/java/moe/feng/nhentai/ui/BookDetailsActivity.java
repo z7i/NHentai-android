@@ -2,6 +2,8 @@ package moe.feng.nhentai.ui;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityOptions;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -129,12 +131,21 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		setContentView(R.layout.activity_book_details);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+		getSupportActionBar().setDisplayShowTitleEnabled(false);
+		ActivityOptions.makeTaskLaunchBehind();
 		FileCacheManager cm = FileCacheManager.getInstance(getApplicationContext());
 
 		TextDrawable textDrawable;
 		if (book.title != null) {
 			int color = ColorGenerator.MATERIAL.getColor(book.title);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(
+						TextUtils.isEmpty(book.titleJP) ? book.title : book.titleJP,
+						null,
+						getResources().getColor(R.color.deep_purple_300)
+				);
+				setTaskDescription(taskDesc);
+			}
 			textDrawable = TextDrawable.builder().buildRect(Utility.getFirstCharacter(book.title), color);
 		} else {
 			textDrawable = TextDrawable.builder().buildRect("", getResources().getColor(R.color.deep_purple_500));
@@ -262,10 +273,14 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 	public static void launch(Activity activity, ImageView imageView, Book book, int fromPosition) {
 		Intent intent = new Intent(activity, BookDetailsActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+		} else {
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		}
 		intent.putExtra(EXTRA_BOOK_DATA, book.toJSONString());
 		intent.putExtra(EXTRA_POSITION, fromPosition);
-		activity.startActivityForResult(intent, REQUEST_MAIN);
+		activity.startActivity(intent);
 	}
 
 	private void updateUIContent() {
@@ -292,6 +307,14 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mContentView.setVisibility(View.VISIBLE);
 		mContentView.animate().alphaBy(0f).alpha(1f).setDuration(1500).start();
 		mTitleText.setText(TextUtils.isEmpty(book.titleJP) ? book.title : book.titleJP);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(
+					TextUtils.isEmpty(book.titleJP) ? book.title : book.titleJP,
+					null,
+					getResources().getColor(R.color.deep_purple_300)
+			);
+			setTaskDescription(taskDesc);
+		}
 		if (isFromExternal) {
 			new CoverTask().execute(book);
 		}
