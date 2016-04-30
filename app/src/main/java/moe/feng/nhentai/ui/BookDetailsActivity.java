@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationManagerCompat;
@@ -31,11 +32,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.nvanbenschoten.motion.ParallaxImageView;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import moe.feng.nhentai.Async.DownloadInterface.DownloadInterface;
+import moe.feng.nhentai.Async.DownloadTask;
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.BookApi;
 import moe.feng.nhentai.api.PageApi;
@@ -59,8 +69,14 @@ import moe.feng.nhentai.view.AutoWrapLayout;
 import moe.feng.nhentai.view.ObservableScrollView;
 import moe.feng.nhentai.view.WheelProgressView;
 
-public class BookDetailsActivity extends AbsActivity implements ObservableScrollView.OnScrollChangeListener {
+public class BookDetailsActivity extends AbsActivity implements
+		ObservableScrollView.OnScrollChangeListener,
+		DownloadInterface {
 
+	public final static int REQUEST_MAIN = 1001, RESULT_HAVE_FAV = 100;
+	public final static int NOTIFICATION_ID_FINISH = 10000;
+	private final static String EXTRA_BOOK_DATA = "book_data", EXTRA_POSITION = "item_position";
+	android.support.v4.app.NotificationCompat.Builder mBuilder;
 	private ObservableScrollView mScrollView;
 	private FrameLayout mAppBarContainer, mImageContainer;
 	private ImageView mImagePlaceholderView;
@@ -71,30 +87,27 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	private LinearLayout mContentView, mAppBarBackground;
 	private WheelProgressView mProgressWheel;
 	private RecyclerView mPreviewList;
-
 	private boolean isPlayingFABAnimation = false;
-
 	private int APP_BAR_HEIGHT, TOOLBAR_HEIGHT, STATUS_BAR_HEIGHT = 0, minHeight = 0;
-
 	private MenuItem mActionDownload;
 	private ShareActionProvider mShareActionProvider;
-
 	private Book book;
 	private int fromPosition;
-
 	private boolean isFavorite = false, originFavorite = false, isFromExternal = false;
 	private boolean isDownloaded = false;
-
-	private final static String EXTRA_BOOK_DATA = "book_data", EXTRA_POSITION = "item_position";
-
-	public final static int REQUEST_MAIN = 1001, RESULT_HAVE_FAV = 100;
-	public final static int NOTIFICATION_ID_FINISH = 10000;
-
 	private AlertDialog mDialogDel, mDialogDownload, mDialogDelOrDownload;
-	private ProgressDialog mDialogDownloading;
-
+	private MaterialDialog mDialogDownloading;
 	private BookDownloader mDownloader;
 	private FileCacheManager mFileCacheManager;
+	private int notID;
+
+	public static void launch(Activity activity, ImageView imageView, Book book, int fromPosition) {
+		Intent intent = new Intent(activity, BookDetailsActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+		intent.putExtra(EXTRA_BOOK_DATA, book.toJSONString());
+		intent.putExtra(EXTRA_POSITION, fromPosition);
+		activity.startActivityForResult(intent, REQUEST_MAIN);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -199,6 +212,9 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		}
 
 		if (!isFromExternal) checkIsDownloaded();
+
+		mBuilder = new android.support.v4.app.NotificationCompat.Builder(getApplicationContext())
+				.setSmallIcon(android.R.drawable.stat_sys_download);
 	}
 
 	@Override
@@ -258,14 +274,6 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		}
 
 		mImageContainer.setTranslationY(target * 0.7f);
-	}
-
-	public static void launch(Activity activity, ImageView imageView, Book book, int fromPosition) {
-		Intent intent = new Intent(activity, BookDetailsActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-		intent.putExtra(EXTRA_BOOK_DATA, book.toJSONString());
-		intent.putExtra(EXTRA_POSITION, fromPosition);
-		activity.startActivityForResult(intent, REQUEST_MAIN);
 	}
 
 	private void updateUIContent() {
@@ -638,13 +646,24 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				});
 			} else {
 				isDownloaded = false;
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						invalidateOptionsMenu();
-						showDeleteOrDownloadDialog(count, downloadPath);
-					}
-				});
+				int state = getSharedPreferences("data", MODE_PRIVATE).getInt(notID + "state", DownloadTask.State.NONE.getValue());
+				if (state == DownloadTask.State.DOWNLOADING.getValue()) {
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							invalidateOptionsMenu();
+							showDownloadingDialog();
+						}
+					});
+				} else {
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							invalidateOptionsMenu();
+							showDeleteOrDownloadDialog(count, downloadPath, book.title);
+						}
+					});
+				}
 			}
 		} else {
 			Log.i("TAG", "Couldn\'t find downloaded info.");
@@ -653,7 +672,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				@Override
 				public void run() {
 					invalidateOptionsMenu();
-					showDownloadDialog(count, downloadPath);
+					showDownloadDialog(count, downloadPath, book.title);
 				}
 			});
 		}
@@ -698,7 +717,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mDialogDel.show();
 	}
 
-	private void showDownloadDialog(final int count, String downloadPath) {
+	private void showDownloadDialog(final int count, String downloadPath, final String title) {
 		if (mDialogDownload == null) {
 			mDialogDownload = new AlertDialog.Builder(this)
 					.setTitle(R.string.dialog_ask_download_title)
@@ -706,7 +725,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 					.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialogInterface, int i) {
-							startDownload(count);
+							startDownload(count, title);
 						}
 					})
 					.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -721,7 +740,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mDialogDownload.show();
 	}
 
-	private void showDeleteOrDownloadDialog(final int count, String downloadPath) {
+	private void showDeleteOrDownloadDialog(final int count, String downloadPath, final String title) {
 		if (mDialogDelOrDownload == null) {
 			mDialogDelOrDownload = new AlertDialog.Builder(this)
 					.setTitle(R.string.dialog_ask_d_or_d_title)
@@ -729,12 +748,13 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 					.setPositiveButton(R.string.dialog_ask_d_or_d_continue, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialogInterface, int i) {
-							startDownload(count);
+							startDownload(count, title);
 						}
 					})
 					.setNeutralButton(R.string.dialog_ask_d_or_d_delete, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialogInterface, int i) {
+							getSharedPreferences("data", MODE_PRIVATE).edit().putInt(notID + "state", DownloadTask.State.CANCELED.getValue()).apply();
 							new DeleteTask().execute();
 						}
 					})
@@ -750,154 +770,57 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mDialogDelOrDownload.show();
 	}
 
-	private void startDownload(int progress) {
+	private void startDownload(int progress, final String title) {
 		progress = Math.max(0, progress);
-		if (mDownloader == null) {
-			mDownloader = new BookDownloader(getApplicationContext(), book);
-			mDownloader.setCurrentPosition(0);
-			mDownloader.setOnDownloadListener(new BookDownloader.OnDownloadListener() {
-				@Override
-				public void onFinish(int position, final int progress) {
-					if (mDialogDownloading == null) return;
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							mDialogDownloading.setProgress(Utility.calcProgress(progress, book.pageCount));
-							mDialogDownloading.setMessage(
-									(mDownloader.isPause() ? getString(R.string.dialog_download_paused) : "")
-											+ getString(
-											R.string.dialog_download_progress,
-											progress,
-											book.pageCount
-									)
-							);
-						}
-					});
-				}
-
-				@Override
-				public void onError(int position, int errorCode) {
-
-				}
-
-				@Override
-				public void onStateChange(int state, final int progress) {
-					switch (state) {
-						case BookDownloader.STATE_STOP:
-							if (mDialogDownloading == null) return;
-							runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									mDialogDownloading.dismiss();
-								}
-							});
-							break;
-						case BookDownloader.STATE_PAUSE:
-							if (mDialogDownloading == null) return;
-							runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									mDialogDownloading.setMessage(
-											(mDownloader.isPause() ? getString(R.string.dialog_download_paused) : "")
-													+ getString(
-													R.string.dialog_download_progress,
-													progress,
-													book.pageCount
-											)
-									);
-								}
-							});
-							break;
-						case BookDownloader.STATE_ALL_OK:
-							runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									isDownloaded = true;
-									invalidateOptionsMenu();
-
-									NotificationManagerCompat nm = NotificationManagerCompat.from(getApplicationContext());
-
-									Intent intent = new Intent(getApplicationContext(), BookDetailsActivity.class);
-									intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-									intent.putExtra(EXTRA_BOOK_DATA, book.toJSONString());
-
-									Notification n = new NotificationCompat.Builder(BookDetailsActivity.this)
-											.setContentTitle(getString(R.string.dialog_download_notification_title))
-											.setTicker(getString(R.string.dialog_download_notification_title))
-											.setSubText(book.getAvailableTitle())
-											.setContentIntent(
-													PendingIntent.getActivity(
-															getApplicationContext(),
-															0,
-															intent,
-															PendingIntent.FLAG_CANCEL_CURRENT
-													)
-											)
-											.setAutoCancel(true)
-											.setSmallIcon(R.drawable.ic_file_download_white_24dp)
-											.setPriority(Notification.PRIORITY_MAX)
-											.build();
-
-									nm.notify(NOTIFICATION_ID_FINISH, n);
-
-									if (mDialogDownloading == null) return;
-									mDialogDownloading.dismiss();
-								}
-							});
-							break;
-					}
-				}
-			});
+		notID = Math.abs(title.hashCode());
+		showDownloadingDialog();
+		int state = getSharedPreferences("data", MODE_PRIVATE).getInt(notID + "state", DownloadTask.State.NONE.getValue());
+		if (state != DownloadTask.State.DOWNLOADING.getValue()) {
+			int corePoolSize = 60;
+			int maximumPoolSize = 80;
+			int keepAliveTime = 10;
+			BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>(maximumPoolSize);
+			Executor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
+			new DownloadTask(progress, book, this).executeOnExecutor(threadPoolExecutor);
 		}
+	}
 
-		mDialogDownloading = new ProgressDialog(BookDetailsActivity.this);
-		mDialogDownloading.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		mDialogDownloading.setCancelable(false);
-		mDialogDownloading.setCanceledOnTouchOutside(false);
-		mDialogDownloading.setMax(100);
-		mDialogDownloading.setProgress(Utility.calcProgress(progress, book.pageCount));
-		mDialogDownloading.setTitle(getString(R.string.dialog_download_title, book.getAvailableTitle()));
-		mDialogDownloading.setMessage(getString(R.string.dialog_download_progress, progress, book.pageCount));
-		mDialogDownloading.setButton(
-				DialogInterface.BUTTON_POSITIVE,
-				getString(R.string.dialog_download_pause),
-				new DialogInterface.OnClickListener() {
+	private void showDownloadingDialog() {
+		mDialogDownloading = new MaterialDialog.Builder(BookDetailsActivity.this)
+				.title(getString(R.string.dialog_download_title, book.getAvailableTitle()))
+				.positiveText(getString(R.string.dialog_download_pause))
+				.negativeText(R.string.dialog_ask_d_or_d_delete)
+				.onPositive(new MaterialDialog.SingleButtonCallback() {
 					@Override
-					public void onClick(DialogInterface dialogInterface, int i) {
-						if (mDownloader.isThreadAllOk()) return;
-						if (mDownloader.isDownloading()) {
-							mDownloader.pause();
-						} else {
-							mDownloader.continueDownload();
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+						int state = getSharedPreferences("data", MODE_PRIVATE).getInt(notID + "state", DownloadTask.State.NONE.getValue());
+						if (state == DownloadTask.State.DOWNLOADING.getValue()) {
+							getSharedPreferences("data", MODE_PRIVATE).edit().putInt(notID + "state", DownloadTask.State.PAUSE.getValue()).apply();
+						}
+						if (state == DownloadTask.State.PAUSE.getValue()) {
+							getSharedPreferences("data", MODE_PRIVATE).edit().putInt(notID + "state", DownloadTask.State.RESUME_DOWNLOAD.getValue()).apply();
 						}
 					}
-				}
-		);
-		mDialogDownloading.setButton(
-				DialogInterface.BUTTON_NEGATIVE,
-				getString(android.R.string.cancel),
-				new DialogInterface.OnClickListener() {
+				})
+				.onNegative(new MaterialDialog.SingleButtonCallback() {
 					@Override
-					public void onClick(DialogInterface dialogInterface, int i) {
-						mDownloader.stop();
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+						getSharedPreferences("data", MODE_PRIVATE).edit().putInt(notID + "state", DownloadTask.State.CANCELED.getValue()).apply();
 					}
-				}
-		);
+				})
+				.build();
 		/** mDialogDownloading.setButton(
-				DialogInterface.BUTTON_NEUTRAL,
-				getString(R.string.dialog_download_restart),
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialogInterface, int i) {
-						if (mDownloader.isThreadAllOk()) return;
-						mDownloader.start();
-					}
-				}
-		); **/
+		 DialogInterface.BUTTON_NEUTRAL,
+		 getString(R.string.dialog_download_restart),
+		 new DialogInterface.OnClickListener() {
+		@Override public void onClick(DialogInterface dialogInterface, int i) {
+		if (mDownloader.isThreadAllOk()) return;
+		mDownloader.start();
+		}
+		}
+		 ); **/
 
 		mDialogDownloading.show();
-		mFileCacheManager.saveBookDataToExternalPath(book);
-		mDownloader.start();
 	}
 
 	private void showFAB() {
@@ -960,6 +883,64 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				.start();
 	}
 
+	protected <T extends View> T $(int id) {
+		return (T) findViewById(id);
+	}
+
+	@Override
+	public void onProgress(int ID, int Progress) {
+
+	}
+
+	@Override
+	public void onStop(int ID) {
+		NotificationManagerCompat.from(getApplicationContext()).cancel(ID);
+	}
+
+	@Override
+	public void onPause(int ID) {
+
+	}
+
+	@Override
+	public void onOK(int ID) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				isDownloaded = true;
+				invalidateOptionsMenu();
+
+				NotificationManagerCompat nm = NotificationManagerCompat.from(getApplicationContext());
+
+				Intent intent = new Intent(getApplicationContext(), BookDetailsActivity.class);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				intent.putExtra(EXTRA_BOOK_DATA, book.toJSONString());
+
+				Notification n = new NotificationCompat.Builder(BookDetailsActivity.this)
+						.setContentTitle(book.title)
+						.setContentText(getString(R.string.dialog_download_notification_title))
+						.setOngoing(false)
+						.setContentIntent(
+								PendingIntent.getActivity(
+										getApplicationContext(),
+										0,
+										intent,
+										PendingIntent.FLAG_CANCEL_CURRENT
+								)
+						)
+						.setAutoCancel(true)
+						.setSmallIcon(android.R.drawable.stat_sys_download_done)
+						.setPriority(Notification.PRIORITY_MAX)
+						.build();
+
+				nm.notify(notID, n);
+
+				if (mDialogDownloading == null) return;
+				mDialogDownloading.dismiss();
+			}
+		});
+	}
+
 	private class BookGetTask extends AsyncTask<String, Void, BaseMessage> {
 
 		@Override
@@ -987,7 +968,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 							public void onClick(View view) {
 								startBookGet();
 							}
-				}).show();
+						}).show();
 			}
 		}
 
@@ -1058,9 +1039,4 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		}
 
 	}
-
-	protected <T extends View> T $(int id) {
-		return (T) findViewById(id);
-	}
-
 }

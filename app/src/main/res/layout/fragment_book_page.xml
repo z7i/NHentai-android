@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:orientation="vertical"
              android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <FrameLayout
+        android:id="@+id/background_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/background_view"
-        android:clickable="true"
-        android:background="?android:attr/windowBackground"/>
+        android:background="?android:attr/windowBackground"
+        android:clickable="true" />
 
     <LinearLayout
+        android:id="@+id/loading_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
-        android:id="@+id/loading_content"
         android:orientation="vertical">
 
         <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/page_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/page_number"
             android:textSize="@dimen/gallery_book_page_number_size"/>
 
         <moe.feng.nhentai.view.WheelProgressView
+            android:id="@+id/wheel_progress"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:id="@+id/wheel_progress"
+            android:layout_marginTop="8dp"
             app:matProg_barColor="@color/pink_500"
             app:matProg_barWidth="4dp"/>
 
         <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/little_tips"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/little_tips"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/image_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/image_view"/>
+        android:layout_height="match_parent" />
 
 </FrameLayout>

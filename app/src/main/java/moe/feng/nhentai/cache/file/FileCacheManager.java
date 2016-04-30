@@ -9,17 +9,16 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import moe.feng.nhentai.api.common.NHentaiUrl;
@@ -35,15 +34,7 @@ public class FileCacheManager {
 	private static FileCacheManager sInstance;
 	
 	private File mCacheDir, mExternalDir;
-	
-	public static FileCacheManager getInstance(Context context) {
-		if (sInstance == null) {
-			sInstance = new FileCacheManager(context);
-		}
-		
-		return sInstance;
-	}
-	
+
 	private FileCacheManager(Context context) {
 		try {
 			mCacheDir = context.getExternalCacheDir();
@@ -58,6 +49,14 @@ public class FileCacheManager {
 			String externalAbsDir = "/NHBooks/";
 			mExternalDir = new File(Environment.getExternalStorageDirectory().getPath() + externalAbsDir);
 		}
+	}
+
+	public static FileCacheManager getInstance(Context context) {
+		if (sInstance == null) {
+			sInstance = new FileCacheManager(context);
+		}
+
+		return sInstance;
 	}
 	
 	public boolean createCacheFromNetwork(String type, String url) {
@@ -186,6 +185,10 @@ public class FileCacheManager {
 	
 	public boolean cacheExists(String type, String name) {
 		return new File(getCachePath(type, name)).isFile();
+	}
+
+	public File getCachedImage(String type, String url) {
+		return new File(getCachePath(type, getCacheName(url)));
 	}
 
 	public boolean externalPageExists(Book book, int page) {
