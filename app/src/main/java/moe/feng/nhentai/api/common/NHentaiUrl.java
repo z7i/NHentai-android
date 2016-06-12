@@ -4,9 +4,9 @@ import moe.feng.nhentai.model.Category;
 
 public class NHentaiUrl {
 
-	public static final String NHENTAI_HOME = "http://nhentai.net";
-	public static final String NHENTAI_I = "http://i.nhentai.net";
-	public static final String NHENTAI_T = "http://t.nhentai.net";
+	public static final String NHENTAI_HOME = "https://nhentai.net";
+	public static final String NHENTAI_I = "https://i.nhentai.net";
+	public static final String NHENTAI_T = "https://t.nhentai.net";
 
 	public static String getSearchUrl(String content) {
 		return getSearchUrl(content, 1);
@@ -18,6 +18,10 @@ public class NHentaiUrl {
 			targetContent = targetContent.replaceAll(" ", "+");
 		}
 		return NHENTAI_HOME + "/search/?q=" + targetContent + "&page=" + page_num;
+	}
+
+	public static String getSearchUrlByTag(String content, String tag, int page_num) {
+		return getSearchUrl("parodies%3A" + content + "+-tag%3A\"" + tag + "\"", page_num);
 	}
 
 	public static String getBookDetailsUrl(String book_id) {

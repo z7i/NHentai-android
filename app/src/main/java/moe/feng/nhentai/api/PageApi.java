@@ -38,51 +38,64 @@ public class PageApi {
 
 		Elements container = doc.getElementsByClass("gallery");
 
-		ArrayList<Book> books = new ArrayList<>();
-
-		for (Element e : container) {
-			Book book = new Book();
-
-			Element bookIdElement = e.getElementsByClass("cover").get(0);
-			String bookId = bookIdElement.attr("href");
-			bookId = bookId.substring(0, bookId.lastIndexOf("/"));
-			bookId = bookId.substring(bookId.lastIndexOf("/") + 1, bookId.length());
-
-			Element caption = e.getElementsByClass("caption").get(0);
-
-			book.bookId = bookId;
-			book.title = caption.text();
-
-			Elements imgs = e.getElementsByTag("img");
-			for (Element imge : imgs) {
-				if (imge.hasAttr("src")) {
-					String thumbUrl = imge.attr("src");
-					thumbUrl = thumbUrl.substring(0, thumbUrl.lastIndexOf("/"));
-					String galleryId = thumbUrl.substring(thumbUrl.lastIndexOf("/") + 1, thumbUrl.length());
-					book.galleryId = galleryId;
-					book.bigCoverImageUrl = NHentaiUrl.getBigCoverUrl(galleryId);
-					book.previewImageUrl = NHentaiUrl.getThumbUrl(galleryId);
-					try {
-						book.thumbHeight = Integer.valueOf(imge.attr("height"));
-						book.thumbWidth = Integer.valueOf(imge.attr("width"));
-					} catch (Exception ex) {
-
-					}
-				}
-			}
-
-			if (book.bookId != null && !book.bookId.isEmpty()) {
-				books.add(book);
-			}
-
-			Log.i(TAG, "Get book: " + book.toJSONString());
-		}
-
 		result.setCode(0);
-		result.setData(books);
+		result.setData(getBooksFromGalleryElements(container));
 
 		return result;
 	}
+
+    public static ArrayList<Book> getBooksFromGalleryElements(Elements container) {
+        ArrayList<Book> books = new ArrayList<>();
+
+        for (Element e : container) {
+            Book book = new Book();
+
+            String tagIds = e.attributes().get("data-tags");
+            if (tagIds.contains(Book.LANG_CN)) {
+                book.langField = Book.LANG_CN;
+            } else if (tagIds.contains(Book.LANG_JP)) {
+                book.langField = Book.LANG_JP;
+            } else {
+                book.langField = Book.LANG_GB;
+            }
+
+            Element bookIdElement = e.getElementsByClass("cover").get(0);
+            String bookId = bookIdElement.attr("href");
+            bookId = bookId.substring(0, bookId.lastIndexOf("/"));
+            bookId = bookId.substring(bookId.lastIndexOf("/") + 1, bookId.length());
+
+            Element caption = e.getElementsByClass("caption").get(0);
+
+            book.bookId = bookId;
+            book.title = caption.text();
+
+            Elements imgs = e.getElementsByTag("img");
+            for (Element imge : imgs) {
+                if (imge.hasAttr("src")) {
+                    String thumbUrl = imge.attr("src");
+                    thumbUrl = thumbUrl.substring(0, thumbUrl.lastIndexOf("/"));
+                    String galleryId = thumbUrl.substring(thumbUrl.lastIndexOf("/") + 1, thumbUrl.length());
+                    book.galleryId = galleryId;
+                    book.bigCoverImageUrl = NHentaiUrl.getBigCoverUrl(galleryId);
+                    book.previewImageUrl = NHentaiUrl.getThumbUrl(galleryId);
+                    try {
+                        book.thumbHeight = Integer.valueOf(imge.attr("height"));
+                        book.thumbWidth = Integer.valueOf(imge.attr("width"));
+                    } catch (Exception ex) {
+
+                    }
+                }
+            }
+
+            if (book.bookId != null && !book.bookId.isEmpty()) {
+                books.add(book);
+            }
+
+            Log.i(TAG, "Get book: " + book.toJSONString());
+        }
+
+        return books;
+    }
 
 	public static BaseMessage getHomePageList(int number) {
 		return getPageList(NHentaiUrl.getHomePageUrl(number));

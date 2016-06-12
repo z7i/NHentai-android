@@ -126,10 +126,15 @@ public class BookApi {
 			}
 		}
 
-		Log.i(TAG, book.toJSONString());
+		/** Get more like this */
+		Elements likesContainer = doc.getElementsByAttributeValue("id", "related-container")
+                .get(0)
+                .getElementsByClass("gallery");
+        Log.i(TAG, "Likes:" + likesContainer.html());
+        book.likes = PageApi.getBooksFromGalleryElements(likesContainer);
 
-		result.setCode(0);
-		result.setData(book);
+        result.setCode(0);
+        result.setData(book);
 
 		return result;
 	}

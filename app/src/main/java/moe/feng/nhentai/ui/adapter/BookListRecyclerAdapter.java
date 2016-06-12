@@ -2,7 +2,9 @@ package moe.feng.nhentai.ui.adapter;
 
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,8 +72,21 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 		if (holder instanceof ViewHolder) {
 			ArrayList<Book> data = this.data == null ? fm.toArray() : this.data;
 			final ViewHolder mHolder = (ViewHolder) holder;
-			mHolder.mTitleTextView.setText(data.get(position).title);
+			mHolder.mTitleTextView.setText("       " + data.get(position).title);
 			String previewImageUrl = data.get(position).previewImageUrl;
+
+            switch (data.get(position).langField) {
+                case Book.LANG_GB:
+                    mHolder.mLangFieldView.setImageResource(R.drawable.ic_lang_gb);
+                    break;
+                case Book.LANG_CN:
+                    mHolder.mLangFieldView.setImageResource(R.drawable.ic_lang_cn);
+                    break;
+                case Book.LANG_JP:
+                default:
+                    mHolder.mLangFieldView.setImageResource(R.drawable.ic_lang_jp);
+                    break;
+            }
 
 			int color = mColorGenerator.getColor(data.get(position).title);
 			TextDrawable drawable = TextDrawable.builder().buildRect(Utility.getFirstCharacter(data.get(position).title), color);
@@ -176,7 +191,7 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 
 	public class ViewHolder extends ClickableViewHolder {
 
-		public ImageView mPreviewImageView;
+		public ImageView mPreviewImageView, mLangFieldView;
 		public TextView mTitleTextView;
 
 		public Drawable mImagePlaceholder;
@@ -188,6 +203,7 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 		public ViewHolder(View itemView, LabelView labelView) {
 			super(itemView);
 			mPreviewImageView = (ImageView) itemView.findViewById(R.id.book_preview);
+            mLangFieldView = (ImageView) itemView.findViewById(R.id.book_lang_field);
 			mTitleTextView = (TextView) itemView.findViewById(R.id.book_title);
 
 			this.labelView = labelView;

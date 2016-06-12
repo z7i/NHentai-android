@@ -13,22 +13,31 @@
         android:adjustViewBounds="true"
         tools:src="@mipmap/ic_launcher"/>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_gravity="start"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
+
+        <ImageView
+            android:layout_width="20sp"
+            android:layout_height="14sp"
+            android:translationY="3sp"
+            android:id="@+id/book_lang_field"
+            android:layout_gravity="start"
+            android:scaleType="centerInside"
+            tools:src="@drawable/ic_lang_cn"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/book_title"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            tools:text="Title"/>
+            tools:text="     Title"/>
 
-    </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>
