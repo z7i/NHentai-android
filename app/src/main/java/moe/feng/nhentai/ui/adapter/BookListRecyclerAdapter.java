@@ -13,6 +13,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.florent37.materialimageloading.MaterialImageLoading;
 import com.lid.lib.LabelView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -177,6 +178,7 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 					.into(iv, new Callback() {
 						@Override
 						public void onSuccess() {
+                            MaterialImageLoading.animate(iv).setDuration(1500).start();
 						}
 
 						@Override

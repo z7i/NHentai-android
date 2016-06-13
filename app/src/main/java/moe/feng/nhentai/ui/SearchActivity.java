@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -73,7 +75,7 @@ public class SearchActivity extends AbsActivity {
 
 	private InputMethodManager imm;
 
-	private static final int MSG_CODE_NO_MORE_RESULTS = 1;
+	private static final int MSG_CODE_NO_MORE_RESULTS = 1, MSG_CODE_DIRECT_TO_BOOK = 2;
 
 	private static final String TRANSITION_NAME_CARD = "card_view";
 
@@ -353,6 +355,11 @@ public class SearchActivity extends AbsActivity {
 					msg.setCode(MSG_CODE_NO_MORE_RESULTS);
 				}
 			} else {
+				if (TextUtils.isDigitsOnly(keyword)) {
+                    msg = new BaseMessage(MSG_CODE_DIRECT_TO_BOOK, keyword);
+                    return msg;
+                }
+
 				msg = PageApi.getSearchPageList(keyword, params[0]);
 				if (msg.getCode() == 0 && msg.getData() != null) {
 					ArrayList<Book> temp = msg.getData();
@@ -396,6 +403,17 @@ public class SearchActivity extends AbsActivity {
 						isAllowToLoadNextPage = false;
 						Snackbar.make($(R.id.root_layout), R.string.tips_no_more_results, Snackbar.LENGTH_LONG).show();
 						break;
+                    case MSG_CODE_DIRECT_TO_BOOK:
+                        Intent intent = new Intent(SearchActivity.this, BookDetailsActivity.class);
+                        intent.setAction(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse("https://nhentai.net/g/" + msg.getData()));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                        } else {
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        }
+                        startActivity(intent);
+                        break;
 					default:
 						if (mNowPage == 1) {
 							Snackbar.make(

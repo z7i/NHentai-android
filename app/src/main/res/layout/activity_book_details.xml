@@ -62,12 +62,19 @@
                     android:id="@+id/book_tags_layout"
                     android:orientation="vertical"/>
 
+				<View
+					android:layout_width="match_parent"
+					android:layout_height="0.5dp"
+					android:paddingLeft="16dp"
+					android:paddingRight="16dp"
+					android:background="@android:color/black"
+					android:alpha="0.3"
+					android:layout_marginTop="24dp"
+					android:layout_marginBottom="10dp"/>
+
 	            <android.support.v7.widget.RecyclerView
 		            android:layout_width="match_parent"
 		            android:layout_height="420dp"
-		            android:layout_marginTop="10dp"
-		            android:paddingLeft="24dp"
-		            android:paddingRight="24dp"
 		            android:clipToPadding="false"
 		            android:id="@+id/preview_list"/>
 
@@ -96,11 +103,16 @@
 				android:id="@+id/preview_placeholder"
 				android:scaleType="centerCrop"/>
 
-			<com.nvanbenschoten.motion.ParallaxImageView
+			<net.grobas.view.MovingImageView
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				android:id="@+id/preview_image"
-				android:scaleType="centerCrop"/>
+				app:miv_load_on_create="true"
+				app:miv_max_relative_size="1.5"
+				app:miv_min_relative_offset="0.2"
+				app:miv_start_delay="1000"
+				app:miv_repetitions="-1"
+				app:miv_speed="100"/>
 
 		</FrameLayout>
 

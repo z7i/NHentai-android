@@ -33,8 +33,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.nvanbenschoten.motion.ParallaxImageView;
 import com.squareup.picasso.Picasso;
+
+import net.grobas.animation.MovingViewAnimator;
+import net.grobas.view.MovingImageView;
 
 import java.io.File;
 
@@ -66,7 +68,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	private ObservableScrollView mScrollView;
 	private FrameLayout mAppBarContainer, mImageContainer;
 	private ImageView mImagePlaceholderView;
-	private ParallaxImageView mImageView;
+	private MovingImageView mImageView;
 	private FloatingActionButton mFAB;
 	private TextView mTitleText;
 	private LinearLayout mTagsLayout;
@@ -131,8 +133,10 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		setContentView(R.layout.activity_book_details);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		ActivityOptions.makeTaskLaunchBehind();
+        getSupportActionBar().setTitle(book.bookId);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			ActivityOptions.makeTaskLaunchBehind();
+		}
 		FileCacheManager cm = FileCacheManager.getInstance(getApplicationContext());
 
 		TextDrawable textDrawable;
@@ -183,7 +187,9 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				}
 				new CoverTask().execute(book);
 			}
-		}
+			mImageView.getMovingAnimator().setSpeed(100);
+			mImageView.getMovingAnimator().setMovementType(MovingViewAnimator.VERTICAL_MOVE);
+        }
 
 		if (book.pageCount != 0) {
 			mContentView.setVisibility(View.GONE);
@@ -236,18 +242,6 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		}
 		mFAB.setTranslationY(fabTranslationY);
 		mScrollView.addOnScrollChangeListener(this);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		mImageView.registerSensorManager(10);
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		mImageView.unregisterSensorManager();
 	}
 
 	@Override

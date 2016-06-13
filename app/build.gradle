@@ -33,5 +33,6 @@ dependencies {
 	compile 'com.lid.labelview:lib:0.1.1'
 	compile 'com.github.ksoichiro:android-observablescrollview:1.6.0'
 	compile 'com.nineoldandroids:library:2.4.0'
-	compile 'com.nvanbenschoten.motion:library:1.1.2'
+	compile 'com.github.florent37:materialimageloading:1.0.2'
+	compile project(':libraries:movingimageview')
 }
