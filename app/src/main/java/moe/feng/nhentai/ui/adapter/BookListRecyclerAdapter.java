@@ -196,11 +196,11 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 		public ImageView mPreviewImageView, mLangFieldView;
 		public TextView mTitleTextView;
 
-		public Drawable mImagePlaceholder;
+		Drawable mImagePlaceholder;
 
 		public Book book;
 
-		public LabelView labelView;
+		LabelView labelView;
 
 		public ViewHolder(View itemView, LabelView labelView) {
 			super(itemView);

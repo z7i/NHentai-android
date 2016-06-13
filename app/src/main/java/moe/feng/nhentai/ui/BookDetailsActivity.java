@@ -47,6 +47,7 @@ import moe.feng.nhentai.api.common.NHentaiUrl;
 import moe.feng.nhentai.cache.common.Constants;
 import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.dao.FavoritesManager;
+import moe.feng.nhentai.drawable.RoundSideRectDrawable;
 import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.model.Category;
@@ -334,6 +335,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		int x = getResources().getDimensionPixelSize(R.dimen.tag_margin_x);
 		int y = getResources().getDimensionPixelSize(R.dimen.tag_margin_y);
 		int min_width = getResources().getDimensionPixelSize(R.dimen.tag_title_width);
+        int color = getResources().getColor(R.color.deep_purple_800);
 
 		// Add Parodies Tags
 		if (!TextUtils.isEmpty(book.parodies)) {
@@ -354,6 +356,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 			TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 			tagView.setText(book.parodies);
+            tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
 			tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -390,6 +393,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			for (final String tag : book.characters) {
 				TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 				tagView.setText(tag);
+                tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
 				tagView.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -427,6 +431,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			for (final String tag : book.tags) {
 				TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 				tagView.setText(tag);
+                tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
 				tagView.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -464,7 +469,8 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			for (final String artist : book.artists) {
 				TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 				tagView.setText(artist);
-				tagView.setOnClickListener(new View.OnClickListener() {
+                tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
+                tagView.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
 						CategoryActivity.launch(
@@ -500,7 +506,8 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 			TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 			tagView.setText(book.group);
-			tagView.setOnClickListener(new View.OnClickListener() {
+            tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
+            tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					CategoryActivity.launch(
@@ -534,6 +541,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 			TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 			tagView.setText(book.language);
+            tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
 			tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
