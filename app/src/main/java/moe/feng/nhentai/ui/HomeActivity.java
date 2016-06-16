@@ -504,6 +504,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				if (mAdapter.getItemCount() >= 1) {
 					mRecyclerView.smoothScrollToPosition(0);
 				}
+				mBooks.clear();
+				mAdapter.notifyDataSetChanged();
 				new PageGetTask().execute(mNowPage = 1);
 			}
 		});
@@ -514,6 +516,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				SearchActivity.launch(HomeActivity.this, mSearchBarCard);
 			}
 		});
+
+        mLuckyFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RandomActivity.launch(HomeActivity.this, mLuckyFAB);
+            }
+        });
 
 		updateTitleBar(SECTION_LATEST);
 	}
@@ -716,7 +725,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 						.show();
 				return true;
 			case R.id.navigation_item_open_nhentai:
-				Uri uri = Uri.parse("https://nhentai.net");
+				Uri uri = Uri.parse("http://nhentai.net");
 				startActivity(new Intent(Intent.ACTION_VIEW, uri));
 				return true;
 		}
@@ -789,9 +798,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			if (msg != null) {
 				if (msg.getCode() == 0 && msg.getData() != null) {
 					if (!((ArrayList<Book>) msg.getData()).isEmpty()) {
-						if (mNowPage == 1) {
-                            mBooks.clear();
-                        }
 						mBooks.addAll((ArrayList<Book>) msg.getData());
 
 						mListKeeper.setData(mBooks);
@@ -872,6 +878,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 					R.string.abc_action_bar_home_description,
 					R.string.abc_action_bar_home_description
 			);
+		}
+
+		public MyDrawerToggle(Activity activity, DrawerLayout drawerLayout, Toolbar toolbar, int openDrawerContentDescRes, int closeDrawerContentDescRes) {
+			super(activity, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes);
 		}
 
 		@Override

@@ -44,6 +44,12 @@
 
     <string name="label_added_to_favorite">FAV.</string>
 
+    <!-- Random -->
+    <string name="activity_random">I\'m feeling lucky</string>
+	<string name="random_failed_set">Cannot get anything from NHentai. Try again?</string>
+	<string name="random_no_data">Please click SHUFFLE button before.</string>
+
+    <!-- Details -->
     <string name="activity_details">Details</string>
     <string name="tag_type_tag">Tags: </string>
     <string name="tag_type_parodies">Parodies: </string>
@@ -101,6 +107,7 @@
 		<item>Popular</item>
 	</string-array>
 
+    <!-- Settings -->
     <string name="settings_main">Settings</string>
 	<string name="snackbar_need_restart">You need to restart app to apply settings.</string>
 	<string name="snackbar_need_restart_action">Restart now</string>

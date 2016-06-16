@@ -44,6 +44,12 @@
 
     <string name="label_added_to_favorite">已收藏</string>
 
+    <!-- Random -->
+    <string name="activity_random">手气不错</string>
+    <string name="random_failed_set">未能从 NHentai 获取本子。再试一次？</string>
+    <string name="random_no_data">请先点击随机按钮！</string>
+
+    <!-- Details -->
     <string name="activity_details">详情</string>
     <string name="tag_type_tag">标签:</string>
     <string name="tag_type_parodies">作品:</string>

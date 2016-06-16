@@ -26,9 +26,11 @@
 
 		<menu>
 			<item android:id="@+id/navigation_item_settings"
+				  android:icon="@drawable/ic_settings_black_24dp"
 			      android:title="@string/item_settings"/>
 
 			<item android:id="@+id/navigation_item_donate"
+				  android:icon="@drawable/ic_thumb_up_black_24dp"
 			      android:title="@string/set_title_alipay"/>
 
 			<item android:id="@+id/navigation_item_open_nhentai"
