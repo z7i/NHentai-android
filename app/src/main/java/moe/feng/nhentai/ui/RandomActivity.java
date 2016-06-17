@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.BookApi;
 import moe.feng.nhentai.api.PageApi;
 import moe.feng.nhentai.dao.FavoriteCategoriesManager;
+import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.dao.LatestBooksKeeper;
 import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
@@ -37,6 +39,7 @@ import moe.feng.nhentai.view.WheelProgressView;
 public class RandomActivity extends AbsActivity {
 
 	private FavoriteCategoriesManager mFCM;
+	private FavoritesManager mFM;
 
     private LatestBooksKeeper mLatestKeeper;
 
@@ -44,6 +47,7 @@ public class RandomActivity extends AbsActivity {
     private ImageView mCoverView, mLangFieldView;
     private TextView mTitleView;
 	private WheelProgressView mWheel;
+	private ImageButton mLikeButton;
 
 	private Book book;
 
@@ -59,6 +63,7 @@ public class RandomActivity extends AbsActivity {
 	protected void onCreate(Bundle savedInstanceState) {
         mLatestKeeper = LatestBooksKeeper.getInstance(getApplicationContext());
 		mFCM = FavoriteCategoriesManager.getInstance(getApplicationContext());
+		mFM = FavoritesManager.getInstance(getApplicationContext());
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_random);
@@ -77,6 +82,7 @@ public class RandomActivity extends AbsActivity {
         mTitleView = $(R.id.book_title);
         mLangFieldView = $(R.id.book_lang_field);
 		mWheel = $(R.id.wheel_progress);
+		mLikeButton = $(R.id.btn_like);
 		$(R.id.btn_open).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -95,6 +101,26 @@ public class RandomActivity extends AbsActivity {
 			@Override
 			public void onClick(View v) {
 				$(R.id.btn_open).callOnClick();
+			}
+		});
+		mLikeButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (book != null) {
+					if (mFM.contains(book.bookId)) {
+						mLikeButton.setImageResource(R.drawable.ic_favorite_outline_white_24dp);
+						mFM.remove(mFM.find(book.bookId));
+					} else {
+						mLikeButton.setImageResource(R.drawable.ic_favorite_white_24dp);
+						mFM.add(book);
+					}
+				} else {
+					Snackbar.make(
+							getWindow().getDecorView().getRootView(),
+							R.string.random_no_data,
+							Snackbar.LENGTH_SHORT
+					).show();
+				}
 			}
 		});
 
@@ -154,6 +180,11 @@ public class RandomActivity extends AbsActivity {
 				            mLangFieldView.setImageResource(R.drawable.ic_lang_jp);
 				            break;
 		            }
+		            mLikeButton.setImageResource(
+				            mFM.contains(book.bookId) ?
+						            R.drawable.ic_favorite_white_24dp :
+						            R.drawable.ic_favorite_outline_white_24dp
+		            );
 		            break;
             }
         }

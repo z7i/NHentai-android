@@ -107,6 +107,16 @@
 		        android:tint="@android:color/white"
 		        android:background="?attr/selectableItemBackgroundBorderless"/>
 
+	        <ImageButton
+		        android:layout_width="64dp"
+		        android:layout_height="64dp"
+		        android:layout_gravity="center_vertical|start"
+		        android:layout_marginStart="24dp"
+		        android:id="@+id/btn_like"
+		        android:src="@drawable/ic_favorite_outline_white_24dp"
+		        android:tint="@android:color/white"
+		        android:background="?attr/selectableItemBackgroundBorderless"/>
+
         </FrameLayout>
 
     </LinearLayout>

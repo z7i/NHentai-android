@@ -579,7 +579,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		menu.clear();
 		getMenuInflater().inflate(R.menu.menu_details, menu);
 
-		MenuItem mFavItem = menu.findItem(R.id.action_favorite);
+		MenuItem mFavItem = menu.findItem(R.id.action_fav);
 		mFavItem.setIcon(isFavorite ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_outline_white_24dp);
 		mFavItem.setTitle(isFavorite ? R.string.action_favorite_true : R.string.action_favorite_false);
 
@@ -601,7 +601,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			this.onBackPressed();
 			return true;
 		}
-		if (id == R.id.action_favorite) {
+		if (id == R.id.action_fav) {
 			FavoritesManager fm = FavoritesManager.getInstance(getApplicationContext());
 			if (isFavorite) {
 				fm.remove(fm.find(book));
