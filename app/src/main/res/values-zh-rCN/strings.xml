@@ -84,6 +84,9 @@
     <string name="dialog_download_pause">暂停/继续</string>
     <string name="dialog_download_copying">正在复制到外置空间.... 请稍候。</string>
 
+    <string name="title_preview">预览</string>
+    <string name="title_recommend">相关推荐</string>
+
     <string name="activity_gallery">图库</string>
     <string name="info_total_pages">"共 %d 页"</string>
     <string name="action_save">保存</string>

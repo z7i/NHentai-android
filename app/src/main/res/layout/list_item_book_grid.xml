@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="160dp"
+              android:layout_height="match_parent"
+              android:layout_margin="4dp"
+              android:background="#afafaf"
+              android:foreground="?attr/selectableItemBackground"
+              android:clickable="true"
+              android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/book_preview"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        tools:src="@mipmap/ic_launcher"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
+
+        <ImageView
+            android:layout_width="20sp"
+            android:layout_height="14sp"
+            android:translationY="3sp"
+            android:id="@+id/book_lang_field"
+            android:layout_gravity="start"
+            android:scaleType="centerInside"
+            tools:src="@drawable/ic_lang_cn"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/book_title"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/white"
+            tools:text="     Title"/>
+
+    </FrameLayout>
+
+</LinearLayout>

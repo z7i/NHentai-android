@@ -84,6 +84,9 @@
     <string name="dialog_download_pause">Pause/Continue</string>
 	<string name="dialog_download_copying">Copying images to external path.... Please wait.</string>
 
+	<string name="title_preview">Preview</string>
+	<string name="title_recommend">Recommend books</string>
+
     <string name="activity_gallery">Gallery</string>
     <string name="info_total_pages">"%d PAGES"</string>
 	<string name="action_save">Save</string>

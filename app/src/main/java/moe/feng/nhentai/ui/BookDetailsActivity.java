@@ -51,6 +51,8 @@ import moe.feng.nhentai.drawable.RoundSideRectDrawable;
 import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.model.Category;
+import moe.feng.nhentai.ui.adapter.BookGridRecyclerAdapter;
+import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.adapter.BookPreviewGridAdapter;
 import moe.feng.nhentai.ui.common.AbsActivity;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
@@ -75,7 +77,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	private LinearLayout mTagsLayout;
 	private LinearLayout mContentView, mAppBarBackground;
 	private WheelProgressView mProgressWheel;
-	private RecyclerView mPreviewList;
+	private RecyclerView mPreviewList, mRecommendList;
 
 	private boolean isPlayingFABAnimation = false;
 
@@ -233,9 +235,12 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mProgressWheel = $(R.id.wheel_progress);
 		mPreviewList = $(R.id.preview_list);
 		mScrollView = $(R.id.scroll_view);
+		mRecommendList = $(R.id.recommend_list);
 
 		mPreviewList.setHasFixedSize(true);
 		mPreviewList.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2, LinearLayoutManager.HORIZONTAL, false));
+		mRecommendList.setHasFixedSize(true);
+		mRecommendList.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
 
 		float fabTranslationY = -getResources().getDimension(R.dimen.floating_action_button_size_half);
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -329,6 +334,17 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			}
 		});
 		mPreviewList.setAdapter(adapter);
+
+		BookGridRecyclerAdapter adapter1 = new BookGridRecyclerAdapter(
+				mRecommendList, book.likes, FavoritesManager.getInstance(getApplicationContext()), mSets
+		);
+		adapter1.setOnItemClickListener(new AbsRecyclerViewAdapter.OnItemClickListener() {
+			@Override
+			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder holder) {
+				BookDetailsActivity.launch(BookDetailsActivity.this, null, book.likes.get(position), position);
+			}
+		});
+		mRecommendList.setAdapter(adapter1);
 	}
 
 	private void updateTagsContent() {

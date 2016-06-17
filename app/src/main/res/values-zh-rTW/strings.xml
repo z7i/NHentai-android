@@ -84,6 +84,9 @@
     <string name="dialog_download_pause">暫停/繼續</string>
     <string name="dialog_download_copying">正在拷貝到外置儲存.... 請稍後。</string>
 
+    <string name="title_preview">預覽</string>
+    <string name="title_recommend">相關推介</string>
+
     <string name="activity_gallery">畫廊</string>
     <string name="info_total_pages">"共 %d 頁"</string>
 	<string name="action_save">保存</string>

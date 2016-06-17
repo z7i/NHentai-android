@@ -72,11 +72,47 @@
 					android:layout_marginTop="24dp"
 					android:layout_marginBottom="10dp"/>
 
+	            <android.support.v7.widget.AppCompatTextView
+		            android:layout_height="wrap_content"
+	                android:layout_width="wrap_content"
+	                android:layout_marginTop="16dp"
+	                android:layout_marginBottom="16dp"
+	                android:layout_marginStart="16dp"
+	                android:text="@string/title_preview"
+		            android:textColor="?attr/colorAccent"
+		            android:textAppearance="@style/TextAppearance.AppCompat.Button"/>
+
 	            <android.support.v7.widget.RecyclerView
 		            android:layout_width="match_parent"
 		            android:layout_height="420dp"
 		            android:clipToPadding="false"
 		            android:id="@+id/preview_list"/>
+
+	            <View
+		            android:layout_width="match_parent"
+		            android:layout_height="0.5dp"
+		            android:paddingLeft="16dp"
+		            android:paddingRight="16dp"
+		            android:background="@android:color/black"
+		            android:alpha="0.3"
+		            android:layout_marginTop="24dp"
+		            android:layout_marginBottom="10dp"/>
+
+	            <android.support.v7.widget.AppCompatTextView
+		            android:layout_height="wrap_content"
+		            android:layout_width="wrap_content"
+		            android:layout_marginTop="16dp"
+		            android:layout_marginBottom="16dp"
+		            android:layout_marginStart="16dp"
+		            android:text="@string/title_recommend"
+		            android:textColor="?attr/colorAccent"
+		            android:textAppearance="@style/TextAppearance.AppCompat.Button"/>
+
+	            <android.support.v7.widget.RecyclerView
+		            android:layout_width="match_parent"
+		            android:layout_height="240dp"
+		            android:clipToPadding="false"
+		            android:id="@+id/recommend_list"/>
 
             </LinearLayout>
 
