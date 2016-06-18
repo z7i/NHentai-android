@@ -144,6 +144,9 @@
     <string name="category_details">信息页面</string>
     <string name="set_title_full_image_in_details">加载全高清图片作预览图</string>
     <string name="set_title_full_image_in_details_summary">这样会消耗大量流量和内存（壕任性选项）</string>
+    <string name="set_title_allow_standalone_task">允许任务独立</string>
+    <string name="set_title_allow_standalone_task_desc">每个本子都会显示为单独的任务</string>
+    <string name="set_title_android_too_old_desc">这个特性在你的 Android 版本上不被支持。</string>
 	<string name="settings_storage">存储</string>
 	<string name="category_folder">文件夹</string>
 	<string name="set_title_nomedia">在系统图库中隐藏已保存的本子</string>

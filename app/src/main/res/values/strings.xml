@@ -145,6 +145,9 @@
 	<string name="category_details">Info page</string>
 	<string name="set_title_full_image_in_details">Load Full HD images as preview</string>
 	<string name="set_title_full_image_in_details_summary">It will consume plenty of data usage and memory.</string>
+	<string name="set_title_allow_standalone_task">Allow standalone task</string>
+	<string name="set_title_allow_standalone_task_desc">Each book will be shown as a standalone task.</string>
+	<string name="set_title_android_too_old_desc">This feature isn\'t supported on your Android version</string>
 	<string name="settings_storage">Storage</string>
 	<string name="category_folder">Folder</string>
 	<string name="set_title_nomedia">Do not show saved books in gallery</string>

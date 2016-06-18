@@ -145,11 +145,11 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		TextDrawable textDrawable;
 		if (book.title != null) {
 			int color = ColorGenerator.MATERIAL.getColor(book.title);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mSets.getBoolean(Settings.KEY_ALLOW_STANDALONE_TASK, true)) {
 				ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(
 						TextUtils.isEmpty(book.titleJP) ? book.title : book.titleJP,
 						null,
-						getResources().getColor(R.color.deep_purple_300)
+						getResources().getColor(R.color.deep_purple_500)
 				);
 				setTaskDescription(taskDesc);
 			}
@@ -273,7 +273,8 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 	public static void launch(Activity activity, ImageView imageView, Book book, int fromPosition) {
 		Intent intent = new Intent(activity, BookDetailsActivity.class);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+				&& Settings.getInstance(activity).getBoolean(Settings.KEY_ALLOW_STANDALONE_TASK, true)) {
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		} else {
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -307,11 +308,11 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mContentView.setVisibility(View.VISIBLE);
 		mContentView.animate().alphaBy(0f).alpha(1f).setDuration(1500).start();
 		mTitleText.setText(TextUtils.isEmpty(book.titleJP) ? book.title : book.titleJP);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mSets.getBoolean(Settings.KEY_ALLOW_STANDALONE_TASK, true)) {
 			ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(
 					TextUtils.isEmpty(book.titleJP) ? book.title : book.titleJP,
 					null,
-					getResources().getColor(R.color.deep_purple_300)
+					getResources().getColor(R.color.deep_purple_500)
 			);
 			setTaskDescription(taskDesc);
 		}

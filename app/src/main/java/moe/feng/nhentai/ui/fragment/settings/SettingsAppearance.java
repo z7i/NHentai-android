@@ -1,6 +1,7 @@
 package moe.feng.nhentai.ui.fragment.settings;
 
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSeekBar;
@@ -18,7 +19,7 @@ import moe.feng.nhentai.view.pref.SwitchPreference;
 public class SettingsAppearance extends PreferenceFragment implements Preference.OnPreferenceClickListener, android.preference.Preference.OnPreferenceChangeListener {
 
 	private Preference mCardCountPref;
-	private SwitchPreference mHDImagePref, mFullHDPreviewPref;
+	private SwitchPreference mHDImagePref, mFullHDPreviewPref, mAllowStandaloneTaskPref;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,12 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 		mCardCountPref = (Preference) findPreference("card_count");
 		mHDImagePref = (SwitchPreference) findPreference("hd_image");
 		mFullHDPreviewPref = (SwitchPreference) findPreference("full_image_preview");
+		mAllowStandaloneTaskPref = (SwitchPreference) findPreference("allow_standalone_task");
+
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+			mAllowStandaloneTaskPref.setEnabled(false);
+			mAllowStandaloneTaskPref.setSummary(R.string.set_title_android_too_old_desc);
+		}
 
 		int cardCount = mSets.getInt(Settings.KEY_CARDS_COUNT, -1);
 		mCardCountPref.setSummary(
@@ -42,10 +49,12 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 		);
 		mHDImagePref.setChecked(mSets.getBoolean(Settings.KEY_LIST_HD_IMAGE, false));
 		mFullHDPreviewPref.setChecked(mSets.getBoolean(Settings.KEY_FULL_IMAGE_PREVIEW, false));
+		mAllowStandaloneTaskPref.setChecked(mSets.getBoolean(Settings.KEY_ALLOW_STANDALONE_TASK, true) && mAllowStandaloneTaskPref.isEnabled());
 
 		mCardCountPref.setOnPreferenceClickListener(this);
 		mHDImagePref.setOnPreferenceChangeListener(this);
 		mFullHDPreviewPref.setOnPreferenceChangeListener(this);
+		mAllowStandaloneTaskPref.setOnPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -87,17 +96,17 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 		final AppCompatTextView numberText = (AppCompatTextView) view.findViewById(R.id.number_text);
 		final AppCompatSeekBar seekBar = (AppCompatSeekBar) view.findViewById(R.id.seekbar);
 		int cardCount = mSets.getInt(Settings.KEY_CARDS_COUNT, 2);
-		if (cardCount < 1) {
+		if (cardCount < 2) {
 			cardCount = 2;
 		}
 		numberText.setText(String.valueOf(cardCount));
 		seekBar.setKeyProgressIncrement(1);
-		seekBar.setMax(9);
-		seekBar.setProgress(cardCount - 1);
+		seekBar.setMax(8);
+		seekBar.setProgress(cardCount - 2);
 		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-				numberText.setText(String.valueOf(i + 1));
+				numberText.setText(String.valueOf(i + 2));
 			}
 
 			@Override
@@ -123,11 +132,11 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i) {
-						mSets.putInt(Settings.KEY_CARDS_COUNT, seekBar.getProgress() + 1);
+						mSets.putInt(Settings.KEY_CARDS_COUNT, seekBar.getProgress() + 2);
 						mCardCountPref.setSummary(
 								getString(
 										R.string.set_title_cards_count_summary,
-										String.valueOf(seekBar.getProgress() + 1)
+										String.valueOf(seekBar.getProgress() + 2)
 								)
 						);
 						showRestartTips();
@@ -149,6 +158,12 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 			Boolean b = (Boolean) o;
 			mSets.putBoolean(Settings.KEY_FULL_IMAGE_PREVIEW, b);
 			mFullHDPreviewPref.setChecked(b);
+			return true;
+		}
+		if (pref == mAllowStandaloneTaskPref) {
+			Boolean b = (Boolean) o;
+			mSets.putBoolean(Settings.KEY_ALLOW_STANDALONE_TASK, b);
+			mAllowStandaloneTaskPref.setChecked(b);
 			return true;
 		}
 		return false;

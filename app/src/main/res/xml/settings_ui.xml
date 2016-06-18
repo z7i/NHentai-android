@@ -21,6 +21,11 @@
 			android:title="@string/set_title_full_image_in_details"
 			android:summary="@string/set_title_full_image_in_details_summary"/>
 
+		<moe.feng.nhentai.view.pref.SwitchPreference
+			android:key="allow_standalone_task"
+			android:title="@string/set_title_allow_standalone_task"
+			android:summary="@string/set_title_allow_standalone_task_desc"/>
+
 	</PreferenceCategory>
 
 </PreferenceScreen>

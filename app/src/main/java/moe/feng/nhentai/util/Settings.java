@@ -8,9 +8,9 @@ public class Settings {
 
 	public static final String PREFERENCES_NAME = "settings";
 
-	public static final String KEY_CELEBRATE = "celebrate", KEY_CARDS_COUNT = "cards_count",
+	public static final String KEY_CELEBRATE = "celebrate", KEY_CARDS_COUNT = "cards_number",
 			KEY_LIST_HD_IMAGE = "list_hd_image", KEY_FULL_IMAGE_PREVIEW = "full_image_preview",
-			KEY_NO_MEDIA = "no_media_boolean";
+			KEY_NO_MEDIA = "no_media_boolean", KEY_ALLOW_STANDALONE_TASK = "allow_standalone_task";
 
 	private static Settings sInstance;
 

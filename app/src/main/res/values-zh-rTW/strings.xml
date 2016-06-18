@@ -144,6 +144,9 @@
     <string name="category_details">資料頁面</string>
     <string name="set_title_full_image_in_details">載入原圖作預覽圖像</string>
     <string name="set_title_full_image_in_details_summary">這會消耗大量流量和內存（壕任性選項）</string>
+    <string name="set_title_allow_standalone_task">允許任務分離</string>
+    <string name="set_title_allow_standalone_task_desc">每個本子都會顯示為單獨的任務</string>
+    <string name="set_title_android_too_old_desc">這個特性在你的 Android 版本上不被支援。</string>
 	<string name="settings_storage">存儲</string>
 	<string name="category_folder">資料夾</string>
 	<string name="set_title_nomedia">在系統畫廊中隱藏已儲存的本子</string>
