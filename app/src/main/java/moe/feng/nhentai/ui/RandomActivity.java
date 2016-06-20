@@ -41,27 +41,27 @@ public class RandomActivity extends AbsActivity {
 	private FavoriteCategoriesManager mFCM;
 	private FavoritesManager mFM;
 
-    private LatestBooksKeeper mLatestKeeper;
+	private LatestBooksKeeper mLatestKeeper;
 
-    private FloatingActionButton mFAB;
-    private ImageView mCoverView, mLangFieldView;
-    private TextView mTitleView;
+	private FloatingActionButton mFAB;
+	private ImageView mCoverView, mLangFieldView;
+	private TextView mTitleView;
 	private WheelProgressView mWheel;
 	private ImageButton mLikeButton;
 
 	private Book book;
 
-    private RandomThread mThread;
+	private RandomThread mThread;
 
-    private static final String ELEMENT_FAB = "fab";
+	private static final String ELEMENT_FAB = "fab";
 
-    private static final int MSG_CHANGE_TEXT = 0, MSG_CHANGE_COVER = 1, MSG_FAILED = 2, MSG_BOOK_SET = 3;
+	private static final int MSG_CHANGE_TEXT = 0, MSG_CHANGE_COVER = 1, MSG_FAILED = 2, MSG_BOOK_SET = 3;
 
 	public static final String TAG = RandomActivity.class.getSimpleName();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-        mLatestKeeper = LatestBooksKeeper.getInstance(getApplicationContext());
+		mLatestKeeper = LatestBooksKeeper.getInstance(getApplicationContext());
 		mFCM = FavoriteCategoriesManager.getInstance(getApplicationContext());
 		mFM = FavoritesManager.getInstance(getApplicationContext());
 
@@ -70,17 +70,17 @@ public class RandomActivity extends AbsActivity {
 
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 
-        ViewCompat.setTransitionName(mFAB, ELEMENT_FAB);
+		ViewCompat.setTransitionName(mFAB, ELEMENT_FAB);
 
 		mFAB.callOnClick();
 	}
 
 	@Override
 	protected void setUpViews() {
-        mFAB = $(R.id.fab);
-        mCoverView = $(R.id.iv_cover);
-        mTitleView = $(R.id.book_title);
-        mLangFieldView = $(R.id.book_lang_field);
+		mFAB = $(R.id.fab);
+		mCoverView = $(R.id.iv_cover);
+		mTitleView = $(R.id.book_title);
+		mLangFieldView = $(R.id.book_lang_field);
 		mWheel = $(R.id.wheel_progress);
 		mLikeButton = $(R.id.btn_like);
 		$(R.id.btn_open).setOnClickListener(new View.OnClickListener() {
@@ -125,70 +125,70 @@ public class RandomActivity extends AbsActivity {
 		});
 
 		mFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mThread != null && mThread.isAlive()) {
-                    mThread.stopRandom();
-                }
-	            mWheel.setVisibility(View.VISIBLE);
-	            mWheel.spin();
-                mThread = new RandomThread();
-                mThread.start();
-            }
-        });
+			@Override
+			public void onClick(View view) {
+				if (mThread != null && mThread.isAlive()) {
+					mThread.stopRandom();
+				}
+				mWheel.setVisibility(View.VISIBLE);
+				mWheel.spin();
+				mThread = new RandomThread();
+				mThread.start();
+			}
+		});
 	}
 
 	public static void launch(AppCompatActivity activity, FloatingActionButton fab) {
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, fab, ELEMENT_FAB);
+		ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, fab, ELEMENT_FAB);
 		Intent intent = new Intent(activity, RandomActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        ActivityCompat.startActivity(activity, intent, options.toBundle());
+		ActivityCompat.startActivity(activity, intent, options.toBundle());
 	}
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MSG_CHANGE_TEXT:
-                    break;
-                case MSG_CHANGE_COVER:
-                    break;
+	private Handler mHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case MSG_CHANGE_TEXT:
+					break;
+				case MSG_CHANGE_COVER:
+					break;
 
-                case MSG_FAILED:
-	                mCoverView.setVisibility(View.GONE);
-	                mLangFieldView.setVisibility(View.GONE);
-	                mTitleView.setText(R.string.random_failed_set);
-	                mWheel.stopSpinning();
-	                mWheel.setVisibility(View.GONE);
-                    break;
-	            case MSG_BOOK_SET:
-		            mWheel.stopSpinning();
-		            mWheel.setVisibility(View.GONE);
-		            book = Book.toBookFromJson(msg.getData().getString("book"));
-		            mCoverView.setVisibility(View.VISIBLE);
-		            mLangFieldView.setVisibility(View.VISIBLE);
-		            mTitleView.setText("     " + (book.titleJP != null ? book.titleJP : book.title));
-		            switch (book.langField) {
-			            case Book.LANG_GB:
-				            mLangFieldView.setImageResource(R.drawable.ic_lang_gb);
-				            break;
-			            case Book.LANG_CN:
-				            mLangFieldView.setImageResource(R.drawable.ic_lang_cn);
-				            break;
-			            case Book.LANG_JP:
-			            default:
-				            mLangFieldView.setImageResource(R.drawable.ic_lang_jp);
-				            break;
-		            }
-		            mLikeButton.setImageResource(
-				            mFM.contains(book.bookId) ?
-						            R.drawable.ic_favorite_white_24dp :
-						            R.drawable.ic_favorite_outline_white_24dp
-		            );
-		            break;
-            }
-        }
-    };
+				case MSG_FAILED:
+					mCoverView.setVisibility(View.GONE);
+					mLangFieldView.setVisibility(View.GONE);
+					mTitleView.setText(R.string.random_failed_set);
+					mWheel.stopSpinning();
+					mWheel.setVisibility(View.GONE);
+					break;
+				case MSG_BOOK_SET:
+					mWheel.stopSpinning();
+					mWheel.setVisibility(View.GONE);
+					book = Book.toBookFromJson(msg.getData().getString("book"));
+					mCoverView.setVisibility(View.VISIBLE);
+					mLangFieldView.setVisibility(View.VISIBLE);
+					mTitleView.setText("     " + book.getAvailableTitle());
+					switch (book.langField) {
+						case Book.LANG_GB:
+							mLangFieldView.setImageResource(R.drawable.ic_lang_gb);
+							break;
+						case Book.LANG_CN:
+							mLangFieldView.setImageResource(R.drawable.ic_lang_cn);
+							break;
+						case Book.LANG_JP:
+						default:
+							mLangFieldView.setImageResource(R.drawable.ic_lang_jp);
+							break;
+					}
+					mLikeButton.setImageResource(
+							mFM.contains(book.bookId) ?
+									R.drawable.ic_favorite_white_24dp :
+									R.drawable.ic_favorite_outline_white_24dp
+					);
+					break;
+			}
+		}
+	};
 
 	private class CoverTask extends AsyncTask<Book, Void, File> {
 
@@ -220,51 +220,51 @@ public class RandomActivity extends AbsActivity {
 		}
 	}
 
-    private class RandomThread extends Thread {
+	private class RandomThread extends Thread {
 
-        private boolean shouldStop = false;
+		private boolean shouldStop = false;
 
-        private int bookId;
+		private int bookId;
 
-        @Override
-        public void run() {
-            int maxId = 166430;
-            if (mLatestKeeper.getUpdatedMiles() != -1 && mLatestKeeper.getData() != null) {
-                maxId = Integer.valueOf(mLatestKeeper.getData().get(0).bookId);
-            }
+		@Override
+		public void run() {
+			int maxId = 166430;
+			if (mLatestKeeper.getUpdatedMiles() != -1 && mLatestKeeper.getData() != null) {
+				maxId = Integer.valueOf(mLatestKeeper.getData().get(0).bookId);
+			}
 
-            Random r = new Random();
-	        bookId = r.nextInt(maxId);
-	        if (shouldStop) return;
-	        int repeatCount = 0;
-	        BaseMessage data = null;
-	        while (repeatCount < 9) {
-		        data = BookApi.getBook(String.valueOf(bookId));
-		        if (data.getCode() == 0) break;
-		        repeatCount++;
-	        }
-	        if (shouldStop) return;
-	        if (data.getCode() == 0) {
-		        new CoverTask().execute((Book) data.getData());
-		        Message msg = new Message();
-		        msg.what = MSG_BOOK_SET;
-		        Bundle bundle = new Bundle();
-		        bundle.putString("book", new Gson().toJson(data.getData()));
-		        msg.setData(bundle);
-		        mHandler.sendMessage(msg);
-	        } else {
-		        mHandler.sendEmptyMessage(MSG_FAILED);
-	        }
-        }
+			Random r = new Random();
+			bookId = r.nextInt(maxId);
+			if (shouldStop) return;
+			int repeatCount = 0;
+			BaseMessage data = null;
+			while (repeatCount < 9) {
+				data = BookApi.getBook(String.valueOf(bookId));
+				if (data.getCode() == 0) break;
+				repeatCount++;
+			}
+			if (shouldStop) return;
+			if (data.getCode() == 0) {
+				new CoverTask().execute((Book) data.getData());
+				Message msg = new Message();
+				msg.what = MSG_BOOK_SET;
+				Bundle bundle = new Bundle();
+				bundle.putString("book", new Gson().toJson(data.getData()));
+				msg.setData(bundle);
+				mHandler.sendMessage(msg);
+			} else {
+				mHandler.sendEmptyMessage(MSG_FAILED);
+			}
+		}
 
-        public void stopRandom() {
-            shouldStop = true;
-            try {
-                this.interrupt();
-            } catch (Exception e) {
+		public void stopRandom() {
+			shouldStop = true;
+			try {
+				this.interrupt();
+			} catch (Exception e) {
 
-            }
-        }
-    }
+			}
+		}
+	}
 
 }

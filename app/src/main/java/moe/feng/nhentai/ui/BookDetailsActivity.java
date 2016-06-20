@@ -136,7 +136,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		setContentView(R.layout.activity_book_details);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(book.bookId);
+		getSupportActionBar().setTitle(book.getAvailableTitle());
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			ActivityOptions.makeTaskLaunchBehind();
 		}
@@ -144,10 +144,10 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 		TextDrawable textDrawable;
 		if (book.title != null) {
-			int color = ColorGenerator.MATERIAL.getColor(book.title);
+			int color = ColorGenerator.MATERIAL.getColor(book.getAvailableTitle());
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mSets.getBoolean(Settings.KEY_ALLOW_STANDALONE_TASK, true)) {
 				ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(
-						TextUtils.isEmpty(book.titleJP) ? book.title : book.titleJP,
+						book.getAvailableTitle(),
 						null,
 						getResources().getColor(R.color.deep_purple_500)
 				);
@@ -192,7 +192,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			}
 			mImageView.getMovingAnimator().setSpeed(100);
 			mImageView.getMovingAnimator().setMovementType(MovingViewAnimator.VERTICAL_MOVE);
-        }
+		}
 
 		if (book.pageCount != 0) {
 			mContentView.setVisibility(View.GONE);
@@ -307,10 +307,10 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mProgressWheel.setVisibility(View.GONE);
 		mContentView.setVisibility(View.VISIBLE);
 		mContentView.animate().alphaBy(0f).alpha(1f).setDuration(1500).start();
-		mTitleText.setText(TextUtils.isEmpty(book.titleJP) ? book.title : book.titleJP);
+		mTitleText.setText(book.getAvailableTitle());
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mSets.getBoolean(Settings.KEY_ALLOW_STANDALONE_TASK, true)) {
 			ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(
-					TextUtils.isEmpty(book.titleJP) ? book.title : book.titleJP,
+					book.getAvailableTitle(),
 					null,
 					getResources().getColor(R.color.deep_purple_500)
 			);
@@ -352,7 +352,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		int x = getResources().getDimensionPixelSize(R.dimen.tag_margin_x);
 		int y = getResources().getDimensionPixelSize(R.dimen.tag_margin_y);
 		int min_width = getResources().getDimensionPixelSize(R.dimen.tag_title_width);
-        int color = getResources().getColor(R.color.deep_purple_800);
+		int color = getResources().getColor(R.color.deep_purple_800);
 
 		// Add Parodies Tags
 		if (!TextUtils.isEmpty(book.parodies)) {
@@ -373,7 +373,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 			TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 			tagView.setText(book.parodies);
-            tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
+			tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
 			tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -410,7 +410,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			for (final String tag : book.characters) {
 				TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 				tagView.setText(tag);
-                tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
+				tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
 				tagView.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -448,7 +448,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			for (final String tag : book.tags) {
 				TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 				tagView.setText(tag);
-                tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
+				tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
 				tagView.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -486,8 +486,8 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			for (final String artist : book.artists) {
 				TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 				tagView.setText(artist);
-                tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
-                tagView.setOnClickListener(new View.OnClickListener() {
+				tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
+				tagView.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
 						CategoryActivity.launch(
@@ -523,8 +523,8 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 			TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 			tagView.setText(book.group);
-            tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
-            tagView.setOnClickListener(new View.OnClickListener() {
+			tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
+			tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					CategoryActivity.launch(
@@ -558,7 +558,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 			TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 			tagView.setText(book.language);
-            tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
+			tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
 			tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -926,16 +926,16 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				}
 		);
 		/** mDialogDownloading.setButton(
-				DialogInterface.BUTTON_NEUTRAL,
-				getString(R.string.dialog_download_restart),
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialogInterface, int i) {
-						if (mDownloader.isThreadAllOk()) return;
-						mDownloader.start();
-					}
-				}
-		); **/
+		 DialogInterface.BUTTON_NEUTRAL,
+		 getString(R.string.dialog_download_restart),
+		 new DialogInterface.OnClickListener() {
+		@Override
+		public void onClick(DialogInterface dialogInterface, int i) {
+		if (mDownloader.isThreadAllOk()) return;
+		mDownloader.start();
+		}
+		}
+		 ); **/
 
 		mDialogDownloading.show();
 		mFileCacheManager.saveBookDataToExternalPath(book);
@@ -1029,7 +1029,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 							public void onClick(View view) {
 								startBookGet();
 							}
-				}).show();
+						}).show();
 			}
 		}
 

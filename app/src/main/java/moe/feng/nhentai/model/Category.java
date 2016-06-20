@@ -21,7 +21,7 @@ public class Category {
 
 	public static final class Type {
 
-		public static final String PARODY = "parody", CHARACTER = "character", TAG = "tagged",
+		public static final String PARODY = "parody", CHARACTER = "character", TAG = "tag",
 				ARTIST = "artist", GROUP = "group", LANGUAGE = "language";
 
 	}
