@@ -73,7 +73,7 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 		if (holder instanceof ViewHolder) {
 			ArrayList<Book> data = this.data == null ? fm.toArray() : this.data;
 			final ViewHolder mHolder = (ViewHolder) holder;
-			mHolder.mTitleTextView.setText("       " + data.get(position).title);
+			mHolder.mTitleTextView.setText("       " + data.get(position).getAvailableTitle());
 			String previewImageUrl = data.get(position).previewImageUrl;
 
             switch (data.get(position).langField) {
@@ -89,8 +89,8 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
                     break;
             }
 
-			int color = mColorGenerator.getColor(data.get(position).title);
-			TextDrawable drawable = TextDrawable.builder().buildRect(Utility.getFirstCharacter(data.get(position).title), color);
+			int color = mColorGenerator.getColor(data.get(position).getAvailableTitle());
+			TextDrawable drawable = TextDrawable.builder().buildRect(Utility.getFirstCharacter(data.get(position).getAvailableTitle()), color);
 			mHolder.mPreviewImageView.setImageDrawable(drawable);
 			mHolder.mImagePlaceholder = drawable;
 

@@ -50,7 +50,9 @@ public class Book {
 	}
 
 	public String getAvailableTitle() {
-		return this.titleJP != null ? this.titleJP : this.title;
+		if( !this.langField.equals(Book.LANG_GB))
+			return this.titleJP != null ? this.titleJP : this.title;
+		else return this.title != null ? this.title : this.titleJP;
 	}
 
 	public String toJSONString() {

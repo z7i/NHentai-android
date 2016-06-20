@@ -200,7 +200,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 							onLoadMain();
 						}
 					})
-			.show();
+					.show();
 		}
 	}
 
@@ -475,13 +475,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 						hideSearchBox();
 					}
 				}
-				if (deltaY > 0 != isFABShowing) {
-					if (deltaY >= 0) {
-						showFAB();
-					} else {
-						hideFAB();
-					}
-				}
 			}
 		});
 
@@ -517,12 +510,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			}
 		});
 
-        mLuckyFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RandomActivity.launch(HomeActivity.this, mLuckyFAB);
-            }
-        });
+		mLuckyFAB.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				RandomActivity.launch(HomeActivity.this, mLuckyFAB);
+			}
+		});
 
 		updateTitleBar(SECTION_LATEST);
 	}
