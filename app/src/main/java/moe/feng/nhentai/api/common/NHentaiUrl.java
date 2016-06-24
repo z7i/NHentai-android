@@ -61,7 +61,7 @@ public class NHentaiUrl {
 	}
 
 	public static String getThumbPictureUrl(String g_id, String page_num, String file_type) {
-		return getThumbGalleryUrl(g_id) + "/" + page_num + "." + file_type;
+		return getThumbGalleryUrl(g_id) + "/" + page_num +  "." + file_type;
 	}
 
 	@Deprecated

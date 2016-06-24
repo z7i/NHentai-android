@@ -9,41 +9,35 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import moe.feng.nhentai.api.common.NHentaiUrl;
 import moe.feng.nhentai.cache.common.Constants;
 import moe.feng.nhentai.model.Book;
 
+
 import static moe.feng.nhentai.BuildConfig.DEBUG;
 
 public class FileCacheManager {
 
 	private static final String TAG = FileCacheManager.class.getSimpleName();
-	
+
 	private static FileCacheManager sInstance;
-	
+
 	private File mCacheDir, mExternalDir;
-	
-	public static FileCacheManager getInstance(Context context) {
-		if (sInstance == null) {
-			sInstance = new FileCacheManager(context);
-		}
-		
-		return sInstance;
-	}
-	
+
+	private Bitmap ret;
+
 	private FileCacheManager(Context context) {
 		try {
 			mCacheDir = context.getExternalCacheDir();
@@ -59,29 +53,36 @@ public class FileCacheManager {
 			mExternalDir = new File(Environment.getExternalStorageDirectory().getPath() + externalAbsDir);
 		}
 	}
-	
-	public boolean createCacheFromNetwork(String type, String url) {
 
+	public static FileCacheManager getInstance(Context context) {
+		if (sInstance == null) {
+			sInstance = new FileCacheManager(context);
+		}
+
+		return sInstance;
+	}
+
+	public boolean createCacheFromNetwork(String type, String url) {
 		if (DEBUG) {
 			Log.d(TAG, "requesting cache from " + url);
 		}
-		
+
 		URL u;
-		
+
 		try {
 			u = new URL(url);
 		} catch (MalformedURLException e) {
 			return false;
 		}
-		
+
 		HttpURLConnection conn;
-		
+
 		try {
 			conn = (HttpURLConnection) u.openConnection();
 		} catch (IOException e) {
 			return false;
 		}
-		
+
 		conn.setConnectTimeout(5000);
 
 		try {
@@ -111,33 +112,34 @@ public class FileCacheManager {
 			return false;
 		}
 	}
-	
+
+
 	public boolean createCacheFromStrem(String type, String name, InputStream stream) {
 		File f = new File(getCachePath(type, name) + "_downloading");
 		f.getParentFile().mkdirs();
 		f.getParentFile().mkdir();
-		
+
 		if (f.exists()) {
 			f.delete();
 		}
-		
+
 		try {
 			f.createNewFile();
 		} catch (IOException e) {
 			return false;
 		}
-		
+
 		FileOutputStream opt;
-		
+
 		try {
 			opt = new FileOutputStream(f);
 		} catch (FileNotFoundException e) {
 			return false;
 		}
-		
+
 		byte[] buf = new byte[512];
 		int len = 0;
-		
+
 		try {
 			while ((len = stream.read(buf)) != -1) {
 				opt.write(buf, 0, len);
@@ -145,12 +147,12 @@ public class FileCacheManager {
 		} catch (IOException e) {
 			return false;
 		}
-		
+
 		try {
 			stream.close();
 			opt.close();
 		} catch (IOException e) {
-			
+
 		}
 
 		f.renameTo(new File(getCachePath(type, name)));
@@ -183,7 +185,7 @@ public class FileCacheManager {
 	public boolean cacheExistsUrl(String type, String url) {
 		return cacheExists(type, getCacheName(url));
 	}
-	
+
 	public boolean cacheExists(String type, String name) {
 		return new File(getCachePath(type, name)).isFile();
 	}
@@ -221,33 +223,39 @@ public class FileCacheManager {
 		}
 	}
 
-	public InputStream openCacheStream(String type, String name) {
+	public FileInputStream openCacheStream(String type, String name) {
 		try {
 			return new FileInputStream(new File(getCachePath(type, name)));
 		} catch (IOException e) {
 			return null;
 		}
 	}
-	
-	public InputStream openCacheStreamUrl(String type, String url) {
+
+	public FileInputStream openCacheStreamUrl(String type, String url) {
 		return openCacheStream(type, getCacheName(url));
 	}
-	
+
 	public Bitmap getBitmap(String type, String name) {
-		InputStream ipt = openCacheStream(type, name);
-		
+
+		FileInputStream ipt = openCacheStream(type, name);
 		if (ipt == null) return null;
-		
-		Bitmap ret = BitmapFactory.decodeStream(ipt);
-		
+
+
+		BitmapFactory.Options bounds = new BitmapFactory.Options();
+		bounds.inSampleSize = 4;
+
+		ret = BitmapFactory.decodeStream(ipt,null,bounds);
+
 		try {
 			ipt.close();
 		} catch (IOException e) {
-			
+			Log.d(TAG, "getBitmap: error");
+			e.printStackTrace();
 		}
-		
+
 		return ret;
 	}
+
 
 	public File getBitmapAllowingExternalPic(Book book, int page) {
 		File cache = new File(getCachePath(Constants.CACHE_PAGE_IMG,
@@ -255,7 +263,7 @@ public class FileCacheManager {
 		File external = new File(getExternalPagePath(book, page));
 		return external.isFile() ? external : cache;
 	}
-	
+
 	public Bitmap getBitmapUrl(String type, String url) {
 		return getBitmap(type, getCacheName(url));
 	}
@@ -350,10 +358,10 @@ public class FileCacheManager {
 		}
 	}
 
-	private String getCacheName(String url) {
+	public String getCacheName(String url) {
 		return url.replaceAll("/", ".").replaceAll(":", "");
 	}
-	
+
 	public String getCachePath(String type, String name) {
 		return mCacheDir.getAbsolutePath() + "/" + type + "/" + name + ".cache";
 	}
@@ -413,5 +421,6 @@ public class FileCacheManager {
 
 		return true;
 	}
+
 
 }

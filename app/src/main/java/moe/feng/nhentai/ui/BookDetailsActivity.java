@@ -153,7 +153,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				);
 				setTaskDescription(taskDesc);
 			}
-			textDrawable = TextDrawable.builder().buildRect(Utility.getFirstCharacter(book.title), color);
+			textDrawable = TextDrawable.builder().buildRect(Utility.getFirstCharacter(book.getAvailableTitle()), color);
 		} else {
 			textDrawable = TextDrawable.builder().buildRect("", getResources().getColor(R.color.deep_purple_500));
 		}
@@ -1039,11 +1039,8 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 		@Override
 		protected File doInBackground(Book... params) {
-			if (mSets.getBoolean(Settings.KEY_FULL_IMAGE_PREVIEW, false)) {
 				return PageApi.getPageOriginImageFile(BookDetailsActivity.this, params[0], 1);
-			} else {
-				return BookApi.getCoverFile(BookDetailsActivity.this, params[0]);
-			}
+
 		}
 
 		@Override
