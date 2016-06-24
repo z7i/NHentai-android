@@ -21,6 +21,10 @@ public class GalleryPagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public Fragment getItem(int position) {
+		if(position<0|| position>=book.pageCount){
+			return null;
+		}
+
 		if (fragments[position] == null) {
 			fragments[position] = BookPageFragment.newInstance(book, position + 1);
 		}
@@ -41,6 +45,10 @@ public class GalleryPagerAdapter extends FragmentPagerAdapter {
 				);
 			}
 		}
+	}
+
+	public void eraseItem(int position){
+		fragments[position] = null;
 	}
 
 }

@@ -2,10 +2,12 @@ package moe.feng.nhentai.ui.fragment;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -84,15 +86,10 @@ public class BookPageFragment extends LazyFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-
-		$(R.id.loading_content).setVisibility(View.VISIBLE);
-		mWheelProgress.setVisibility(View.VISIBLE);
-		mWheelProgress.spin();
-
 		try {
-			if (PageApi.isPageOriginImageLocalFileExist(getApplicationContext(), book, pageNum)) {
-				new DownloadTask().execute();
-			}
+			Bundle data = getArguments();
+			book = new Gson().fromJson(data.getString(ARG_BOOK_DATA), Book.class);
+			new DownloadTask().execute();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -101,15 +98,21 @@ public class BookPageFragment extends LazyFragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-		mImageView.setImageBitmap(null);
-		if (mBitmap != null) {
-			mBitmap.recycle();
-		} else {
-			try {
-				((BitmapDrawable) mImageView.getDrawable()).getBitmap().recycle();
-			} catch (Exception e) {
+		try {
+			Drawable toRecycle = mImageView.getDrawable();
+			if ( toRecycle != null && toRecycle instanceof BitmapDrawable ) {
+				if (((BitmapDrawable) mImageView.getDrawable()).getBitmap() != null)
+					((BitmapDrawable) mImageView.getDrawable()).getBitmap().recycle();
 			}
+		} catch (Exception e) {
+			Log.d(TAG, "onPause: Error Recycling");
 		}
+		if(mImageView!=null){
+			mImageView.setImageBitmap(null);
+			mImageView.setImageDrawable(null);
+			mImageView.invalidate();
+		}
+
 	}
 
 	private class DownloadTask extends AsyncTask<Void, Void, Bitmap> {
@@ -125,8 +128,7 @@ public class BookPageFragment extends LazyFragment {
 
 			if (result != null) {
 				$(R.id.loading_content).setVisibility(View.GONE);
-				mBitmap = result;
-				mImageView.setImageBitmap(mBitmap);
+				mImageView.setImageBitmap(result);
 				mPhotoViewAttacher.update();
 				mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
 					@Override
@@ -145,12 +147,10 @@ public class BookPageFragment extends LazyFragment {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 				case MSG_FINISHED_LOADING:
-					Bitmap b;
 					if (PageApi.isPageOriginImageLocalFileExist(getApplicationContext(), book, pageNum)) {
-						b = PageApi.getPageOriginImage(getApplicationContext(), book, pageNum);
-						if (b != null) {
+						mBitmap = PageApi.getPageOriginImage(getApplicationContext(), book, pageNum);
+						if (mBitmap != null) {
 							$(R.id.loading_content).setVisibility(View.GONE);
-							mBitmap = b;
 							if (mImageView != null) {
 								mImageView.setImageBitmap(mBitmap);
 								if (mPhotoViewAttacher != null) {

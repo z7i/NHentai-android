@@ -1,6 +1,8 @@
 package moe.feng.nhentai.ui;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -10,9 +12,9 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.AppCompatTextView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.SeekBar;
@@ -24,6 +26,7 @@ import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.adapter.GalleryPagerAdapter;
 import moe.feng.nhentai.ui.common.AbsActivity;
+import moe.feng.nhentai.ui.fragment.BookPageFragment;
 import moe.feng.nhentai.util.FullScreenHelper;
 import moe.feng.nhentai.util.Utility;
 import moe.feng.nhentai.util.task.PageDownloader;
@@ -32,18 +35,18 @@ public class GalleryActivity extends AbsActivity {
 
 	private Book book;
 	private int page_num;
-
+	private Fragment old;
 	private ViewPager mPager;
 	private GalleryPagerAdapter mPagerAdpater;
 	private View mAppBar, mBottomBar;
 	private AppCompatSeekBar mSeekBar;
 	private AppCompatTextView mTotalPagesText;
-
+	private int lastpositon;
 	private FullScreenHelper mFullScreenHelper;
-
 	private PageDownloader mDownloader;
 
 	private static final String EXTRA_BOOK_DATA = "book_data", EXTRA_FISRT_PAGE = "first_page";
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,12 +89,14 @@ public class GalleryActivity extends AbsActivity {
 	public void onPause() {
 		super.onPause();
 		mDownloader.pause();
+
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
 		mDownloader.stop();
+		Runtime.getRuntime().gc();
 	}
 
 	@Override
@@ -129,7 +134,7 @@ public class GalleryActivity extends AbsActivity {
 	protected void setUpViews() {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(book.getAvailableTitle());
-
+		lastpositon =0;
 		mAppBar = $(R.id.my_app_bar);
 		mBottomBar = $(R.id.bottom_bar);
 		mPager = $(R.id.pager);
@@ -138,16 +143,49 @@ public class GalleryActivity extends AbsActivity {
 		mPagerAdpater = new GalleryPagerAdapter(getFragmentManager(), book);
 		mPager.setAdapter(mPagerAdpater);
 		mPager.setCurrentItem(page_num, false);
+
 		mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
 			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-			}
+				lastpositon =position;
+		}
 
 			@Override
 			public void onPageSelected(int position) {
+				boolean right =true;
+
+				if (lastpositon==position){
+					lastpositon++;
+					right=false;
+				}
+
+				Log.d("Gallery", "onPageSelected:" + lastpositon);
+				Log.d("Gallery", "onPageSelected:" + position);
+
+				if (right){
+					if(mPagerAdpater.getItem(lastpositon-1)!=null){
+						mPagerAdpater.getItem(lastpositon-1).onPause();
+						mPagerAdpater.eraseItem(lastpositon-1);
+					}
+
+
+					if(mPagerAdpater.getItem(position+1)!=null)
+						mPagerAdpater.getItem(position+1).onResume();
+				}
+				else{
+					if(mPagerAdpater.getItem(lastpositon+1)!=null){
+						mPagerAdpater.getItem(lastpositon+1).onPause();
+						mPagerAdpater.eraseItem(lastpositon+1);
+					}
+
+
+					if(mPagerAdpater.getItem(position-1)!=null)
+						mPagerAdpater.getItem(position-1).onResume();
+				}
+
 				mSeekBar.setProgress(position);
 				mDownloader.setCurrentPosition(position);
+
 			}
 
 			@Override

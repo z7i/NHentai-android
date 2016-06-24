@@ -11,6 +11,7 @@ import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import moe.feng.nhentai.api.common.NHentaiUrl;
@@ -107,32 +108,33 @@ public class PageApi {
 
 	public static Bitmap getPageOriginImage(Context context, Book book, int page_num) {
 		String url = NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(page_num));
-		FileCacheManager m = FileCacheManager.getInstance(context);
 
-		if (!m.cacheExistsUrl(CACHE_PAGE_IMG, url) && !m.createCacheFromNetwork(CACHE_PAGE_IMG, url)) {
+		if (!FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url) && !FileCacheManager.getInstance(context).createCacheFromNetwork(CACHE_PAGE_IMG, url)) {
 			return null;
 		}
 
-		return m.getBitmapUrl(CACHE_PAGE_IMG, url);
+		return FileCacheManager.getInstance(context).getBitmapUrl(CACHE_PAGE_IMG, url);
 	}
 
 	public static File getPageOriginImageFile(Context context, Book book, int page_num) {
 		String url = NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(page_num));
-		FileCacheManager m = FileCacheManager.getInstance(context);
 
-		if (!m.externalPageExists(book, page_num) &&
-				!m.cacheExistsUrl(CACHE_PAGE_IMG, url) && !m.createCacheFromNetwork(CACHE_PAGE_IMG, url)) {
+		if (!FileCacheManager.getInstance(context).externalPageExists(book, page_num) &&
+				!FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url) && !FileCacheManager.getInstance(context).createCacheFromNetwork(CACHE_PAGE_IMG, url)) {
 			return null;
 		}
 
-		return m.getBitmapAllowingExternalPic(book, page_num);
+		return FileCacheManager.getInstance(context).getBitmapAllowingExternalPic(book, page_num);
 	}
+
+    public static String getPageOriginImageURL(Context context, Book book, int page_num){
+        return NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(page_num));
+    }
 
 	public static boolean isPageOriginImageLocalFileExist(Context context, Book book, int page_num) {
 		String url = NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(page_num));
-		FileCacheManager m = FileCacheManager.getInstance(context);
 
-		return m.cacheExistsUrl(CACHE_PAGE_IMG, url);
+		return FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url);
 	}
 
 }

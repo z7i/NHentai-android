@@ -2,6 +2,7 @@ package moe.feng.nhentai.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -72,7 +73,6 @@ import moe.feng.nhentai.util.Settings;
 import moe.feng.nhentai.util.Utility;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
 	// View states
 	private int mSectionType = SECTION_LATEST;
 	private static final int SECTION_LATEST = 0, SECTION_FAV_TAB = 1, SECTION_FOLLOWING_ARTISTS = 2;
@@ -83,6 +83,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	private boolean isFABShowing = true, isSearchBoxShowing = true;
 	private int currentY = 0;
 
+	public static Context myContext;
 	// List
 	private ObservableRecyclerView mRecyclerView;
 	private BookListRecyclerAdapter mAdapter;
@@ -129,7 +130,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	private Settings mSets;
 
 	private Handler mHandler = new Handler();
-
 	public static final String TAG = HomeActivity.class.getSimpleName();
 
 	private static final int REQUEST_CODE_PERMISSION_GET = 101;
@@ -139,7 +139,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		mSets = Settings.getInstance(getApplicationContext());
 		CrashHandler.init(getApplicationContext());
 		CrashHandler.register();
-
+		myContext = getApplicationContext();
 		/** Set up translucent status bar */
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			getWindow().getDecorView().setSystemUiVisibility(
@@ -202,6 +202,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 					})
 					.show();
 		}
+
+
 	}
 
 	private void onLoadMain() {
@@ -689,7 +691,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				mActionBar.setTitle(R.string.item_favorite_categories);
 				mFragmentLayout.setVisibility(View.VISIBLE);
 				ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
-				if (mFragmentFavCategory == null) mFragmentFavCategory = new FavoriteCategoryFragment();
+				if (mFragmentFavCategory == null)
+					mFragmentFavCategory = new FavoriteCategoryFragment();
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentFavCategory)
 						.commit();
@@ -775,6 +778,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 	private <T extends View> T $(int id) {
 		return (T) findViewById(id);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
 	}
 
 	private class PageGetTask extends AsyncTask<Integer, Void, BaseMessage> {

@@ -158,7 +158,7 @@ public class BookApi {
 		if (!m.cacheExistsUrl(CACHE_COVER, url) && !m.createCacheFromNetwork(CACHE_COVER, url)) {
 			return null;
 		}
-		
+
 		return m.getBitmapUrl(CACHE_COVER, url);
 	}
 
