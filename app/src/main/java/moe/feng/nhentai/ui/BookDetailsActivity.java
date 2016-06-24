@@ -9,6 +9,7 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -52,7 +53,6 @@ import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.model.Category;
 import moe.feng.nhentai.ui.adapter.BookGridRecyclerAdapter;
-import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.adapter.BookPreviewGridAdapter;
 import moe.feng.nhentai.ui.common.AbsActivity;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
@@ -113,7 +113,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			STATUS_BAR_HEIGHT = Utility.getStatusBarHeight(getApplicationContext());
 		}
 		minHeight = APP_BAR_HEIGHT - TOOLBAR_HEIGHT - STATUS_BAR_HEIGHT;
-
+		setContentView(R.layout.activity_book_details);
 		Intent intent = getIntent();
 		if (Intent.ACTION_VIEW.equals(intent.getAction())) {
 			book = new Book();
@@ -133,10 +133,6 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 		isFavorite = originFavorite = FavoritesManager.getInstance(getApplicationContext()).contains(book.bookId);
 
-		setContentView(R.layout.activity_book_details);
-
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle(book.getAvailableTitle());
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			ActivityOptions.makeTaskLaunchBehind();
 		}
@@ -218,6 +214,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			startBookGet();
 		}
 
+
 		if (!isFromExternal) checkIsDownloaded();
 	}
 
@@ -285,6 +282,8 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	}
 
 	private void updateUIContent() {
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setTitle(book.getAvailableTitle());
 		$(R.id.toolbar).invalidate();
 
 		mFAB.setOnClickListener(new View.OnClickListener() {
@@ -301,6 +300,8 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		});
 
 		updateDetailsContent();
+
+
 	}
 
 	private void updateDetailsContent() {
@@ -664,6 +665,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 		new BookGetTask().execute(book.bookId);
 	}
+
 
 	private void onActionDownloadClick() {
 		final String downloadPath = mFileCacheManager.getExternalPath(book);
@@ -1035,20 +1037,24 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 	}
 
-	private class CoverTask extends AsyncTask<Book, Void, File> {
+	private class CoverTask extends AsyncTask<Book, Void, String> {
 
 		@Override
-		protected File doInBackground(Book... params) {
-				return PageApi.getPageOriginImageFile(BookDetailsActivity.this, params[0], 1);
+		protected String doInBackground(Book... params) {
+				return PageApi.getPageOriginImageURL(BookDetailsActivity.this, params[0], 1);
 
 		}
 
 		@Override
-		protected void onPostExecute(File result) {
+		protected void onPostExecute(String result) {
 			mImageView.setImageBitmap(null);
 			Picasso.with(getApplicationContext())
-					.load(result)
+					.load(Uri.parse(result))
 					.into(mImageView);
+
+			mImageView.invalidate();
+
+
 		}
 	}
 

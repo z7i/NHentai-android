@@ -20,7 +20,7 @@ public class Book {
 	public ArrayList<String> characters = new ArrayList<>();
 	public ArrayList<String> artists = new ArrayList<>();
 
-    // cn = Chinese 29963 , jp = Japanese 6346, gb = Great Britain 12227
+    // cn = Chinese 29963 , jp = Japanese 6346, gb = Great Britain (English) 12227
     public String langField = LANG_UNKNOWN;
     public static final String LANG_CN = "29963", LANG_JP = "6346", LANG_GB = "12227", LANG_UNKNOWN = "0";
 
@@ -50,9 +50,10 @@ public class Book {
 	}
 
 	public String getAvailableTitle() {
-		if( !this.langField.equals(Book.LANG_GB))
+		if( (this.langField.equals(Book.LANG_JP) || this.langField.equals(Book.LANG_CN))){
 			return this.titleJP != null ? this.titleJP : this.title;
-		else return this.title != null ? this.title : this.titleJP;
+		}
+			return this.title != null ? this.title : this.titleJP;
 	}
 
 	public String toJSONString() {

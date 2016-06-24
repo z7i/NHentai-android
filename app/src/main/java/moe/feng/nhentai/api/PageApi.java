@@ -69,6 +69,7 @@ public class PageApi {
 
             book.bookId = bookId;
             book.title = caption.text();
+            book.titleJP = caption.text();
 
             Elements imgs = e.getElementsByTag("img");
             for (Element imge : imgs) {

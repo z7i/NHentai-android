@@ -49,8 +49,9 @@ public class BookApi {
 		try {
 			book.titleJP = element.getElementsByTag("h2").get(0).text();
 		} catch (Exception e) {
-			Log.v(TAG, "This book hasn\'t japanese name.");
+			book.titleJP =book.title;
 		}
+
 		book.bookId = id;
 
 		/** Get tags */
@@ -58,22 +59,44 @@ public class BookApi {
 		for (Element r : tags) {
 			try {
 				if (r.text().contains("Parodies")) {
-					book.parodies = analysisTags(r.html()).get(0);
+					String st = analysisTags(r.html()).get(0);
+					if (st!=null)
+						book.parodies = st;
 				}
 				if (r.text().contains("Tags")) {
-					book.tags.addAll(analysisTags(r.html()));
+					String st = analysisTags(r.html()).get(0);
+					if (st!=null)
+						book.tags.addAll(analysisTags(r.html()));
 				}
 				if (r.text().contains("Language")) {
+
 					book.language = analysisTags(r.html()).get(0);
+
+					if(book.language.equals("japanese")){
+						book.langField = Book.LANG_JP;
+					}
+					else if (book.language.equals("english")){
+						book.langField =Book.LANG_GB;
+					}
+					else{
+						book.langField=Book.LANG_CN;
+					}
 				}
+
 				if (r.text().contains("Groups")) {
-					book.group = analysisTags(r.html()).get(0);
+					String st = analysisTags(r.html()).get(0);
+					if (st!=null)
+						book.group = st;
 				}
 				if (r.text().contains("Artists")) {
-					book.artists.addAll(analysisTags(r.html()));
+					String st = analysisTags(r.html()).get(0);
+					if (st!=null)
+						book.artists.addAll(analysisTags(r.html()));
 				}
 				if (r.text().contains("Characters")) {
-					book.characters.addAll(analysisTags(r.html()));
+					String st = analysisTags(r.html()).get(0);
+					if (st!=null)
+						book.characters.addAll(analysisTags(r.html()));
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -86,9 +109,9 @@ public class BookApi {
 		try {
 			int position = htmlSrc.indexOf("pages");
 			String s = htmlSrc.substring(0, position);
-			System.out.println(s);
+			//System.out.println(s);
 			s = s.substring(s.lastIndexOf("<div>") + "<div>".length(), s.length()).trim();
-			System.out.println(s);
+			//System.out.println(s);
 			book.pageCount = Integer.valueOf(s);
 		} catch (Exception e) {
 
@@ -107,14 +130,14 @@ public class BookApi {
 		Element coverDiv = doc.getElementById("cover").getElementsByTag("a").get(0);
 		for (Element e : coverDiv.getElementsByTag("img")) {
 			try {
-				Log.i(TAG, coverDiv.html());
+				//Log.i(TAG, coverDiv.html());
 				String coverUrl;
 				if (e.hasAttr("src")){
 					coverUrl = e.attr("src");
 				} else {
 					coverUrl = e.attr("data-cfsrc");
 				}
-				Log.i(TAG, coverUrl);
+				//Log.i(TAG, coverUrl);
 				coverUrl = coverUrl.substring(0, coverUrl.lastIndexOf("/"));
 				String galleryId = coverUrl.substring(coverUrl.lastIndexOf("/") + 1, coverUrl.length());
 				book.galleryId = galleryId;
@@ -130,7 +153,7 @@ public class BookApi {
 		Elements likesContainer = doc.getElementsByAttributeValue("id", "related-container")
                 .get(0)
                 .getElementsByClass("gallery");
-        Log.i(TAG, "Likes:" + likesContainer.html());
+        //Log.i(TAG, "Likes:" + likesContainer.html());
         book.likes = PageApi.getBooksFromGalleryElements(likesContainer);
 
         result.setCode(0);
@@ -141,10 +164,14 @@ public class BookApi {
 
 	private static ArrayList<String> analysisTags(String originHtml) {
 		ArrayList<String> temp = new ArrayList<>();
+		if(!originHtml.contains("a href=")){
+			temp.add(0,null);
+		}
+
 		while (originHtml.contains("a href=")) {
-			Log.i(TAG, "origin=" + originHtml);
+			//Log.i(TAG, "origin=" + originHtml);
 			String href = originHtml.substring(originHtml.indexOf("href=\"") + 7, originHtml.indexOf("\" class") - 1);
-			Log.i(TAG, "href=" + href);
+			//Log.i(TAG, "href=" + href);
 			originHtml = originHtml.substring(originHtml.indexOf("\" class") + 7, originHtml.length());
 			temp.add(href.substring(href.lastIndexOf("/") + 1).replaceAll("-", " "));
 		}
