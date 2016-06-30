@@ -25,7 +25,6 @@ import moe.feng.nhentai.api.common.NHentaiUrl;
 import moe.feng.nhentai.cache.common.Constants;
 import moe.feng.nhentai.model.Book;
 
-
 import static moe.feng.nhentai.BuildConfig.DEBUG;
 
 public class FileCacheManager {
@@ -236,21 +235,34 @@ public class FileCacheManager {
 	}
 
 	public Bitmap getBitmap(String type, String name) {
+		ret=null;
 
-		FileInputStream ipt = openCacheStream(type, name);
+		FileInputStream ipt= openCacheStream(type, name);
 		if (ipt == null) return null;
 
-
 		BitmapFactory.Options bounds = new BitmapFactory.Options();
-		bounds.inSampleSize = 4;
+		bounds.inJustDecodeBounds=true;
+		BitmapFactory.decodeStream(ipt,null,bounds);
 
-		ret = BitmapFactory.decodeStream(ipt,null,bounds);
+		bounds.inSampleSize = calculateInSampleSize(bounds,480, 640);
+
+		Log.d(TAG, "getBitmap: " + bounds.inSampleSize);
+
+		FileInputStream iptF=openCacheStream(type,name);
+
+		bounds.inJustDecodeBounds=false;
+		ret=BitmapFactory.decodeStream(iptF,null, bounds);
 
 		try {
 			ipt.close();
+			iptF.close();
+			iptF=null;
+			ipt=null;
+			bounds = null;
 		} catch (IOException e) {
-			Log.d(TAG, "getBitmap: error");
+			Log.d(TAG, "getBitmap: Cleaning error");
 			e.printStackTrace();
+
 		}
 
 		return ret;
@@ -421,6 +433,27 @@ public class FileCacheManager {
 
 		return true;
 	}
+	public static int calculateInSampleSize(
+			BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
 
+		if (height > reqHeight || width > reqWidth) {
+
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
+
+			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
+			// height and width larger than the requested height and width.
+			while ((halfHeight / inSampleSize) > reqHeight
+					&& (halfWidth / inSampleSize) > reqWidth) {
+				inSampleSize *= 2;
+			}
+		}
+
+		return inSampleSize;
+	}
 
 }

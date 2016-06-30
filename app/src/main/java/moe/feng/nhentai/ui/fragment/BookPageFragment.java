@@ -81,36 +81,33 @@ public class BookPageFragment extends LazyFragment {
 				}
 			}
 		});
-	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		try {
-			Bundle data = getArguments();
-			book = new Gson().fromJson(data.getString(ARG_BOOK_DATA), Book.class);
-			new DownloadTask().execute();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		new DownloadTask().execute();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		if (mBitmap!=null){
+			Log.d(TAG, "onDestroy: Bitmap Recycled");
+			mBitmap.recycle();
+			mBitmap=null;
+		}
+
 		try {
 			Drawable toRecycle = mImageView.getDrawable();
 			if ( toRecycle != null && toRecycle instanceof BitmapDrawable ) {
-				if (((BitmapDrawable) mImageView.getDrawable()).getBitmap() != null)
+
+				if (((BitmapDrawable) mImageView.getDrawable()).getBitmap() != null){
 					((BitmapDrawable) mImageView.getDrawable()).getBitmap().recycle();
+				}
 			}
-		} catch (Exception e) {
-			Log.d(TAG, "onPause: Error Recycling");
-		}
-		if(mImageView!=null){
-			mImageView.setImageBitmap(null);
 			mImageView.setImageDrawable(null);
-			mImageView.invalidate();
+			mPhotoViewAttacher.cleanup();
+			Log.d(TAG, "onDestroy: Image View Bitmap Recycled");
+
+		} catch (Exception e) {
+			Log.d(TAG, "onDestroy: Error Recycling");
 		}
 
 	}
@@ -125,17 +122,20 @@ public class BookPageFragment extends LazyFragment {
 		@Override
 		protected void onPostExecute(Bitmap result) {
 			super.onPostExecute(result);
-
+			Log.d(TAG, "onPostExecute: Donwload Task" +pageNum);
 			if (result != null) {
 				$(R.id.loading_content).setVisibility(View.GONE);
-				mImageView.setImageBitmap(result);
-				mPhotoViewAttacher.update();
-				mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
-					@Override
-					public void onViewTap(View view, float v, float v1) {
-						((GalleryActivity) getActivity()).toggleControlBar();
-					}
-				});
+					mImageView.setImageBitmap(result);
+					mPhotoViewAttacher.update();
+					mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+						@Override
+						public void onViewTap(View view, float v, float v1) {
+							if (getActivity() instanceof GalleryActivity) {
+								((GalleryActivity) getActivity()).toggleControlBar();
+							}
+						}
+					});
+
 			}
 		}
 
@@ -152,6 +152,7 @@ public class BookPageFragment extends LazyFragment {
 						if (mBitmap != null) {
 							$(R.id.loading_content).setVisibility(View.GONE);
 							if (mImageView != null) {
+								Log.d(TAG, "onPostExecute: Donwload Handler");
 								mImageView.setImageBitmap(mBitmap);
 								if (mPhotoViewAttacher != null) {
 									mPhotoViewAttacher.update();

@@ -28,12 +28,19 @@ public class GalleryPagerAdapter extends FragmentPagerAdapter {
 		if (fragments[position] == null) {
 			fragments[position] = BookPageFragment.newInstance(book, position + 1);
 		}
+
 		return fragments[position];
 	}
 
 	@Override
 	public int getCount() {
 		return book.pageCount;
+	}
+
+	public void eraseItem(int position){
+		fragments[position].getFragmentManager().beginTransaction().remove(fragments[position]).commit();
+		fragments[position]=null;
+
 	}
 
 	public void notifyPageImageLoaded(int position, boolean isSucceed) {
@@ -46,9 +53,4 @@ public class GalleryPagerAdapter extends FragmentPagerAdapter {
 			}
 		}
 	}
-
-	public void eraseItem(int position){
-		fragments[position] = null;
-	}
-
 }

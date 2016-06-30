@@ -2,8 +2,9 @@ package moe.feng.nhentai.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,7 +13,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.AppCompatTextView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,13 +26,12 @@ import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.adapter.GalleryPagerAdapter;
 import moe.feng.nhentai.ui.common.AbsActivity;
-import moe.feng.nhentai.ui.fragment.BookPageFragment;
 import moe.feng.nhentai.util.FullScreenHelper;
 import moe.feng.nhentai.util.Utility;
 import moe.feng.nhentai.util.task.PageDownloader;
 
 public class GalleryActivity extends AbsActivity {
-
+	public static Context mContext;
 	private Book book;
 	private int page_num;
 	private Fragment old;
@@ -41,10 +40,12 @@ public class GalleryActivity extends AbsActivity {
 	private View mAppBar, mBottomBar;
 	private AppCompatSeekBar mSeekBar;
 	private AppCompatTextView mTotalPagesText;
+	private int orientation;
+	private int lastOrientation;
 	private int lastpositon;
 	private FullScreenHelper mFullScreenHelper;
 	private PageDownloader mDownloader;
-
+	private int scrolled;
 	private static final String EXTRA_BOOK_DATA = "book_data", EXTRA_FISRT_PAGE = "first_page";
 
 
@@ -76,7 +77,10 @@ public class GalleryActivity extends AbsActivity {
 		mDownloader.setCurrentPosition(page_num);
 		mDownloader.setOnDownloadListener(new GalleryDownloaderListener());
 
+		scrolled =0;
+
 		setContentView(R.layout.activity_gallery);
+		mContext =getApplicationContext();
 	}
 
 	@Override
@@ -135,6 +139,8 @@ public class GalleryActivity extends AbsActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(book.getAvailableTitle());
 		lastpositon =0;
+		orientation = Configuration.ORIENTATION_PORTRAIT;
+		lastOrientation = Configuration.ORIENTATION_PORTRAIT;
 		mAppBar = $(R.id.my_app_bar);
 		mBottomBar = $(R.id.bottom_bar);
 		mPager = $(R.id.pager);
@@ -142,8 +148,8 @@ public class GalleryActivity extends AbsActivity {
 		mTotalPagesText = $(R.id.total_pages_text);
 		mPagerAdpater = new GalleryPagerAdapter(getFragmentManager(), book);
 		mPager.setAdapter(mPagerAdpater);
+		mPager.setOffscreenPageLimit(1);
 		mPager.setCurrentItem(page_num, false);
-
 		mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
 			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -154,15 +160,17 @@ public class GalleryActivity extends AbsActivity {
 			public void onPageSelected(int position) {
 				boolean right =true;
 
-				if (lastpositon==position){
+				if (orientation != lastOrientation){
+					lastOrientation = orientation;
+					return;
+				}
+
+				else if (lastpositon==position){
 					lastpositon++;
 					right=false;
 				}
 
-				Log.d("Gallery", "onPageSelected:" + lastpositon);
-				Log.d("Gallery", "onPageSelected:" + position);
-
-				if (right){
+				if (right ){
 					if(mPagerAdpater.getItem(lastpositon-1)!=null){
 						mPagerAdpater.getItem(lastpositon-1).onPause();
 						mPagerAdpater.eraseItem(lastpositon-1);
@@ -185,6 +193,11 @@ public class GalleryActivity extends AbsActivity {
 
 				mSeekBar.setProgress(position);
 				mDownloader.setCurrentPosition(position);
+
+				if(scrolled++ == 5){
+					Runtime.getRuntime().gc();
+					scrolled=0;
+				}
 
 			}
 
@@ -250,6 +263,13 @@ public class GalleryActivity extends AbsActivity {
 		}
 	}
 
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		orientation =newConfig.orientation;
+	}
+
+
 	public PageDownloader getPageDownloader() {
 		return mDownloader;
 	}
@@ -277,5 +297,6 @@ public class GalleryActivity extends AbsActivity {
 		}
 
 	}
+
 
 }

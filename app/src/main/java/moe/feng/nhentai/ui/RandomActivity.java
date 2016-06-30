@@ -1,6 +1,7 @@
 package moe.feng.nhentai.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,12 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.florent37.materialimageloading.MaterialImageLoading;
 import com.google.gson.Gson;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 import java.util.Random;
 
 import moe.feng.nhentai.R;
@@ -190,33 +186,18 @@ public class RandomActivity extends AbsActivity {
 		}
 	};
 
-	private class CoverTask extends AsyncTask<Book, Void, File> {
+	private class CoverTask extends AsyncTask<Book, Void, Bitmap> {
 
 		@Override
-		protected File doInBackground(Book... params) {
-			if (mSets.getBoolean(Settings.KEY_FULL_IMAGE_PREVIEW, false)) {
-				return PageApi.getPageOriginImageFile(RandomActivity.this, params[0], 1);
-			} else {
-				return BookApi.getCoverFile(RandomActivity.this, params[0]);
-			}
+		protected Bitmap doInBackground(Book... params) {
+			return PageApi.getPageOriginImage(getApplicationContext(), params[0],1);
 		}
 
 		@Override
-		protected void onPostExecute(File result) {
+		protected void onPostExecute(Bitmap result) {
 			mCoverView.setImageBitmap(null);
-			Picasso.with(getApplicationContext())
-					.load(result)
-					.into(mCoverView, new Callback() {
-						@Override
-						public void onSuccess() {
-							MaterialImageLoading.animate(mCoverView).setDuration(2000).start();
-						}
-
-						@Override
-						public void onError() {
-
-						}
-					});
+			mCoverView.setImageBitmap(result);
+			mCoverView.invalidate();
 		}
 	}
 
@@ -267,4 +248,11 @@ public class RandomActivity extends AbsActivity {
 		}
 	}
 
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+
+		mCoverView.setImageBitmap(null);
+		mLangFieldView.setImageBitmap(null);
+	}
 }
