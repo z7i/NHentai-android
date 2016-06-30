@@ -9,7 +9,7 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -655,6 +655,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			intent.putExtra("position", fromPosition);
 			setResult(RESULT_HAVE_FAV, intent);
 		}
+		mImageView.setImageBitmap(null);
 		super.onBackPressed();
 	}
 
@@ -1037,21 +1038,18 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 	}
 
-	private class CoverTask extends AsyncTask<Book, Void, String> {
+	private class CoverTask extends AsyncTask<Book, Void, Bitmap> {
 
 		@Override
-		protected String doInBackground(Book... params) {
-				return PageApi.getPageOriginImageURL(BookDetailsActivity.this, params[0], 1);
+		protected Bitmap doInBackground(Book... params) {
+				return PageApi.getPageOriginImage(getApplicationContext(), params[0], 1);
 
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
-			mImageView.setImageBitmap(null);
-			Picasso.with(getApplicationContext())
-					.load(Uri.parse(result))
-					.into(mImageView);
-
+		protected void onPostExecute(Bitmap result) {
+			mImageView.setImageDrawable(null);
+			mImageView.setImageBitmap(result);
 			mImageView.invalidate();
 
 

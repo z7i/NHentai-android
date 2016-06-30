@@ -51,6 +51,7 @@
 	    <activity
 		    android:name=".ui.GalleryActivity"
 		    android:label="@string/activity_gallery"
+            android:configChanges="orientation|keyboardHidden|screenSize"
 		    android:theme="@style/Theme.NHBooks.Dark.Translucent">
 		    <intent-filter>
 			    <action android:name="android.intent.action.MAIN" />
