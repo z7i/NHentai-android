@@ -120,7 +120,8 @@ public class NHentaiUrl {
 	public static String getCategoryUrl(Category category, boolean isPopularType) {
 		String targetName = category.id;
 
-		return NHENTAI_HOME + "/api/galleries/tagged?tag_id=" + targetName;
+		if (!isPopularType)return NHENTAI_HOME + "/api/galleries/tagged?tag_id=" + targetName;
+		else return NHENTAI_HOME + "/api/galleries/tagged?tag_id=" + targetName+"&sort=popular";
 	}
 
 	public static String getHomePageUrl(int page) {
