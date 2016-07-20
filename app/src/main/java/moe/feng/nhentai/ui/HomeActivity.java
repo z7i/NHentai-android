@@ -32,6 +32,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -162,18 +163,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 		getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.background_material_light)));
 
-		if (mListKeeper.getData() != null && !mListKeeper.getData().isEmpty() && mListKeeper.getUpdatedMiles() != -1) {
-			mBooks = mListKeeper.getData();
-			mNowPage = mListKeeper.getNowPage();
-			mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
-			setRecyclerAdapter(mAdapter);
-			isFirstLoad = false;
-		} else {
-			mBooks = new ArrayList<>();
-			mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
-			setRecyclerAdapter(mAdapter);
-			new PageGetTask().execute(mNowPage);
-		}
 
 		if (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 			if (mSets.getBoolean(Settings.KEY_NO_MEDIA, true)) {
@@ -205,7 +194,22 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		}
 
 		mFileCacheManager = FileCacheManager.getInstance(getApplicationContext());
+		if(!mFileCacheManager.checkUpdate()){
+			new UpdateData().execute(1);
+		}
 
+		if (mListKeeper.getData() != null && !mListKeeper.getData().isEmpty() && mListKeeper.getUpdatedMiles() != -1) {
+			mBooks = mListKeeper.getData();
+			mNowPage = mListKeeper.getNowPage();
+			mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
+			setRecyclerAdapter(mAdapter);
+			isFirstLoad = false;
+		} else {
+			mBooks = new ArrayList<>();
+			mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
+			setRecyclerAdapter(mAdapter);
+			new PageGetTask().execute(mNowPage);
+		}
 
 	}
 
@@ -786,6 +790,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	@Override
 	public void onStart() {
 		super.onStart();
+	}
+
+	private class UpdateData extends AsyncTask<Integer, Void, BaseMessage> {
+		@Override
+		protected BaseMessage doInBackground(Integer... params) {
+			mFileCacheManager.updateSaved(getApplicationContext());
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(BaseMessage msg) {
+			Log.d(TAG, "Update Data Complete ");
+		}
+
 	}
 
 	private class PageGetTask extends AsyncTask<Integer, Void, BaseMessage> {
