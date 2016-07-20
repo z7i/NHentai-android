@@ -10,6 +10,9 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -34,18 +37,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import net.grobas.animation.MovingViewAnimator;
 import net.grobas.view.MovingImageView;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.BookApi;
 import moe.feng.nhentai.api.PageApi;
 import moe.feng.nhentai.api.common.NHentaiUrl;
-import moe.feng.nhentai.cache.common.Constants;
 import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.drawable.RoundSideRectDrawable;
@@ -74,11 +75,12 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	private MovingImageView mImageView;
 	private FloatingActionButton mFAB;
 	private TextView mTitleText;
+	private TextView mTitlePretty;
 	private LinearLayout mTagsLayout;
 	private LinearLayout mContentView, mAppBarBackground;
 	private WheelProgressView mProgressWheel;
 	private RecyclerView mPreviewList, mRecommendList;
-
+	private ArrayList<Book> Recommend;
 	private boolean isPlayingFABAnimation = false;
 
 	private int APP_BAR_HEIGHT, TOOLBAR_HEIGHT, STATUS_BAR_HEIGHT = 0, minHeight = 0;
@@ -116,13 +118,10 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		setContentView(R.layout.activity_book_details);
 		Intent intent = getIntent();
 		if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-			book = new Book();
 			String url = intent.getData().toString();
-			if (url.endsWith("/")) url = url.substring(0, url.length() - 1);
-			String bid = url.substring(url.lastIndexOf("/") + 1, url.length());
-			Log.i("TAG", "url get id:" + bid);
-			book.bookId = bid;
-			fromPosition = -1;
+			book = new Book ();
+			book.bookId = url;
+
 			isFromExternal = true;
 		} else {
 			book = Book.toBookFromJson(intent.getStringExtra(EXTRA_BOOK_DATA));
@@ -136,7 +135,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			ActivityOptions.makeTaskLaunchBehind();
 		}
-		FileCacheManager cm = FileCacheManager.getInstance(getApplicationContext());
+
 
 		TextDrawable textDrawable;
 		if (book.title != null) {
@@ -155,19 +154,18 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		}
 		mImagePlaceholderView.setImageDrawable(textDrawable);
 
-		if (book.galleryId != null) {
-			if (cm.cacheExistsUrl(Constants.CACHE_COVER, book.bigCoverImageUrl)) {
-				if (cm.cacheExistsUrl(Constants.CACHE_PAGE_IMG,
+		/*if (book.galleryId != null) {
+			if (mFileCacheManager.cacheExistsUrl(Constants.CACHE_COVER, book.bigCoverImageUrl)) {
+				if (mFileCacheManager.cacheExistsUrl(Constants.CACHE_PAGE_IMG,
 						NHentaiUrl.getOriginPictureUrl(book.galleryId, "1"))) {
 					Picasso.with(getApplicationContext())
-							.load(cm.getBitmapUrlFile(Constants.CACHE_PAGE_IMG, NHentaiUrl.getOriginPictureUrl(book.galleryId, "1")))
+							.load(mFileCacheManager.getBitmapUrlFile(Constants.CACHE_PAGE_IMG, NHentaiUrl.getOriginPictureUrl(book.galleryId, "1")))
 							.fit()
 							.centerCrop()
 							.into(mImageView);
 				} else {
 					Picasso.with(getApplicationContext())
-							.load(cm.getBitmapUrlFile(Constants.CACHE_COVER, book.bigCoverImageUrl))
-							.fit()
+							.load(mFileCacheManager.getBitmapUrlFile(Constants.CACHE_COVER, book.bigCoverImageUrl))
 							.centerCrop()
 							.into(mImageView);
 					if (mSets.getBoolean(Settings.KEY_FULL_IMAGE_PREVIEW, false)) {
@@ -175,9 +173,9 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 					}
 				}
 			} else {
-				if (cm.cacheExistsUrl(Constants.CACHE_THUMB, book.previewImageUrl)) {
+				if (mFileCacheManager.cacheExistsUrl(Constants.CACHE_THUMB, book.previewImageUrl)) {
 					Picasso.with(getApplicationContext())
-							.load(cm.getBitmapUrlFile(Constants.CACHE_THUMB, book.previewImageUrl))
+							.load(mFileCacheManager.getBitmapUrlFile(Constants.CACHE_THUMB, book.previewImageUrl))
 							.fit()
 							.centerCrop()
 							.into(mImageView);
@@ -188,8 +186,11 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			}
 			mImageView.getMovingAnimator().setSpeed(100);
 			mImageView.getMovingAnimator().setMovementType(MovingViewAnimator.VERTICAL_MOVE);
-		}
+		} */
 
+		new CoverTask().execute(book);
+		mImageView.getMovingAnimator().setSpeed(100);
+		mImageView.getMovingAnimator().setMovementType(MovingViewAnimator.VERTICAL_MOVE);
 		if (book.pageCount != 0) {
 			mContentView.setVisibility(View.GONE);
 			mProgressWheel.setVisibility(View.VISIBLE);
@@ -210,9 +211,10 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 					});
 				}
 			}.start();
-		} else {
-			startBookGet();
 		}
+
+		startBookGet();
+
 
 
 		if (!isFromExternal) checkIsDownloaded();
@@ -227,6 +229,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mImagePlaceholderView = $(R.id.preview_placeholder);
 		mFAB = $(R.id.fab);
 		mTitleText = $(R.id.tv_title);
+		mTitlePretty = $(R.id.pretty_title);
 		mTagsLayout = $(R.id.book_tags_layout);
 		mContentView = $(R.id.book_content);
 		mProgressWheel = $(R.id.wheel_progress);
@@ -308,7 +311,11 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mProgressWheel.setVisibility(View.GONE);
 		mContentView.setVisibility(View.VISIBLE);
 		mContentView.animate().alphaBy(0f).alpha(1f).setDuration(1500).start();
-		mTitleText.setText(book.getAvailableTitle());
+
+		if (!book.titleJP.equals("null"))mTitleText.setText(book.titleJP);
+		else mTitleText.setText(book.titlePretty);
+
+		mTitlePretty.setText(book.title);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mSets.getBoolean(Settings.KEY_ALLOW_STANDALONE_TASK, true)) {
 			ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(
 					book.getAvailableTitle(),
@@ -320,6 +327,8 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		if (isFromExternal) {
 			new CoverTask().execute(book);
 		}
+
+		Recommend = new ArrayList<Book>();
 
 		checkIsDownloaded();
 		setUpShareAction();
@@ -338,15 +347,17 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mPreviewList.setAdapter(adapter);
 
 		BookGridRecyclerAdapter adapter1 = new BookGridRecyclerAdapter(
-				mRecommendList, book.likes, FavoritesManager.getInstance(getApplicationContext()), mSets
+				mRecommendList, Recommend, FavoritesManager.getInstance(getApplicationContext()), mSets
 		);
 		adapter1.setOnItemClickListener(new AbsRecyclerViewAdapter.OnItemClickListener() {
 			@Override
 			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder holder) {
-				BookDetailsActivity.launch(BookDetailsActivity.this, null, book.likes.get(position), position);
+				BookDetailsActivity.launch(BookDetailsActivity.this, null, Recommend.get(position), position);
 			}
 		});
 		mRecommendList.setAdapter(adapter1);
+		new RecommendGetTask().execute(book.bookId);
+
 	}
 
 	private void updateTagsContent() {
@@ -380,7 +391,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				public void onClick(View v) {
 					CategoryActivity.launch(
 							BookDetailsActivity.this,
-							new Category(Category.Type.PARODY, book.parodies)
+							new Category(Category.Type.PARODY, book.parodies, book.parodiesID)
 					);
 				}
 			});
@@ -408,7 +419,10 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			lp.width = min_width;
 			tagGroupLayout.addView(groupNameView, lp);
 
-			for (final String tag : book.characters) {
+			for (int z=0; z <book.characters.size();z++) {
+				final String tag = book.characters.get(z);
+				final String tagID = book.charactersID.get(z);
+
 				TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 				tagView.setText(tag);
 				tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
@@ -417,7 +431,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 					public void onClick(View v) {
 						CategoryActivity.launch(
 								BookDetailsActivity.this,
-								new Category(Category.Type.CHARACTER, tag)
+								new Category(Category.Type.CHARACTER, tag, tagID)
 						);
 					}
 				});
@@ -446,7 +460,9 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			lp.width = min_width;
 			tagGroupLayout.addView(groupNameView, lp);
 
-			for (final String tag : book.tags) {
+			for (int z=0; z <book.tags.size();z++) {
+				final String tag = book.tags.get(z);
+				final String tagID = book.tagID.get(z);
 				TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
 				tagView.setText(tag);
 				tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
@@ -455,7 +471,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 					public void onClick(View v) {
 						CategoryActivity.launch(
 								BookDetailsActivity.this,
-								new Category(Category.Type.TAG, tag)
+								new Category(Category.Type.TAG, tag,tagID)
 						);
 					}
 				});
@@ -484,16 +500,18 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			lp.width = min_width;
 			tagGroupLayout.addView(groupNameView, lp);
 
-			for (final String artist : book.artists) {
+			for (int z=0; z <book.artists.size();z++) {
+				final String tag = book.artists.get(z);
+				final String tagID = book.artistsID.get(z);
 				TextView tagView = (TextView) View.inflate(getApplicationContext(), R.layout.layout_tag, null);
-				tagView.setText(artist);
+				tagView.setText(tag);
 				tagView.setBackgroundDrawable(new RoundSideRectDrawable(color));
 				tagView.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
 						CategoryActivity.launch(
 								BookDetailsActivity.this,
-								new Category(Category.Type.ARTIST, artist)
+								new Category(Category.Type.ARTIST, tag, tagID)
 						);
 					}
 				});
@@ -530,7 +548,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				public void onClick(View v) {
 					CategoryActivity.launch(
 							BookDetailsActivity.this,
-							new Category(Category.Type.GROUP, book.group)
+							new Category(Category.Type.GROUP, book.group, book.groupID)
 					);
 				}
 			});
@@ -565,7 +583,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				public void onClick(View v) {
 					CategoryActivity.launch(
 							BookDetailsActivity.this,
-							new Category(Category.Type.LANGUAGE, book.language)
+							new Category(Category.Type.LANGUAGE, book.language ,book.langField)
 					);
 				}
 			});
@@ -665,8 +683,8 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mProgressWheel.spin();
 
 		new BookGetTask().execute(book.bookId);
-	}
 
+	}
 
 	private void onActionDownloadClick() {
 		final String downloadPath = mFileCacheManager.getExternalPath(book);
@@ -1010,7 +1028,12 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		@Override
 		protected BaseMessage doInBackground(String... params) {
 			Book externalBook = mFileCacheManager.getExternalBook(book.bookId);
-			return externalBook != null ? new BaseMessage(0, externalBook) : BookApi.getBook(params[0]);
+			if (externalBook == null){
+				return BookApi.getBook(getApplicationContext(), book.bookId);
+			}
+			else{
+				return new BaseMessage(0, externalBook);
+			}
 		}
 
 		@Override
@@ -1033,6 +1056,29 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 								startBookGet();
 							}
 						}).show();
+			}
+		}
+
+	}
+
+	private class RecommendGetTask extends AsyncTask<String, Void, BaseMessage> {
+
+		@Override
+		protected BaseMessage doInBackground(String... params) {
+
+			return PageApi.getPageList(NHentaiUrl.getBookRecommendUrl(book.bookId));
+		}
+
+		@Override
+		protected void onPostExecute(BaseMessage result) {
+			if (result.getCode() == 0) {
+				Recommend.addAll((ArrayList<Book>)result.getData());
+
+				for (Book b : Recommend){
+					mFileCacheManager.createCacheFromBook(b);
+				}
+
+				mRecommendList.getAdapter().notifyDataSetChanged();
 			}
 		}
 

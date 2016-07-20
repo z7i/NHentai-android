@@ -220,7 +220,7 @@ public class RandomActivity extends AbsActivity {
 			int repeatCount = 0;
 			BaseMessage data = null;
 			while (repeatCount < 9) {
-				data = BookApi.getBook(String.valueOf(bookId));
+				data = BookApi.getBook(getApplicationContext(), String.valueOf(bookId));
 				if (data.getCode() == 0) break;
 				repeatCount++;
 			}

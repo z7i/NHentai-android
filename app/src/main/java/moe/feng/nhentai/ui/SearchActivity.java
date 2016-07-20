@@ -41,6 +41,7 @@ import java.util.ArrayList;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.PageApi;
+import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.dao.SearchHistoryManager;
 import moe.feng.nhentai.model.BaseMessage;
@@ -69,7 +70,7 @@ public class SearchActivity extends AbsActivity {
 	private int mNowPage = 1, mHorCardCount = 2;
 	private String keyword;
 	private boolean isAllowToLoadNextPage = true;
-
+	private FileCacheManager mFileCacheManager;
 	private FavoritesManager mFM;
 	private SearchHistoryManager mHM;
 
@@ -219,6 +220,8 @@ public class SearchActivity extends AbsActivity {
 		});
 
 		mResultList.setAdapter(adapter);
+
+		mFileCacheManager = FileCacheManager.getInstance(getApplicationContext());
 	}
 
 	private void setHistoryListAdapter(HistoryRecyclerAdapter adapter) {
@@ -389,6 +392,9 @@ public class SearchActivity extends AbsActivity {
 						if (msg.getData() != null) {
 							if (!((ArrayList<Book>) msg.getData()).isEmpty()) {
 								mBooks.addAll((ArrayList<Book>) msg.getData());
+								for(Book b : (ArrayList<Book>) msg.getData()){
+									mFileCacheManager.createCacheFromBook(b);
+								}
 								mAdapter.notifyDataSetChanged();
 								if (mNowPage == 1) {
 									isAllowToLoadNextPage = true;
@@ -406,7 +412,7 @@ public class SearchActivity extends AbsActivity {
                     case MSG_CODE_DIRECT_TO_BOOK:
                         Intent intent = new Intent(SearchActivity.this, BookDetailsActivity.class);
                         intent.setAction(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("https://nhentai.net/g/" + msg.getData()));
+                        intent.setData(Uri.parse(keyword));
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
                         } else {

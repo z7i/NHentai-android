@@ -4,14 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 
 import moe.feng.nhentai.api.common.NHentaiUrl;
@@ -25,75 +24,198 @@ public class PageApi {
 
 	public static final String TAG = PageApi.class.getSimpleName();
 
-	public static BaseMessage getPageList(String url) {
-		BaseMessage result = new BaseMessage();
+    public static BaseMessage getPageBook(String url) {
+        BaseMessage result = new BaseMessage();
+        JSONObject tagInspect;
+        boolean english =false;
+        boolean chinese = false;
+        Book book = new Book();
+        try {
+            String json = Jsoup.connect(url).ignoreContentType(true).execute().body();
 
-		Document doc;
-		try {
-			doc = Jsoup.connect(url).get();
-		} catch (IOException e) {
-			result.setCode(403);
-			e.printStackTrace();
-			return result;
-		}
+            Log.d(TAG, "getPageListAPI: "+ json);
+            try {
+                JSONObject inspect = new JSONObject(json);
+                JSONObject titles = inspect.getJSONObject("title");
+                book.title = titles.getString("english");
+                book.titleJP = titles.getString("japanese");
+                book.titlePretty =titles.getString("pretty");
+                book.galleryId = inspect.getString("media_id");
+                book.bookId = inspect.getString("id");
+                book.bigCoverImageUrl = NHentaiUrl.getBigCoverUrl(inspect.getString("media_id"));
+                book.previewImageUrl = NHentaiUrl.getThumbUrl(inspect.getString("media_id"));
+                JSONObject images = inspect.getJSONObject("images");
+                JSONArray pages = images.getJSONArray("pages");
+                book.pageCount =pages.length();
 
-		Elements container = doc.getElementsByClass("gallery");
+                JSONArray tags = inspect.getJSONArray("tags");
 
-		result.setCode(0);
-		result.setData(getBooksFromGalleryElements(container));
+                for (int y =0; y< tags.length();y++){
+                    tagInspect = tags.getJSONObject(y);
+                    if (tagInspect.getString("type").equals("tag")){
+                        book.tags.add(tagInspect.getString("name"));
+                        book.tagID.add(tagInspect.getString("id"));
+                    }
+                    else if (tagInspect.getString("type").equals("artist")){
+                        book.artists.add(tagInspect.getString("name"));
+                        book.artistsID.add(tagInspect.getString("id"));
+                    }
 
-		return result;
-	}
+                    else if (tagInspect.getString("type").equals("character")){
+                        book.characters.add(tagInspect.getString("name"));
+                        book.charactersID.add(tagInspect.getString("id"));
+                    }
 
-    public static ArrayList<Book> getBooksFromGalleryElements(Elements container) {
-        ArrayList<Book> books = new ArrayList<>();
+                    else if (tagInspect.getString("type").equals("group")){
+                        book.group = tagInspect.getString("name");
+                        book.groupID = tagInspect.getString("id");
+                    }
 
-        for (Element e : container) {
-            Book book = new Book();
+                    else if (tagInspect.getString("type").equals("parody")){
+                        book.parodies = tagInspect.getString("name");
+                        book.parodiesID = tagInspect.getString("id");
+                    }
 
-            String tagIds = e.attributes().get("data-tags");
-            if (tagIds.contains(Book.LANG_CN)) {
-                book.langField = Book.LANG_CN;
-            } else if (tagIds.contains(Book.LANG_JP)) {
-                book.langField = Book.LANG_JP;
-            } else {
-                book.langField = Book.LANG_GB;
-            }
+                    if (tagInspect.getString("name").equals("chinese")){
+                        chinese= true;
+                        book.language ="chinese";
+                        book.langField=Book.LANG_CN;
 
-            Element bookIdElement = e.getElementsByClass("cover").get(0);
-            String bookId = bookIdElement.attr("href");
-            bookId = bookId.substring(0, bookId.lastIndexOf("/"));
-            bookId = bookId.substring(bookId.lastIndexOf("/") + 1, bookId.length());
-
-            Element caption = e.getElementsByClass("caption").get(0);
-
-            book.bookId = bookId;
-            book.title = caption.text();
-            book.titleJP = caption.text();
-
-            Elements imgs = e.getElementsByTag("img");
-            for (Element imge : imgs) {
-                if (imge.hasAttr("src")) {
-                    String thumbUrl = imge.attr("src");
-                    thumbUrl = thumbUrl.substring(0, thumbUrl.lastIndexOf("/"));
-                    String galleryId = thumbUrl.substring(thumbUrl.lastIndexOf("/") + 1, thumbUrl.length());
-                    book.galleryId = galleryId;
-                    book.bigCoverImageUrl = NHentaiUrl.getBigCoverUrl(galleryId);
-                    book.previewImageUrl = NHentaiUrl.getThumbUrl(galleryId);
-                    try {
-                        book.thumbHeight = Integer.valueOf(imge.attr("height"));
-                        book.thumbWidth = Integer.valueOf(imge.attr("width"));
-                    } catch (Exception ex) {
 
                     }
+                    else if(tagInspect.getString("name").equals("english")){
+                        english = true;
+                        book.language="english";
+                        book.langField=Book.LANG_GB;
+                    }
                 }
+
+                if(!chinese && !english){
+                    book.language="japanese";
+                    book.langField = Book.LANG_JP;
+                }
+
             }
 
-            if (book.bookId != null && !book.bookId.isEmpty()) {
+            catch (JSONException e){
+                e.printStackTrace();
+                Log.d(TAG, "getPageListAPI: ERROR 1");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "getPageListAPI: ERROR 2");
+        }
+
+        result.setData(book);
+        result.setCode(0);
+
+        return  result;
+    }
+
+    public static BaseMessage getPageList(String url) {
+        BaseMessage result = new BaseMessage();
+        result.setCode(0);
+        try {
+            String json = Jsoup.connect(url).ignoreContentType(true).execute().body();
+            try {
+                JSONObject obj = new JSONObject(json);
+                JSONArray books = obj.getJSONArray("result");
+                result.setData(getBooksFromJson(books));
+            }
+            catch (JSONException e){
+                e.printStackTrace();
+                Log.d(TAG, "getPageListAPI: ERROR 1");
+                result.setCode(1);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d(TAG, "getPageListAPI: ERROR 2");
+            result.setCode(1);
+        }
+
+
+        return  result;
+    }
+
+    public static ArrayList<Book> getBooksFromJson(JSONArray array) {
+        ArrayList<Book> books = new ArrayList<>();
+        JSONObject inspect;
+        JSONObject tagInspect;
+        boolean english =false;
+        boolean chinese = false;
+        for (int x =0; x<array.length();x++){
+            Book book = new Book();
+            english=false;
+            chinese=false;
+            try {
+                inspect = array.getJSONObject(x);
+
+                JSONObject titles = inspect.getJSONObject("title");
+                book.title = titles.getString("english");
+                book.titleJP = titles.getString("japanese");
+                book.titlePretty =titles.getString("pretty");
+                book.galleryId = inspect.getString("media_id");
+                book.bookId = inspect.getString("id");
+                book.bigCoverImageUrl = NHentaiUrl.getBigCoverUrl(inspect.getString("media_id"));
+                book.previewImageUrl = NHentaiUrl.getThumbUrl(inspect.getString("media_id"));
+
+                JSONObject images = inspect.getJSONObject("images");
+                JSONArray pages = images.getJSONArray("pages");
+                book.pageCount =pages.length();
+
+                JSONArray tags = inspect.getJSONArray("tags");
+
+                for (int y =0; y< tags.length();y++){
+                    tagInspect = tags.getJSONObject(y);
+                    if (tagInspect.getString("type").equals("tag")){
+                        book.tags.add(tagInspect.getString("name"));
+                        book.tagID.add(tagInspect.getString("id"));
+                    }
+                    else if (tagInspect.getString("type").equals("artist")){
+                        book.artists.add(tagInspect.getString("name"));
+                        book.artistsID.add(tagInspect.getString("id"));
+                    }
+
+                    else if (tagInspect.getString("type").equals("character")){
+                        book.characters.add(tagInspect.getString("name"));
+                        book.charactersID.add(tagInspect.getString("id"));
+                    }
+
+                    else if (tagInspect.getString("type").equals("group")){
+                        book.group = tagInspect.getString("name");
+                        book.groupID = tagInspect.getString("id");
+                    }
+
+                    else if (tagInspect.getString("type").equals("parody")){
+                        book.parodies = tagInspect.getString("name");
+                        book.parodiesID = tagInspect.getString("id");
+                    }
+
+                    if (tagInspect.getString("name").equals("chinese")){
+                        chinese= true;
+                        book.language ="chinese";
+                        book.langField=Book.LANG_CN;
+
+
+                    }
+                    else if(tagInspect.getString("name").equals("english")){
+                        english = true;
+                        book.language="english";
+                        book.langField=Book.LANG_GB;
+                    }
+                }
+
+                if(!chinese && !english){
+                    book.language="japanese";
+                    book.langField = Book.LANG_JP;
+                }
+
                 books.add(book);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-            Log.i(TAG, "Get book: " + book.toJSONString());
         }
 
         return books;
@@ -102,6 +224,10 @@ public class PageApi {
 	public static BaseMessage getHomePageList(int number) {
 		return getPageList(NHentaiUrl.getHomePageUrl(number));
 	}
+
+    public static BaseMessage getBookDetailList(String id){
+        return getPageBook(NHentaiUrl.getBookDetailsUrl(id));
+    }
 
 	public static BaseMessage getSearchPageList(String keyword, int number) {
 		return getPageList(NHentaiUrl.getSearchUrl(keyword, number));
