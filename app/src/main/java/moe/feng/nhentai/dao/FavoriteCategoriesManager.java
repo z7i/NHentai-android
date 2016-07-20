@@ -87,8 +87,8 @@ public class FavoriteCategoriesManager {
 		return find(category) != -1;
 	}
 
-	public boolean contains(String type, String name) {
-		return find(new Category(type, name)) != -1;
+	public boolean contains(String type, String name, String id) {
+		return find(new Category(type, name, id)) != -1;
 	}
 
 	public void save() {

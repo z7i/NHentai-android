@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -139,7 +140,8 @@ public class PageListFragment extends LazyFragment {
 		@Override
 		protected BaseMessage doInBackground(Integer... params) {
 			mFM.reload();
-			BaseMessage msg = PageApi.getPageList(getArguments().getString(ARG_PAGE_URL) + "?page=" + mNowPage);
+			Log.d("Hey", "doInBackground: " + getArguments().getString(ARG_PAGE_URL) + "&page=" + mNowPage);
+			BaseMessage msg = PageApi.getPageList(getArguments().getString(ARG_PAGE_URL) + "&page=" + mNowPage);
 			if (msg.getCode() == 0 && msg.getData() != null) {
 				ArrayList<Book> temp = msg.getData();
 				if (temp.isEmpty()) {

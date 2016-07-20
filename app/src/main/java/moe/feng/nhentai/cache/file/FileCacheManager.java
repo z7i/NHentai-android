@@ -112,6 +112,35 @@ public class FileCacheManager {
 		}
 	}
 
+	public boolean createCacheFromBook(Book book){
+		String path = mCacheDir.getAbsolutePath() + "/Books/" + book.title;
+
+		File d = new File(path);
+
+		if (!d.isDirectory()) {
+			d.delete();
+			d.mkdirs();
+		}
+
+		File f = new File(path + "/book.json");
+
+		if(!f.exists()){
+			try {
+
+				OutputStream out = new FileOutputStream(f);
+
+				out.write(book.toJSONString().getBytes());
+
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
+
+		return true;
+	}
 
 	public boolean createCacheFromStrem(String type, String name, InputStream stream) {
 		File f = new File(getCachePath(type, name) + "_downloading");
@@ -289,7 +318,7 @@ public class FileCacheManager {
 	}
 
 	public Book getExternalBook(String bid) {
-		File parentDir = new File(mExternalDir.getAbsolutePath()+ "/Books/");
+		File parentDir = new File(mCacheDir.getAbsolutePath()+ "/Books/");
 
 		if (parentDir.isDirectory()) {
 			File[] files = parentDir.listFiles();
@@ -305,8 +334,9 @@ public class FileCacheManager {
 							ins.close();
 
 							Book book = new Gson().fromJson(new String(b), Book.class);
+							if (book!=null)
 							if (book.bookId.equals(bid)) {
-								Log.i(TAG, "Found bookId: " + book.bookId);
+								Log.i(TAG, "Found bookId Cache: " + book.bookId);
 								return book;
 							}
 						} catch (Exception e) {
@@ -321,6 +351,7 @@ public class FileCacheManager {
 		}
 
 	}
+
 
 	public ArrayList<Book> getExternalBooks() {
 		File parentDir = new File(mExternalDir.getAbsolutePath()+ "/Books/");
@@ -404,35 +435,39 @@ public class FileCacheManager {
 			target.delete();
 		}
 
-		return saveBookDataToExternalPath(book) && srcFile.isFile() && copy(srcFile, target);
+		return  srcFile.isFile() && copy(srcFile, target);
 	}
 
 	public boolean saveBookDataToExternalPath(Book book) {
 		String path = getExternalPath(book);
 		File d = new File(path);
 
-		if (d.isFile()) {
+		if (!d.isDirectory()) {
 			d.delete();
+			d.mkdirs();
 		}
-		d.mkdirs();
 
 		File f = new File(path + "/book.json");
 
-		f.delete();
 
-		try {
-			OutputStream out = new FileOutputStream(f);
+		if(!f.exists()){
+			try {
 
-			out.write(book.toJSONString().getBytes());
+				OutputStream out = new FileOutputStream(f);
 
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
+				out.write(book.toJSONString().getBytes());
+
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
 		}
+
 
 		return true;
 	}
+
 	public static int calculateInSampleSize(
 			BitmapFactory.Options options, int reqWidth, int reqHeight) {
 		// Raw height and width of image

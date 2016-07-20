@@ -4,15 +4,16 @@ import com.google.gson.Gson;
 
 public class Category {
 
-	public String type, name;
+	public String type, name, id;
 
 	public Category() {
-		this(null, null);
+		this(null, null,null);
 	}
 
-	public Category(String type, String name) {
+	public Category(String type, String name, String id) {
 		this.type = type;
 		this.name = name;
+		this.id = id;
 	}
 
 	public String toJSONString() {
