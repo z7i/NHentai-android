@@ -191,27 +191,6 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		new CoverTask().execute(book);
 		mImageView.getMovingAnimator().setSpeed(100);
 		mImageView.getMovingAnimator().setMovementType(MovingViewAnimator.VERTICAL_MOVE);
-		if (book.pageCount != 0) {
-			mContentView.setVisibility(View.GONE);
-			mProgressWheel.setVisibility(View.VISIBLE);
-			mProgressWheel.spin();
-			new Thread() {
-				@Override
-				public void run() {
-					try {
-						Thread.sleep(250);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							updateUIContent();
-						}
-					});
-				}
-			}.start();
-		}
 
 		startBookGet();
 

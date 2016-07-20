@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import moe.feng.nhentai.api.BookApi;
 import moe.feng.nhentai.api.common.NHentaiUrl;
 import moe.feng.nhentai.cache.common.Constants;
 import moe.feng.nhentai.model.Book;
@@ -61,7 +62,7 @@ public class FileCacheManager {
 		return sInstance;
 	}
 
-	public boolean createCacheFromNetwork(String type, String url) {
+	public boolean createCacheFromNetwork(String type, String url, String title) {
 		if (DEBUG) {
 			Log.d(TAG, "requesting cache from " + url);
 		}
@@ -106,7 +107,7 @@ public class FileCacheManager {
 		}
 
 		try {
-			return createCacheFromStrem(type, getCacheName(url), conn.getInputStream());
+			return createCacheFromStrem(type, getCacheName(url),title, conn.getInputStream());
 		} catch (IOException e) {
 			return false;
 		}
@@ -142,8 +143,8 @@ public class FileCacheManager {
 		return true;
 	}
 
-	public boolean createCacheFromStrem(String type, String name, InputStream stream) {
-		File f = new File(getCachePath(type, name) + "_downloading");
+	public boolean createCacheFromStrem(String type, String name, String title, InputStream stream) {
+		File f = new File(getCachePath(type, name, title) + "_downloading");
 		f.getParentFile().mkdirs();
 		f.getParentFile().mkdir();
 
@@ -183,7 +184,7 @@ public class FileCacheManager {
 
 		}
 
-		f.renameTo(new File(getCachePath(type, name)));
+		f.renameTo(new File(getCachePath(type, name, title)));
 
 		return true;
 	}
@@ -210,16 +211,17 @@ public class FileCacheManager {
 	}
 
 	// True if the cache downloaded from url exists
-	public boolean cacheExistsUrl(String type, String url) {
-		return cacheExists(type, getCacheName(url));
+	public boolean cacheExistsUrl(String type, String url,String title) {
+		return cacheExists(type, getCacheName(url), title);
 	}
 
-	public boolean cacheExists(String type, String name) {
-		return new File(getCachePath(type, name)).isFile();
+	public boolean cacheExists(String type, String name, String title) {
+		return new File(getCachePath(type, name, title)).isFile();
 	}
 
 	public boolean externalPageExists(Book book, int page) {
 		return new File(getExternalPagePath(book, page)).isFile();
+
 	}
 
 	public boolean externalBookExists(Book book) {
@@ -239,34 +241,78 @@ public class FileCacheManager {
 		}
 	}
 
-	public boolean deleteCacheUrl(String type, String url) {
-		return deleteCache(type, getCacheName(url));
+	public boolean deleteCacheUrl(String type, String url, String title) {
+		return deleteCache(type, getCacheName(url), title);
 	}
 
-	public boolean deleteCache(String type, String name) {
-		if (cacheExists(type, name)) {
-			return new File(getCachePath(type, name)).delete();
+	public boolean deleteCache(String type, String name,String title) {
+		if (cacheExists(type, name, title)) {
+			return new File(getCachePath(type, name, title)).delete();
 		} else {
 			return false;
 		}
 	}
 
-	public FileInputStream openCacheStream(String type, String name) {
+	public FileInputStream openCacheStream(String type, String name, String title) {
 		try {
-			return new FileInputStream(new File(getCachePath(type, name)));
+			return new FileInputStream(new File(getCachePath(type, name, title)));
 		} catch (IOException e) {
 			return null;
 		}
 	}
 
-	public FileInputStream openCacheStreamUrl(String type, String url) {
-		return openCacheStream(type, getCacheName(url));
+	public FileInputStream openCacheStreamUrl(String type, String url, String title) {
+		return openCacheStream(type, getCacheName(url), title);
 	}
 
-	public Bitmap getBitmap(String type, String name) {
+	public Bitmap getBitmapFile(File f) {
+		ret=null;
+		FileInputStream ipt= null;
+
+		try {
+			ipt = new FileInputStream(f);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		if (ipt == null) return null;
+
+		BitmapFactory.Options bounds = new BitmapFactory.Options();
+		bounds.inJustDecodeBounds=true;
+		BitmapFactory.decodeStream(ipt,null,bounds);
+
+		bounds.inSampleSize = calculateInSampleSize(bounds,480, 640);
+
+		Log.d(TAG, "getBitmap: " + bounds.inSampleSize);
+		FileInputStream iptF =null;
+		try {
+			iptF = new FileInputStream(f);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		bounds.inJustDecodeBounds=false;
+		ret=BitmapFactory.decodeStream(iptF,null, bounds);
+
+		try {
+			ipt.close();
+			iptF.close();
+			iptF=null;
+			ipt=null;
+			bounds = null;
+		} catch (IOException e) {
+			Log.d(TAG, "getBitmap: Cleaning error");
+			e.printStackTrace();
+
+		}
+
+		return ret;
+	}
+
+
+	public Bitmap getBitmap(String type, String name, String title) {
 		ret=null;
 
-		FileInputStream ipt= openCacheStream(type, name);
+		FileInputStream ipt= openCacheStream(type, name, title);
 		if (ipt == null) return null;
 
 		BitmapFactory.Options bounds = new BitmapFactory.Options();
@@ -277,7 +323,7 @@ public class FileCacheManager {
 
 		Log.d(TAG, "getBitmap: " + bounds.inSampleSize);
 
-		FileInputStream iptF=openCacheStream(type,name);
+		FileInputStream iptF=openCacheStream(type,name, title);
 
 		bounds.inJustDecodeBounds=false;
 		ret=BitmapFactory.decodeStream(iptF,null, bounds);
@@ -300,21 +346,21 @@ public class FileCacheManager {
 
 	public File getBitmapAllowingExternalPic(Book book, int page) {
 		File cache = new File(getCachePath(Constants.CACHE_PAGE_IMG,
-				NHentaiUrl.getOriginPictureUrl(book.galleryId, Integer.toString(page))));
+				NHentaiUrl.getOriginPictureUrl(book.galleryId, Integer.toString(page)), book.title));
 		File external = new File(getExternalPagePath(book, page));
 		return external.isFile() ? external : cache;
 	}
 
-	public Bitmap getBitmapUrl(String type, String url) {
-		return getBitmap(type, getCacheName(url));
+	public Bitmap getBitmapUrl(String type, String url, String title) {
+		return getBitmap(type, getCacheName(url), title);
 	}
 
-	public File getBitmapFile(String type, String name) {
-		return new File(getCachePath(type, name));
+	public File getBitmapFile(String type, String name, String title) {
+		return new File(getCachePath(type, name, title));
 	}
 
-	public File getBitmapUrlFile(String type, String url) {
-		return getBitmapFile(type, getCacheName(url));
+	public File getBitmapUrlFile(String type, String url, String title) {
+		return getBitmapFile(type, getCacheName(url), title);
 	}
 
 	public Book getExternalBook(String bid) {
@@ -352,6 +398,78 @@ public class FileCacheManager {
 
 	}
 
+	public boolean updateSaved(Context context){
+		File parentDir = new File(mExternalDir.getAbsolutePath()+ "/Books/");
+
+		if (parentDir.isDirectory()) {
+			File[] files = parentDir.listFiles();
+			for (File file : files) {
+				if (file.isDirectory()) {
+					File bookFile = new File(file.getAbsolutePath() + "/book.json");
+					if (bookFile.isFile()) {
+						try {
+							InputStream ins = new FileInputStream(bookFile);
+
+							byte b[] = new byte[(int) bookFile.length()];
+							ins.read(b);
+							ins.close();
+
+							Book book = Book.toBookFromJson(new String(b));
+							String id = book.bookId;
+
+							if (bookFile.delete()){
+								Log.d(TAG, "updateSaved: Erased correctly");
+							}
+
+							book = (Book) BookApi.getBook(context, id).getData();
+							Log.i(TAG, "Updated external: " + book.bookId);
+							saveBookDataToExternalPath(book);
+
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		} else {
+			return false;
+		}
+
+		parentDir = new File(mCacheDir.getAbsolutePath()+ "/pages/");
+		if (parentDir.exists()) {
+			File[] files = parentDir.listFiles();
+			for (File file : files) {
+				file.delete();
+			}
+			parentDir.delete();
+		}
+
+		parentDir = new File(mCacheDir.getAbsolutePath()+ "/thumb/");
+		if (parentDir.exists()) {
+			File[] files = parentDir.listFiles();
+			for (File file : files) {
+				file.delete();
+			}
+			parentDir.delete();
+		}
+
+		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updated.txt");
+		try {
+			OutputStream out = new FileOutputStream(updateFile);
+			out.write(String.valueOf("updated").getBytes());
+			out.close();
+			Log.d(TAG, "Version Updated Wroted");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public boolean checkUpdate (){
+		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updated.txt");
+		return updateFile.exists();
+	}
 
 	public ArrayList<Book> getExternalBooks() {
 		File parentDir = new File(mExternalDir.getAbsolutePath()+ "/Books/");
@@ -405,8 +523,8 @@ public class FileCacheManager {
 		return url.replaceAll("/", ".").replaceAll(":", "");
 	}
 
-	public String getCachePath(String type, String name) {
-		return mCacheDir.getAbsolutePath() + "/" + type + "/" + name + ".cache";
+	public String getCachePath(String type, String name, String title) {
+		return mCacheDir.getAbsolutePath() + "/Books/" +title +"/"+ type + "/" + name + ".cache";
 	}
 
 	public String getExternalPath(Book book) {
@@ -419,7 +537,7 @@ public class FileCacheManager {
 
 	public boolean saveToExternalPath(Book book, int page) {
 		String path = getExternalPagePath(book, page);
-		String src = getCachePath(Constants.CACHE_PAGE_IMG, getCacheName(NHentaiUrl.getOriginPictureUrl(book.galleryId, Integer.toString(page))));
+		String src = getCachePath(Constants.CACHE_PAGE_IMG, getCacheName(NHentaiUrl.getOriginPictureUrl(book.galleryId, Integer.toString(page))), book.title);
 		File target = new File(path);
 		File srcFile = new File(src);
 
@@ -458,6 +576,7 @@ public class FileCacheManager {
 				out.write(book.toJSONString().getBytes());
 
 				out.close();
+				Log.d(TAG, "saveBookDataToExternalPath: Wroted");
 			} catch (IOException e) {
 				e.printStackTrace();
 				return false;
