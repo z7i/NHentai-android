@@ -17,7 +17,7 @@ public class NHentaiUrl {
 		if (targetContent.contains(" ")) {
 			targetContent = targetContent.replaceAll(" ", "+");
 		}
-		return NHENTAI_HOME + "/search/?q=" + targetContent + "&page=" + page_num;
+		return NHENTAI_HOME + "/api/galleries/search?query=" + targetContent + "&page=" + page_num;
 	}
 
 	public static String getSearchUrlByTag(String content, String tag, int page_num) {
@@ -25,11 +25,10 @@ public class NHentaiUrl {
 	}
 
 	public static String getBookDetailsUrl(String book_id) {
-		return NHENTAI_HOME + "/g/" + book_id;
+		return NHENTAI_HOME + "/api/gallery/" + book_id;
 	}
-
-	public static String getBookPageUrl(String book_id, int page_num) {
-		return getBookDetailsUrl(book_id) + "/" + page_num;
+	public static String getBookRecommendUrl(String book_id) {
+		return NHENTAI_HOME + "/api/gallery/" + book_id + "/related";
 	}
 
 	public static String getGalleryUrl(String g_id) {
@@ -119,16 +118,14 @@ public class NHentaiUrl {
 	}
 
 	public static String getCategoryUrl(Category category, boolean isPopularType) {
-		String targetName = category.name;
-		if (targetName.contains(" ")) {
-			targetName = targetName.replaceAll(" ", "-");
-		}
-		return NHENTAI_HOME + "/" + category.type.toLowerCase() + "/" + targetName +
-				(isPopularType ? "/popular" : "");
+		String targetName = category.id;
+
+		if (!isPopularType)return NHENTAI_HOME + "/api/galleries/tagged?tag_id=" + targetName;
+		else return NHENTAI_HOME + "/api/galleries/tagged?tag_id=" + targetName+"&sort=popular";
 	}
 
 	public static String getHomePageUrl(int page) {
-		return NHENTAI_HOME + "/?page=" + page;
+		return NHENTAI_HOME + "/api/galleries/all?page=" + page;
 	}
 
 }

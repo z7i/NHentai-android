@@ -10,22 +10,25 @@ public class Book {
 	public String title, other, bookId;
 
 	/** 次要数据 */
-	public String previewImageUrl, bigCoverImageUrl, titleJP, galleryId;
+	public String previewImageUrl, bigCoverImageUrl, titleJP, titlePretty, galleryId;
 	public int pageCount;
 
 	public int thumbHeight = 0, thumbWidth = 0;
 
-	public String parodies, language, group;
+	public String parodies, parodiesID, language, group, groupID;
+
 	public ArrayList<String> tags = new ArrayList<>();
+	public ArrayList<String> tagID = new ArrayList<>();
+
 	public ArrayList<String> characters = new ArrayList<>();
+	public ArrayList<String> charactersID = new ArrayList<>();
+
 	public ArrayList<String> artists = new ArrayList<>();
+	public ArrayList<String> artistsID = new ArrayList<>();
 
     // cn = Chinese 29963 , jp = Japanese 6346, gb = Great Britain (English) 12227
     public String langField = LANG_UNKNOWN;
     public static final String LANG_CN = "29963", LANG_JP = "6346", LANG_GB = "12227", LANG_UNKNOWN = "0";
-
-    // "More like this" List
-    public ArrayList<Book> likes = new ArrayList<>();
 
 	/** 旧数据 */
 	private String artist = null;
@@ -50,6 +53,9 @@ public class Book {
 	}
 
 	public String getAvailableTitle() {
+
+		if (titlePretty!=null) return titlePretty;
+
 		if( (this.langField.equals(Book.LANG_JP) || this.langField.equals(Book.LANG_CN))){
 			return this.titleJP != null ? this.titleJP : this.title;
 		}
@@ -61,11 +67,6 @@ public class Book {
 	}
 
 	public void updateDataFromOldData() {
-        // Update artist tags
-		if (this.artist != null && !this.artist.trim().isEmpty()) {
-			this.artists.add(this.artist);
-		}
-
         // Update pictures address
 		if (this.bigCoverImageUrl.contains("i.nhentai")) {
 			this.bigCoverImageUrl = this.bigCoverImageUrl.replace("i.nhentai", "t.nhentai");
@@ -80,16 +81,6 @@ public class Book {
             this.previewImageUrl = this.previewImageUrl.replace("http://t.nhentai", "https://t.nhentai");
         }
 
-        // Add Language Field
-        if (this.language != null) {
-            if (this.language.equalsIgnoreCase("chinese")) {
-                this.langField = LANG_CN;
-            } else if (this.language.equalsIgnoreCase("japanese")) {
-                this.langField = LANG_JP;
-            } else if (this.language.equalsIgnoreCase("english")) {
-                this.langField = LANG_GB;
-            }
-        }
 	}
 
 	public static Book toBookFromJson(String json) {

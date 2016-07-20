@@ -57,6 +57,7 @@ import io.codetail.animation.ViewAnimationUtils;
 import io.codetail.widget.RevealFrameLayout;
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.PageApi;
+import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.dao.LatestBooksKeeper;
 import moe.feng.nhentai.model.BaseMessage;
@@ -131,7 +132,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 	private Handler mHandler = new Handler();
 	public static final String TAG = HomeActivity.class.getSimpleName();
-
+	public FileCacheManager mFileCacheManager;
 	private static final int REQUEST_CODE_PERMISSION_GET = 101;
 
 	@Override
@@ -202,6 +203,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 					})
 					.show();
 		}
+
+		mFileCacheManager = FileCacheManager.getInstance(getApplicationContext());
 
 
 	}
@@ -799,6 +802,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			if (msg != null) {
 				if (msg.getCode() == 0 && msg.getData() != null) {
 					if (!((ArrayList<Book>) msg.getData()).isEmpty()) {
+
+						for(Book b : (ArrayList<Book>) msg.getData()){
+							mFileCacheManager.createCacheFromBook(b);
+						}
+
 						mBooks.addAll((ArrayList<Book>) msg.getData());
 
 						mListKeeper.setData(mBooks);
