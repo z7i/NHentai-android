@@ -1,8 +1,16 @@
 package moe.feng.nhentai.model;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.google.gson.Gson;
 
+import org.jsoup.Connection;
+
 import java.util.ArrayList;
+
+import moe.feng.nhentai.api.BookApi;
+import moe.feng.nhentai.api.PageApi;
 
 public class Book {
 
@@ -66,26 +74,38 @@ public class Book {
 		return new Gson().toJson(this);
 	}
 
-	public void updateDataFromOldData() {
-        // Update pictures address
-		if (this.bigCoverImageUrl.contains("i.nhentai")) {
-			this.bigCoverImageUrl = this.bigCoverImageUrl.replace("i.nhentai", "t.nhentai");
+	public void updateDataFromOldData(Context context) {
+		Log.d("HEY", "updateDataFromOldData: " + this.bookId);
+		BaseMessage msg = BookApi.getBook(context,this.bookId);
+		if (msg.getCode()==0){
+			Book result = (Book) msg.getData();
+			this.title = result.title;
+			this.titleJP = result.titleJP;
+			this.titlePretty = result.titlePretty;
+			this.characters = result.characters;
+			this.charactersID = result.charactersID;
+			this.parodies = result.parodies;
+			this.parodiesID = result.parodiesID;
+			this.artists = result.artists;
+			this.uploadTime = result.uploadTime;
+			this.uploadTimeText = result.uploadTimeText;
+			this.artistsID =result.artistsID;
+			this.bigCoverImageUrl = result.bigCoverImageUrl;
+			this.langField = result.langField;
+			this.language = result.language;
+			this.tags = result.tags;
+			this.tagID = result.tagID;
+			this.galleryId = result.galleryId;
+			this.bookId = result.bookId;
+			this.group = result.group;
+			this.groupID = result.groupID;
+			this.previewImageUrl = result.previewImageUrl;
+			this.other =result.other;
 		}
-        if (this.previewImageUrl.contains("i.nhentai")) {
-			this.previewImageUrl = this.previewImageUrl.replace("i.nhentai", "t.nhentai");
-		}
-        if (this.bigCoverImageUrl.contains("http://t.nhentai")) {
-            this.bigCoverImageUrl = this.bigCoverImageUrl.replace("http://t.nhentai", "https://t.nhentai");
-        }
-        if (this.previewImageUrl.contains("http://t.nhentai")) {
-            this.previewImageUrl = this.previewImageUrl.replace("http://t.nhentai", "https://t.nhentai");
-        }
-
 	}
 
 	public static Book toBookFromJson(String json) {
 		Book book = new Gson().fromJson(json, Book.class);
-		book.updateDataFromOldData();
 		return book;
 	}
 

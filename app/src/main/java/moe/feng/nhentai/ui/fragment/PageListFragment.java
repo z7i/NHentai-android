@@ -139,7 +139,7 @@ public class PageListFragment extends LazyFragment {
 
 		@Override
 		protected BaseMessage doInBackground(Integer... params) {
-			mFM.reload();
+			mFM.reload(getApplicationContext());
 			Log.d("Hey", "doInBackground: " + getArguments().getString(ARG_PAGE_URL) + "&page=" + mNowPage);
 			BaseMessage msg = PageApi.getPageList(getArguments().getString(ARG_PAGE_URL) + "&page=" + mNowPage);
 			if (msg.getCode() == 0 && msg.getData() != null) {

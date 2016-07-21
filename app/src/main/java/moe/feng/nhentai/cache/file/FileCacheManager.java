@@ -471,6 +471,44 @@ public class FileCacheManager {
 		return updateFile.exists();
 	}
 
+	public boolean checkUpdateFavorites (){
+		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updateFab.txt");
+		return updateFile.exists();
+	}
+
+	public boolean checkUpdateLatest(){
+		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updateLat.txt");
+		return updateFile.exists();
+	}
+
+	public boolean UpdateFavorites(){
+		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updateFab.txt");
+		try {
+			OutputStream out = new FileOutputStream(updateFile);
+			out.write(String.valueOf("updated").getBytes());
+			out.close();
+			Log.d(TAG, "Favorites Updated Wroted");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public boolean UpdateLatest(){
+		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updateLat.txt");
+		try {
+			OutputStream out = new FileOutputStream(updateFile);
+			out.write(String.valueOf("updated").getBytes());
+			out.close();
+			Log.d(TAG, "Latest Updated Wroted");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
 	public ArrayList<Book> getExternalBooks() {
 		File parentDir = new File(mExternalDir.getAbsolutePath()+ "/Books/");
 

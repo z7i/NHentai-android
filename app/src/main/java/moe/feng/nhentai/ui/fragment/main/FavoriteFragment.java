@@ -81,7 +81,7 @@ public class FavoriteFragment extends LazyFragment {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			getFavoritesManager().reload();
+			getFavoritesManager().reload(getApplicationContext());
 			return null;
 		}
 
