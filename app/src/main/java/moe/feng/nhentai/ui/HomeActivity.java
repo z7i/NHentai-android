@@ -810,7 +810,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 		@Override
 		protected BaseMessage doInBackground(Integer... params) {
-			mFM.reload();
+			mFM.reload(getApplicationContext());
 			return PageApi.getHomePageList(params[0]);
 		}
 

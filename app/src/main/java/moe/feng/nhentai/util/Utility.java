@@ -93,6 +93,7 @@ public class Utility {
 
 	public static String readStringFromFile(Context context, String name) throws IOException{
 		File file = context.getFileStreamPath(name);
+		Log.d("utility", "readStringFromFile: "+ file.getAbsoluteFile());
 		InputStream is = new FileInputStream(file);
 
 		byte b[] = new byte[(int) file.length()];

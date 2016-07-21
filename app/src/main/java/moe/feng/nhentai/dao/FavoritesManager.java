@@ -8,7 +8,10 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import moe.feng.nhentai.cache.file.FileCacheManager;
+import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
+import moe.feng.nhentai.util.AsyncTask;
 import moe.feng.nhentai.util.Utility;
 
 public class FavoritesManager {
@@ -25,7 +28,7 @@ public class FavoritesManager {
 	public static FavoritesManager getInstance(Context context) {
 		if (sInstance == null) {
 			sInstance = new FavoritesManager(context);
-			sInstance.reload();
+			sInstance.reload(context);
 		}
 		return sInstance;
 	}
@@ -35,7 +38,7 @@ public class FavoritesManager {
 		this.books = new MyArray();
 	}
 
-	public void reload() {
+	public void reload(Context context) {
 		String json;
 		try {
 			json = Utility.readStringFromFile(context, FILE_NAME);
@@ -45,8 +48,13 @@ public class FavoritesManager {
 		}
 
 		books = new Gson().fromJson(json, MyArray.class);
-		books.updateBooksData();
+		if (!FileCacheManager.getInstance(context).checkUpdateFavorites()){
+			new UpdateFavorites().execute(context);
+			save();
+		}
 	}
+
+
 
 	public Book get(int position) {
 		return books.get(position);
@@ -142,13 +150,31 @@ public class FavoritesManager {
 			data.remove(position);
 		}
 
-		public void updateBooksData() {
+		public void updateBooksData(Context context) {
 			if (data != null) {
 				for (Book book : data) {
-					book.updateDataFromOldData();
+					book.updateDataFromOldData(context);
 				}
 			}
 		}
+
+	}
+
+	private class UpdateFavorites extends AsyncTask<Context, Void, BaseMessage> {
+		@Override
+		protected BaseMessage doInBackground(Context... params) {
+			books.updateBooksData(params[0]);
+			FileCacheManager.getInstance(params[0]).UpdateFavorites();
+
+			return null;
+		}
+
+
+		@Override
+		protected void onPostExecute(BaseMessage msg) {
+			Log.d(TAG, "Favorites Update Complete ");
+		}
+
 
 	}
 

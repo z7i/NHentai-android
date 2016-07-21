@@ -20,6 +20,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,7 +74,7 @@ public class SearchActivity extends AbsActivity {
 	private FileCacheManager mFileCacheManager;
 	private FavoritesManager mFM;
 	private SearchHistoryManager mHM;
-
+	private MyArray books;
 	private InputMethodManager imm;
 
 	private static final int MSG_CODE_NO_MORE_RESULTS = 1, MSG_CODE_DIRECT_TO_BOOK = 2;
@@ -148,7 +149,8 @@ public class SearchActivity extends AbsActivity {
 				mBooks = new ArrayList<>();
 				mAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM, mSets);
 				setResultListAdapter(mAdapter);
-				new PageGetTask().execute(mNowPage = 1);
+				mNowPage=1;
+				new PageGetTask().execute(getApplicationContext());
 			}
 		});
 
@@ -214,7 +216,8 @@ public class SearchActivity extends AbsActivity {
 			public void onScrolled(RecyclerView rv, int dx, int dy) {
 				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[mHorCardCount])[1] >= mAdapter.getItemCount() - 2) {
 					mSwipeRefreshLayout.setRefreshing(true);
-					new PageGetTask().execute(++mNowPage);
+					++mNowPage;
+					new PageGetTask().execute(getApplicationContext());
 				}
 			}
 		});
@@ -256,7 +259,8 @@ public class SearchActivity extends AbsActivity {
 		mBooks = new ArrayList<>();
 		mAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM, mSets);
 		setResultListAdapter(mAdapter);
-		new PageGetTask().execute(mNowPage = 1);
+		mNowPage=1;
+		new PageGetTask().execute(getApplicationContext());
 
 		invalidateOptionsMenu();
 	}
@@ -304,18 +308,19 @@ public class SearchActivity extends AbsActivity {
 			return true;
 		} else if (id == R.id.action_load_next_page) {
 			mSwipeRefreshLayout.setRefreshing(true);
-			new PageGetTask().execute(++mNowPage);
+			++mNowPage;
+			new PageGetTask().execute(getApplicationContext());
 			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
 
-	private class PageGetTask extends AsyncTask<Integer, Void, BaseMessage> {
+	private class PageGetTask extends AsyncTask<Context, Void, BaseMessage> {
 
 		@Override
-		protected BaseMessage doInBackground(Integer... params) {
-			mFM.reload();
+		protected BaseMessage doInBackground(Context... params) {
+			mFM.reload(params[0]);
 			BaseMessage msg;
 			if (isEggKeyword(keyword)) {
 				msg = new BaseMessage();
@@ -351,9 +356,9 @@ public class SearchActivity extends AbsActivity {
 							e.printStackTrace();
 						}
 					}
-					MyArray books = new Gson().fromJson(sb.toString(), MyArray.class);
-					books.updateBooksData();
-					msg.setData(books.data);
+					books = new Gson().fromJson(sb.toString(), MyArray.class);
+					new UpdateSearch().execute(getApplicationContext());
+
 				} else {
 					msg.setCode(MSG_CODE_NO_MORE_RESULTS);
 				}
@@ -363,7 +368,7 @@ public class SearchActivity extends AbsActivity {
                     return msg;
                 }
 
-				msg = PageApi.getSearchPageList(keyword, params[0]);
+				msg = PageApi.getSearchPageList(keyword, mNowPage);
 				if (msg.getCode() == 0 && msg.getData() != null) {
 					ArrayList<Book> temp = msg.getData();
 					if (temp.isEmpty()) {
@@ -432,7 +437,7 @@ public class SearchActivity extends AbsActivity {
 										@Override
 										public void onClick(View view) {
 											mSwipeRefreshLayout.setRefreshing(true);
-											new PageGetTask().execute(mNowPage);
+											new PageGetTask().execute(getApplicationContext());
 										}
 									}
 							).show();
@@ -483,12 +488,28 @@ public class SearchActivity extends AbsActivity {
 			data.remove(position);
 		}
 
-		public void updateBooksData() {
+		public void updateBooksData(Context context) {
 			if (data != null) {
 				for (Book book : data) {
-					book.updateDataFromOldData();
+					book.updateDataFromOldData(context);
 				}
 			}
+		}
+
+	}
+
+	public class UpdateSearch extends AsyncTask<Context, Void, BaseMessage> {
+		@Override
+		protected BaseMessage doInBackground(Context... params) {
+			books.updateBooksData(params[0]);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(BaseMessage msg) {
+			msg.setData(books.data);
+			msg.setCode(MSG_CODE_NO_MORE_RESULTS);
+			Log.d(SearchActivity.class.getSimpleName(), "Search Books Update Complete ");
 		}
 
 	}

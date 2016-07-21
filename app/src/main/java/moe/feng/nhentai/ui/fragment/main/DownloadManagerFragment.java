@@ -98,7 +98,7 @@ public class DownloadManagerFragment extends LazyFragment {
 
 		@Override
 		protected ArrayList<Book> doInBackground(Void... params) {
-			getFavoritesManager().reload();
+			getFavoritesManager().reload(getApplicationContext());
 			return FileCacheManager.getInstance(getApplicationContext()).getExternalBooks();
 		}
 
