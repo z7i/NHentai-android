@@ -285,9 +285,8 @@ public class PageApi {
     }
 
 	public static boolean isPageOriginImageLocalFileExist(Context context, Book book, int page_num) {
-		String url = NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(page_num));
-
-		return FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url, book.title);
+        Log.d(TAG, "isPageOriginImageLocalFileExist: "+ FileCacheManager.getInstance(context).externalPageExists(book,page_num));
+        return FileCacheManager.getInstance(context).externalPageExists(book,page_num);
 	}
 
 }
