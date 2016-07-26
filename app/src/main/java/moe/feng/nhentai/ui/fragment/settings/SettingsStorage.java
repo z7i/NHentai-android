@@ -19,7 +19,7 @@ public class SettingsStorage extends PreferenceFragment implements Preference.On
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.settings_storage);
 
-		mSets = Settings.getInstance(getContext());
+		mSets = Settings.getInstance(getParentActivity().getBaseContext());
 
 		getActivity().setTitle(R.string.settings_storage);
 
