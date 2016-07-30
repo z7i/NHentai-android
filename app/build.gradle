@@ -8,9 +8,10 @@ android {
 		applicationId "moe.feng.nhentai"
 		minSdkVersion 17
 		targetSdkVersion 24
-		versionCode 22
-		versionName "1.4.1"
+		versionCode 23
+		versionName "1.5.0"
 	}
+
 	buildTypes {
 		release {
 			minifyEnabled false

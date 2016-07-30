@@ -287,6 +287,12 @@ public class PageApi {
 	public static boolean isPageOriginImageLocalFileExist(Context context, Book book, int page_num) {
         Log.d(TAG, "isPageOriginImageLocalFileExist: "+ FileCacheManager.getInstance(context).externalPageExists(book,page_num));
         return FileCacheManager.getInstance(context).externalPageExists(book,page_num);
-	}
+    }
+
+    public static boolean isPageOriginImageCacheFileExist(Context context, Book book, int page_num) {
+        String url = NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(page_num));
+        Log.d(TAG, "isPageOriginImageLocalFileExist: "+ FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url, book.title));
+        return FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url, book.title);
+    }
 
 }

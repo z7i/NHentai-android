@@ -364,7 +364,7 @@ public class FileCacheManager {
 	}
 
 	public Book getExternalBook(String bid) {
-		File parentDir = new File(mCacheDir.getAbsolutePath()+ "/Books/");
+		File parentDir = new File(mExternalDir.getAbsolutePath()+ "/Books/");
 
 		if (parentDir.isDirectory()) {
 			File[] files = parentDir.listFiles();
