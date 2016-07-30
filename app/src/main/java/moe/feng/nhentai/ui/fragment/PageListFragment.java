@@ -124,7 +124,7 @@ public class PageListFragment extends LazyFragment {
 		adapter.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
 			public void onScrolled(RecyclerView rv, int dx, int dy) {
-				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[mHorCardCount])[1] >= mAdapter.getItemCount() - 2) {
+				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[mHorCardCount])[0] >= mAdapter.getItemCount() - 2) {
 					if (!isAllowToLoadNextPage) return;
 					mSwipeRefreshLayout.setRefreshing(true);
 					new PageGetTask().execute(++mNowPage);

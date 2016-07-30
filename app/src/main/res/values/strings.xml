@@ -61,7 +61,9 @@
     <string name="action_favorite_false">Add to favorites</string>
     <string name="action_favorite_true">Remove from favorites</string>
     <string name="favorite_add_finished">The book successfully added to favorites.</string>
+    <string name="favorite_categories_add_finished">Category successfully added to favorites.</string>
     <string name="favorite_remove_finished">The book successfully removed from favorites.</string>
+    <string name="favorite_categories_remove_finished">The book successfully removed from favorites.</string>
     <string name="action_share">Share....</string>
 	<string name="action_share_send_text">I found a interesting book:\"%1$s\" Link:%2$s (R-18 WARNING! Share from NHBooks Client https://github.com/fython/NHentai-android )</string>
 	<string name="action_share_send_category">%1$s is great. Link:%2$s (R-18 WARNING! Share from NHBooks Client https://github.com/fython/NHentai-android )</string>
