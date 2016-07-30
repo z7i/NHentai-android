@@ -13,9 +13,12 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.AppCompatTextView;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 
@@ -30,11 +33,10 @@ import moe.feng.nhentai.util.FullScreenHelper;
 import moe.feng.nhentai.util.Utility;
 import moe.feng.nhentai.util.task.PageDownloader;
 
-public class GalleryActivity extends AbsActivity {
+public class GalleryActivity extends AbsActivity implements OnTouchListener {
 	public static Context mContext;
 	private Book book;
 	private int page_num;
-	private Fragment old;
 	private ViewPager mPager;
 	private GalleryPagerAdapter mPagerAdpater;
 	private View mAppBar, mBottomBar;
@@ -43,11 +45,44 @@ public class GalleryActivity extends AbsActivity {
 	private int orientation;
 	private int lastOrientation;
 	private int lastpositon;
+	private int gPosition;
 	private FullScreenHelper mFullScreenHelper;
 	private PageDownloader mDownloader;
 	private int scrolled;
+	private boolean gRight;
+	private boolean button;
 	private static final String EXTRA_BOOK_DATA = "book_data", EXTRA_FISRT_PAGE = "first_page";
 
+	@Override
+	public boolean onTouch(View view, MotionEvent me) {
+		return true;
+	}
+
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		gRight=false;
+		button=true;
+		lastpositon =gPosition;
+
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
+			if (gPosition< book.pageCount-1)
+				gPosition++;
+		}
+
+		else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP){
+				if(gPosition>0) {
+					gRight = true;
+					gPosition--;
+				}
+		}
+
+		mSeekBar.setProgress(gPosition);
+		mDownloader.setCurrentPosition(gPosition);
+		mPager.setCurrentItem(gPosition, false);
+
+		return true;
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,12 +108,13 @@ public class GalleryActivity extends AbsActivity {
 		Intent intent = getIntent();
 		book = new Gson().fromJson(intent.getStringExtra(EXTRA_BOOK_DATA), Book.class);
 		page_num = intent.getIntExtra(EXTRA_FISRT_PAGE, 0);
+
 		mDownloader = new PageDownloader(getApplicationContext(), book);
 		mDownloader.setCurrentPosition(page_num);
 		mDownloader.setOnDownloadListener(new GalleryDownloaderListener());
+		mDownloader.start();
 
 		scrolled =0;
-
 		setContentView(R.layout.activity_gallery);
 		mContext =getApplicationContext();
 	}
@@ -86,13 +122,11 @@ public class GalleryActivity extends AbsActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		mDownloader.continueDownload();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		mDownloader.pause();
 
 	}
 
@@ -139,6 +173,9 @@ public class GalleryActivity extends AbsActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(book.getAvailableTitle());
 		lastpositon =0;
+		gPosition =0;
+		button=false;
+		gRight=false;
 		orientation = Configuration.ORIENTATION_PORTRAIT;
 		lastOrientation = Configuration.ORIENTATION_PORTRAIT;
 		mAppBar = $(R.id.my_app_bar);
@@ -159,6 +196,7 @@ public class GalleryActivity extends AbsActivity {
 			@Override
 			public void onPageSelected(int position) {
 				boolean right =true;
+				gPosition =position;
 
 				if (orientation != lastOrientation){
 					lastOrientation = orientation;
@@ -170,7 +208,12 @@ public class GalleryActivity extends AbsActivity {
 					right=false;
 				}
 
-				if (right ){
+				else if(button && gRight){
+					right=false;
+					button =false;
+				}
+
+				if (right){
 					if(mPagerAdpater.getItem(lastpositon-1)!=null){
 						mPagerAdpater.getItem(lastpositon-1).onPause();
 						mPagerAdpater.eraseItem(lastpositon-1);
