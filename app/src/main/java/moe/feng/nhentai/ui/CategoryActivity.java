@@ -146,7 +146,7 @@ public class CategoryActivity extends AbsActivity {
 			isFavorite = !isFavorite;
 			Snackbar.make(
 					mPager,
-					isFavorite ? R.string.favorite_add_finished : R.string.favorite_remove_finished,
+					isFavorite ? R.string.favorite_categories_add_finished : R.string.favorite_categories_remove_finished,
 					Snackbar.LENGTH_LONG
 			).show();
 			invalidateOptionsMenu();

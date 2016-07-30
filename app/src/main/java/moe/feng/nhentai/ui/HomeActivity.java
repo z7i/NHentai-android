@@ -752,7 +752,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			@Override
 			public void onScrolled(RecyclerView rv, int dx, int dy) {
 				super.onScrolled(rv, dx, dy);
-				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[mHorCardCount])[1] >= mAdapter.getItemCount() - 2) {
+				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[mHorCardCount])[0] >= mAdapter.getItemCount() - 2) {
 					mSwipeRefreshLayout.setRefreshing(true);
 					new PageGetTask().execute(++mNowPage);
 				}
