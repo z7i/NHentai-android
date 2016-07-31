@@ -8,20 +8,20 @@
 
 	<!-- Initial -->
 	<string name="dialog_permission_title">Permission is needed</string>
-	<string name="dialog_permission_msg">NHBooks needs the permission of reading and writing external storage to cache images. Without them, this app could not work well.</string>
-	<string name="snack_permission_failed">The request of permissions is denied!</string>
+	<string name="dialog_permission_msg">NHBooks needs permission to read and wtite on the external storage to save images. Without them, this app could not work well.</string>
+	<string name="snack_permission_failed">The request of permissions was denied!</string>
 
 	<!-- New Home Design -->
     <string name="search_bar_hint">Search books here....</string>
-	<string name="title_bar_main_recent">Latest books</string>
+	<string name="title_bar_main_recent">Latest Books</string>
 	<string name="title_bar_updated_time_just_now">Updated just now</string>
     <string name="title_bar_updated_time_at">Updated at %s</string>
 	<string name="title_bar_updated_time_null">Pull down to get the latest information</string>
 
     <string name="item_home">Home</string>
-    <string name="item_download">Saved books</string>
-    <string name="item_favorite_books">Favorite books</string>
-    <string name="item_favorite_categories">Favorite categories</string>
+    <string name="item_download">Saved Books</string>
+    <string name="item_favorite_books">Favorite Books</string>
+    <string name="item_favorite_categories">Favorite Categories</string>
     <string name="item_tag">Tags</string>
     <string name="item_character">Characters</string>
 	<string name="item_group_other">Other</string>
@@ -29,16 +29,16 @@
 	<string name="item_open_nhentai">Open NHentai.net</string>
 
     <string name="title_page_latest">Latest</string>
-    <string name="title_page_download">Saved books</string>
-    <string name="title_page_favorite">Favorite books</string>
-    <string name="title_page_favorite_category">Favorite categories</string>
+    <string name="title_page_download">Saved Books</string>
+    <string name="title_page_favorite">Favorite Books</string>
+    <string name="title_page_favorite_category">Favorite Categories</string>
     <string-array name="page_titles">
         <item>@string/title_page_latest</item>
         <item>@string/title_page_download</item>
         <item>@string/title_page_favorite</item>
         <item>@string/title_page_favorite_category</item>
     </string-array>
-    <string name="tips_network_error">Failed to connect to NHentai.</string>
+    <string name="tips_network_error">Connection to NHentai failed.</string>
     <string name="snack_action_try_again">Try again</string>
     <string name="snack_action_get_it">I got it</string>
 
@@ -60,14 +60,14 @@
     <string name="tag_type_upload_time">Uploaded time: </string>
     <string name="action_favorite_false">Add to favorites</string>
     <string name="action_favorite_true">Remove from favorites</string>
-    <string name="favorite_add_finished">The book successfully added to favorites.</string>
+    <string name="favorite_add_finished">Book successfully added to favorites.</string>
     <string name="favorite_categories_add_finished">Category successfully added to favorites.</string>
-    <string name="favorite_remove_finished">The book successfully removed from favorites.</string>
-    <string name="favorite_categories_remove_finished">The book successfully removed from favorites.</string>
+    <string name="favorite_remove_finished">Book successfully removed from favorites.</string>
+    <string name="favorite_categories_remove_finished">Category successfully removed from favorites.</string>
     <string name="action_share">Share....</string>
 	<string name="action_share_send_text">I found a interesting book:\"%1$s\" Link:%2$s (R-18 WARNING! Share from NHBooks Client https://github.com/fython/NHentai-android )</string>
 	<string name="action_share_send_category">%1$s is great. Link:%2$s (R-18 WARNING! Share from NHBooks Client https://github.com/fython/NHentai-android )</string>
-    <string name="action_download_none">Save to external</string>
+    <string name="action_download_none">Save to External</string>
     <string name="action_download_okay">Delete</string>
     <string name="dialog_ask_download_title">Do you want to download this book?</string>
     <string name="dialog_ask_download_summary">It will be saved to \"%s\".</string>
@@ -82,29 +82,29 @@
 	<string name="dialog_download_progress">%1$d/%2$d</string>
 	<string name="dialog_download_paused">(Paused)</string>
     <string name="dialog_download_restart">Has problem?</string>
-    <string name="dialog_download_notification_title">Finish downloading!</string>
+    <string name="dialog_download_notification_title">Finished downloading!</string>
     <string name="dialog_download_pause">Pause/Continue</string>
-	<string name="dialog_download_copying">Copying images to external path.... Please wait.</string>
+	<string name="dialog_download_copying">Copying images to external storage.... Please wait.</string>
 
 	<string name="title_preview">Preview</string>
-	<string name="title_recommend">Recommend books</string>
+	<string name="title_recommend">Recommended Books</string>
 
     <string name="activity_gallery">Gallery</string>
     <string name="info_total_pages">"%d PAGES"</string>
 	<string name="action_save">Save</string>
 	<string name="action_save_succeed">The current image has been saved to \"%s\".</string>
-	<string name="action_save_failed">The current image hasn\'t been downloaded. Please wait for finishing.</string>
-	<string name="action_save_unknown">Failed to save images for unknown error.</string>
+	<string name="action_save_failed">The current image hasn\'t been downloaded. Please wait for it to finish.</string>
+	<string name="action_save_unknown">Failed to save images.</string>
 
-    <string name="activity_search">Search books</string>
-	<string name="search_text_hint">Enter book name....</string>
-	<string name="tips_search_text_empty">Please input the name of book!</string>
+    <string name="activity_search">Search Books</string>
+	<string name="search_text_hint">Enter Book name....</string>
+	<string name="tips_search_text_empty">Please input the name of the book!</string>
     <string name="action_clear">Clear text</string>
 
-    <string name="activity_search_result">Search result</string>
-    <string name="title_search_result">Search result: %s</string>
-    <string name="tips_no_result">No result.</string>
-    <string name="tips_no_more_results">There is the last page.</string>
+    <string name="activity_search_result">Search Results</string>
+    <string name="title_search_result">Search Results: %s</string>
+    <string name="tips_no_result">No Results.</string>
+    <string name="tips_no_more_results">This is the last page.</string>
 
 	<!-- Category -->
 	<string-array name="category_tabs_title">
@@ -114,11 +114,11 @@
 
     <!-- Settings -->
     <string name="settings_main">Settings</string>
-	<string name="snackbar_need_restart">You need to restart app to apply settings.</string>
-	<string name="snackbar_need_restart_action">Restart now</string>
-	<string name="category_options">Application options</string>
+	<string name="snackbar_need_restart">You need to restart the app to apply settings.</string>
+	<string name="snackbar_need_restart_action">Restart Now</string>
+	<string name="category_options">Application Options</string>
     <string name="category_about">About</string>
-    <string name="set_title_app_version">Application version</string>
+    <string name="set_title_app_version">Application Version</string>
     <string name="settings_license">Licenses</string>
     <string name="set_title_google_plus">Google Plus</string>
     <string name="set_title_google_plus_summary">+Fung Jichun</string>
@@ -128,12 +128,12 @@
 	<string name="set_title_gpgroup_link">"https://plus.google.com/communities/106652485673516183999"</string>
     <string name="set_title_telegram">Telegram Group</string>
     <string name="set_title_telegram_link">"https://telegram.me/joinchat/0668165200bd194d0a89b8995057e330"</string>
-	<string name="set_title_alipay">Donate us by Alipay</string>
+	<string name="set_title_alipay">Donate us via Alipay</string>
 	<string name="set_title_alipay_address">316643843\@qq.com</string>
     <string name="category_ui">Appearance</string>
     <string name="category_list">List</string>
     <string name="set_title_hd_image">Load high quality preview images</string>
-    <string name="set_title_hd_image_summary">Need high network speed and larger memory</string>
+    <string name="set_title_hd_image_summary">Uses more data and Memory</string>
     <string name="set_title_cards_count">Horizontal cards count</string>
     <string name="set_title_cards_count_summary">Current value: %s</string>
     <string-array name="set_cards_count_options">
@@ -146,9 +146,9 @@
     </string-array>
 	<string name="category_details">Info page</string>
 	<string name="set_title_full_image_in_details">Load Full HD images as preview</string>
-	<string name="set_title_full_image_in_details_summary">It will consume plenty of data usage and memory.</string>
+	<string name="set_title_full_image_in_details_summary">It will consume plenty of data and memory.</string>
 	<string name="set_title_allow_standalone_task">Allow standalone task</string>
-	<string name="set_title_allow_standalone_task_desc">Each book will be shown as a standalone task.</string>
+	<string name="set_title_allow_standalone_task_desc">Each Book will be shown as a standalone task.</string>
 	<string name="set_title_android_too_old_desc">This feature isn\'t supported on your Android version</string>
 	<string name="settings_storage">Storage</string>
 	<string name="category_folder">Folder</string>

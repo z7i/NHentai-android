@@ -1,7 +1,6 @@
 package moe.feng.nhentai.ui;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -44,7 +43,7 @@ public class GalleryActivity extends AbsActivity implements OnTouchListener {
 	private AppCompatTextView mTotalPagesText;
 	private int orientation;
 	private int lastOrientation;
-	private int lastpositon;
+	private int lastPositon;
 	private int gPosition;
 	private FullScreenHelper mFullScreenHelper;
 	private PageDownloader mDownloader;
@@ -63,9 +62,14 @@ public class GalleryActivity extends AbsActivity implements OnTouchListener {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		gRight=false;
 		button=true;
-		lastpositon =gPosition;
+		lastPositon =gPosition;
 
-		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
+		if (keyCode == KeyEvent.KEYCODE_BACK){
+			this.onBackPressed();
+			return super.onKeyDown(keyCode,event);
+		}
+
+		else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
 			if (gPosition< book.pageCount-1)
 				gPosition++;
 		}
@@ -99,8 +103,7 @@ public class GalleryActivity extends AbsActivity implements OnTouchListener {
 		}
 
 		mFullScreenHelper = new FullScreenHelper(this);
-		// 别问我为什么这么干 让我先冷静一下→_→
-		mFullScreenHelper.setFullScreen(true);
+
 		mFullScreenHelper.setFullScreen(false);
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -170,9 +173,13 @@ public class GalleryActivity extends AbsActivity implements OnTouchListener {
 
 	@Override
 	protected void setUpViews() {
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle(book.getAvailableTitle());
-		lastpositon =0;
+
+		if (getSupportActionBar()!=null){
+			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+			getSupportActionBar().setTitle(book.getAvailableTitle());
+		}
+
+		lastPositon =0;
 		gPosition =0;
 		button=false;
 		gRight=false;
@@ -190,7 +197,7 @@ public class GalleryActivity extends AbsActivity implements OnTouchListener {
 		mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			@Override
 			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-				lastpositon =position;
+				lastPositon =position;
 		}
 
 			@Override
@@ -203,8 +210,8 @@ public class GalleryActivity extends AbsActivity implements OnTouchListener {
 					return;
 				}
 
-				else if (lastpositon==position){
-					lastpositon++;
+				else if (lastPositon==position){
+					lastPositon++;
 					right=false;
 				}
 
@@ -214,9 +221,9 @@ public class GalleryActivity extends AbsActivity implements OnTouchListener {
 				}
 
 				if (right){
-					if(mPagerAdpater.getItem(lastpositon-1)!=null){
-						mPagerAdpater.getItem(lastpositon-1).onPause();
-						mPagerAdpater.eraseItem(lastpositon-1);
+					if(mPagerAdpater.getItem(lastPositon-1)!=null){
+						mPagerAdpater.getItem(lastPositon-1).onPause();
+						mPagerAdpater.eraseItem(lastPositon-1);
 					}
 
 
@@ -224,9 +231,9 @@ public class GalleryActivity extends AbsActivity implements OnTouchListener {
 						mPagerAdpater.getItem(position+1).onResume();
 				}
 				else{
-					if(mPagerAdpater.getItem(lastpositon+1)!=null){
-						mPagerAdpater.getItem(lastpositon+1).onPause();
-						mPagerAdpater.eraseItem(lastpositon+1);
+					if(mPagerAdpater.getItem(lastPositon+1)!=null){
+						mPagerAdpater.getItem(lastPositon+1).onPause();
+						mPagerAdpater.eraseItem(lastPositon+1);
 					}
 
 

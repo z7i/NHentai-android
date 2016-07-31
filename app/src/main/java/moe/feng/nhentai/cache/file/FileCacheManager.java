@@ -321,8 +321,6 @@ public class FileCacheManager {
 
 		bounds.inSampleSize = calculateInSampleSize(bounds,480, 640);
 
-		Log.d(TAG, "getBitmap: " + bounds.inSampleSize);
-
 		FileInputStream iptF=openCacheStream(type,name, title);
 
 		bounds.inJustDecodeBounds=false;

@@ -104,7 +104,6 @@ public class BookPageFragment extends LazyFragment {
 			}
 			mImageView.setImageDrawable(null);
 			mPhotoViewAttacher.cleanup();
-			Log.d(TAG, "onDestroy: Image View Bitmap Recycled");
 
 		} catch (Exception e) {
 			Log.d(TAG, "onDestroy: Error Recycling");
@@ -122,7 +121,7 @@ public class BookPageFragment extends LazyFragment {
 		@Override
 		protected void onPostExecute(Bitmap result) {
 			super.onPostExecute(result);
-			Log.d(TAG, "onPostExecute: Donwload Task" +pageNum);
+			Log.d(TAG, "onPostExecute: Donwload Image " + pageNum);
 			if (result != null) {
 				$(R.id.loading_content).setVisibility(View.GONE);
 					mImageView.setImageBitmap(result);
