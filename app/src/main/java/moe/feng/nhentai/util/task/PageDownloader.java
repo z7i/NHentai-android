@@ -165,7 +165,7 @@ public class PageDownloader {
 				downloadingPosition = nextToDownloadPosition();
 				if (downloadingPosition == book.pageCount)
 					break;
-				Log.i(TAG, "downloadingPosition:" + downloadingPosition);
+				Log.i(TAG, "Downloading Image: " + downloadingPosition);
 				if (state == STATE_PAUSE) {
 					Log.i(TAG, "download paused");
 					if (listener != null) listener.onStateChange(STATE_PAUSE, getDownloadedCount());
