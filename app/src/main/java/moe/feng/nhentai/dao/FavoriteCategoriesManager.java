@@ -1,13 +1,17 @@
 package moe.feng.nhentai.dao;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import moe.feng.nhentai.cache.file.FileCacheManager;
+import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Category;
+import moe.feng.nhentai.util.AsyncTask;
 import moe.feng.nhentai.util.Utility;
 
 public class FavoriteCategoriesManager {
@@ -44,6 +48,10 @@ public class FavoriteCategoriesManager {
 		}
 
 		categories = new Gson().fromJson(json, MyArray.class);
+		if (!FileCacheManager.getInstance(context).checkUpdateCategories()){
+			new UpdateCategories().execute(context);
+			save();
+		}
 	}
 
 	public Category get(int position) {
@@ -130,6 +138,24 @@ public class FavoriteCategoriesManager {
 		public void remove(int position) {
 			data.remove(position);
 		}
+
+	}
+
+	private class UpdateCategories extends AsyncTask<Context, Void, BaseMessage> {
+		@Override
+		protected BaseMessage doInBackground(Context... params) {
+			categories.data = new ArrayList<>();
+			FileCacheManager.getInstance(params[0]).UpdateFavoriteCategories();
+
+			return null;
+		}
+
+
+		@Override
+		protected void onPostExecute(BaseMessage msg) {
+			Log.d(TAG, "Favorites Update Complete ");
+		}
+
 
 	}
 

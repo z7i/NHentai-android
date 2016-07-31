@@ -59,6 +59,7 @@ import io.codetail.widget.RevealFrameLayout;
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.PageApi;
 import moe.feng.nhentai.cache.file.FileCacheManager;
+import moe.feng.nhentai.dao.FavoriteCategoriesManager;
 import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.dao.LatestBooksKeeper;
 import moe.feng.nhentai.model.BaseMessage;
@@ -198,7 +199,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			new UpdateData().execute(1);
 		}
 
-		if (mListKeeper.getData() != null && !mListKeeper.getData().isEmpty() && mListKeeper.getUpdatedMiles() != -1) {
+		if (mListKeeper.getData() != null && !mListKeeper.getData().isEmpty() && mListKeeper.getUpdatedMiles() != -1 && mFileCacheManager.checkUpdateLatest()) {
 			mBooks = mListKeeper.getData();
 			mNowPage = mListKeeper.getNowPage();
 			mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
@@ -210,7 +211,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 			setRecyclerAdapter(mAdapter);
 			new PageGetTask().execute(mNowPage);
 		}
-
 	}
 
 	private void onLoadMain() {
@@ -321,7 +321,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	@Override
 	protected void onStop() {
 		super.onStop();
-		mFM.save();
 	}
 
 	@Override
@@ -796,6 +795,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		@Override
 		protected BaseMessage doInBackground(Integer... params) {
 			mFileCacheManager.updateSaved(getApplicationContext());
+
 			return null;
 		}
 
@@ -811,6 +811,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		@Override
 		protected BaseMessage doInBackground(Integer... params) {
 			mFM.reload(getApplicationContext());
+			FavoriteCategoriesManager.getInstance(getApplicationContext()).reload();
 			return PageApi.getHomePageList(params[0]);
 		}
 
