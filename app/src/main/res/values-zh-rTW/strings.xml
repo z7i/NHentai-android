@@ -156,5 +156,7 @@
 	<string name="dialog_donate_title">捐助我們</string>
 	<string name="dialog_donate_message">一個好的應用需要時間、精力與你們的支持。
 		如果你非常喜愛 NH 本子並很樂意捐助我們，請將慷慨寄送到支付寶帳號：316643843\@qq.com</string>
+    <string name="favorite_categories_add_finished">类别成功添加到收藏。</string>
+    <string name="favorite_categories_remove_finished">從分類收集成功取出。</string>
 
 </resources>

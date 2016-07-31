@@ -99,9 +99,7 @@ public class LatestBooksKeeper {
 
 		public void updateBooksData(Context context) {
 			if (books != null) {
-				for (Book book : books) {
-					book.updateDataFromOldData(context);
-				}
+				books = new ArrayList<>();
 			}
 		}
 

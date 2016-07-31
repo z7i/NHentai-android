@@ -62,7 +62,12 @@ public class Book {
 
 	public String getAvailableTitle() {
 
-		if (titlePretty!=null) return titlePretty;
+		if (titlePretty== null) {
+		}
+
+		else if(!titlePretty.equals("")) {
+			return titlePretty;
+		}
 
 		if( (this.langField.equals(Book.LANG_JP) || this.langField.equals(Book.LANG_CN))){
 			return this.titleJP != null ? this.titleJP : this.title;
