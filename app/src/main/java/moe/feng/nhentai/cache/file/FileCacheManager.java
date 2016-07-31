@@ -479,6 +479,25 @@ public class FileCacheManager {
 		return updateFile.exists();
 	}
 
+	public boolean checkUpdateCategories(){
+		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updateCat.txt");
+		return updateFile.exists();
+	}
+
+	public boolean UpdateFavoriteCategories(){
+		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updateCat.txt");
+		try {
+			OutputStream out = new FileOutputStream(updateFile);
+			out.write(String.valueOf("updated").getBytes());
+			out.close();
+			Log.d(TAG, "Categories Updated Wroted");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
 	public boolean UpdateFavorites(){
 		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updateFab.txt");
 		try {
