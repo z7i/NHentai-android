@@ -10,9 +10,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -154,40 +151,6 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		}
 		mImagePlaceholderView.setImageDrawable(textDrawable);
 
-		/*if (book.galleryId != null) {
-			if (mFileCacheManager.cacheExistsUrl(Constants.CACHE_COVER, book.bigCoverImageUrl)) {
-				if (mFileCacheManager.cacheExistsUrl(Constants.CACHE_PAGE_IMG,
-						NHentaiUrl.getOriginPictureUrl(book.galleryId, "1"))) {
-					Picasso.with(getApplicationContext())
-							.load(mFileCacheManager.getBitmapUrlFile(Constants.CACHE_PAGE_IMG, NHentaiUrl.getOriginPictureUrl(book.galleryId, "1")))
-							.fit()
-							.centerCrop()
-							.into(mImageView);
-				} else {
-					Picasso.with(getApplicationContext())
-							.load(mFileCacheManager.getBitmapUrlFile(Constants.CACHE_COVER, book.bigCoverImageUrl))
-							.centerCrop()
-							.into(mImageView);
-					if (mSets.getBoolean(Settings.KEY_FULL_IMAGE_PREVIEW, false)) {
-						new CoverTask().execute(book);
-					}
-				}
-			} else {
-				if (mFileCacheManager.cacheExistsUrl(Constants.CACHE_THUMB, book.previewImageUrl)) {
-					Picasso.with(getApplicationContext())
-							.load(mFileCacheManager.getBitmapUrlFile(Constants.CACHE_THUMB, book.previewImageUrl))
-							.fit()
-							.centerCrop()
-							.into(mImageView);
-				} else {
-					mImageView.setImageDrawable(textDrawable);
-				}
-				new CoverTask().execute(book);
-			}
-			mImageView.getMovingAnimator().setSpeed(100);
-			mImageView.getMovingAnimator().setMovementType(MovingViewAnimator.VERTICAL_MOVE);
-		} */
-
 		new CoverTask().execute(book);
 		mImageView.getMovingAnimator().setSpeed(100);
 		mImageView.getMovingAnimator().setMovementType(MovingViewAnimator.VERTICAL_MOVE);
@@ -291,10 +254,20 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mContentView.setVisibility(View.VISIBLE);
 		mContentView.animate().alphaBy(0f).alpha(1f).setDuration(1500).start();
 
-		if (!book.titleJP.equals("null"))mTitleText.setText(book.titleJP);
+		if (book.titleJP == null){
+			if (book.titlePretty!=null){
+				mTitleText.setText(book.titlePretty);
+			}
+			else {
+				mTitleText.setText(book.title);
+			}
+		}
+
+		else if (!book.titleJP.equals("null"))mTitleText.setText(book.titleJP);
 		else mTitleText.setText(book.titlePretty);
 
 		mTitlePretty.setText(book.title);
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mSets.getBoolean(Settings.KEY_ALLOW_STANDALONE_TASK, true)) {
 			ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(
 					book.getAvailableTitle(),
@@ -653,7 +626,19 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			setResult(RESULT_HAVE_FAV, intent);
 		}
 		mImageView.setImageBitmap(null);
+		mImageView.invalidate();
+
+		Recommend.clear();
+		mRecommendList.getAdapter().notifyDataSetChanged();
+		mRecommendList.setAdapter(null);
+
+
+		book = null;
+		mPreviewList.getAdapter().notifyDataSetChanged();
+		mPreviewList.setAdapter(null);
+		Runtime.getRuntime().gc();
 		super.onBackPressed();
+
 	}
 
 	private void startBookGet() {
@@ -925,17 +910,6 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 					}
 				}
 		);
-		/** mDialogDownloading.setButton(
-		 DialogInterface.BUTTON_NEUTRAL,
-		 getString(R.string.dialog_download_restart),
-		 new DialogInterface.OnClickListener() {
-		@Override
-		public void onClick(DialogInterface dialogInterface, int i) {
-		if (mDownloader.isThreadAllOk()) return;
-		mDownloader.start();
-		}
-		}
-		 ); **/
 
 		mDialogDownloading.show();
 		mFileCacheManager.saveBookDataToExternalPath(book);
@@ -1057,7 +1031,8 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 					mFileCacheManager.createCacheFromBook(b);
 				}
 
-				mRecommendList.getAdapter().notifyDataSetChanged();
+				 if (mRecommendList.getAdapter()!=null)
+					 mRecommendList.getAdapter().notifyDataSetChanged();
 			}
 		}
 

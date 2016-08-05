@@ -76,8 +76,8 @@ public class DownloadManagerFragment extends LazyFragment {
 	}
 
 	private void setRecyclerViewAdapter(BookListRecyclerAdapter adapter) {
-		mRecyclerView.setAdapter(mAdapter);
-		mAdapter.setOnItemClickListener(new AbsRecyclerViewAdapter.OnItemClickListener() {
+
+		adapter.setOnItemClickListener(new AbsRecyclerViewAdapter.OnItemClickListener() {
 			@Override
 			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder viewHolder) {
 				BookListRecyclerAdapter.ViewHolder holder = (BookListRecyclerAdapter.ViewHolder) viewHolder;
@@ -86,6 +86,8 @@ public class DownloadManagerFragment extends LazyFragment {
 				BookDetailsActivity.launch(getActivity(), holder.mPreviewImageView, holder.book, position);
 			}
 		});
+		mRecyclerView.setAdapter(adapter);
+		adapter.notifyDataSetChanged();
 	}
 
 	public void scrollToTop() {
@@ -98,7 +100,6 @@ public class DownloadManagerFragment extends LazyFragment {
 
 		@Override
 		protected ArrayList<Book> doInBackground(Void... params) {
-			getFavoritesManager().reload(getApplicationContext());
 			return FileCacheManager.getInstance(getApplicationContext()).getExternalBooks();
 		}
 
@@ -113,11 +114,9 @@ public class DownloadManagerFragment extends LazyFragment {
 	}
 
 	private FavoritesManager getFavoritesManager() {
-		if (getActivity() != null && getActivity() instanceof HomeActivity) {
-			return ((HomeActivity) getActivity()).getFavoritesManager();
-		} else {
 			return FavoritesManager.getInstance(getApplicationContext());
-		}
 	}
+
+
 
 }

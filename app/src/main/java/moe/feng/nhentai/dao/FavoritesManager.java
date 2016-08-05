@@ -50,6 +50,8 @@ public class FavoritesManager {
 		books = new Gson().fromJson(json, MyArray.class);
 		if (!FileCacheManager.getInstance(context).checkUpdateFavorites()){
 			new UpdateFavorites().execute(context);
+		}
+		else{
 			save();
 		}
 	}
@@ -173,6 +175,7 @@ public class FavoritesManager {
 		@Override
 		protected void onPostExecute(BaseMessage msg) {
 			Log.d(TAG, "Favorites Update Complete ");
+			save();
 		}
 
 
