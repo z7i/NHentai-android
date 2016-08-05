@@ -99,6 +99,15 @@ public class SearchActivity extends AbsActivity {
 	}
 
 	@Override
+	public void onBackPressed(){
+		super.onBackPressed();
+		mBooks =null;
+		mAdapter.notifyDataSetChanged();
+		mResultList.setAdapter(null);
+		Runtime.getRuntime().gc();
+	}
+
+	@Override
 	protected void setUpViews() {
 		mTopBar = $(R.id.top_card_layout);
 		mEditText = new AppCompatEditText(this);

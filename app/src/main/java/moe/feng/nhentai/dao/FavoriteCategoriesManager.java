@@ -50,6 +50,8 @@ public class FavoriteCategoriesManager {
 		categories = new Gson().fromJson(json, MyArray.class);
 		if (!FileCacheManager.getInstance(context).checkUpdateCategories()){
 			new UpdateCategories().execute(context);
+		}
+		else {
 			save();
 		}
 	}
@@ -154,6 +156,7 @@ public class FavoriteCategoriesManager {
 		@Override
 		protected void onPostExecute(BaseMessage msg) {
 			Log.d(TAG, "Favorites Update Complete ");
+			save();
 		}
 
 

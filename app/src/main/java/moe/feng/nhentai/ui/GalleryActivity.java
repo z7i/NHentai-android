@@ -130,14 +130,13 @@ public class GalleryActivity extends AbsActivity implements OnTouchListener {
 	@Override
 	public void onPause() {
 		super.onPause();
-
+		mDownloader.pause();
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
 		mDownloader.stop();
-		Runtime.getRuntime().gc();
 	}
 
 	@Override
@@ -309,6 +308,10 @@ public class GalleryActivity extends AbsActivity implements OnTouchListener {
 		if (mAppBar.getAlpha() != 1f) {
 			toggleControlBar();
 		} else {
+			book =null;
+			mPagerAdpater.notifyDataSetChanged();
+			mPager.setAdapter(null);
+			Runtime.getRuntime().gc();
 			super.onBackPressed();
 		}
 	}

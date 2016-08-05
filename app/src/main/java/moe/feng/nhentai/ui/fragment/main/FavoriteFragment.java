@@ -58,17 +58,19 @@ public class FavoriteFragment extends LazyFragment {
 				new FavoritesRefreshTask().execute();
 			}
 		});
+		new FavoritesRefreshTask().execute();
 	}
 
 	private void setRecyclerViewAdapter(BookListRecyclerAdapter adapter) {
-		mRecyclerView.setAdapter(mAdapter);
-		mAdapter.setOnItemClickListener(new AbsRecyclerViewAdapter.OnItemClickListener() {
+		adapter.setOnItemClickListener(new AbsRecyclerViewAdapter.OnItemClickListener() {
 			@Override
 			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder viewHolder) {
 				BookListRecyclerAdapter.ViewHolder holder = (BookListRecyclerAdapter.ViewHolder) viewHolder;
 				BookDetailsActivity.launch(getActivity(), holder.mPreviewImageView, holder.book, position);
 			}
 		});
+		mRecyclerView.setAdapter(adapter);
+		adapter.notifyDataSetChanged();
 	}
 
 	public void scrollToTop() {
@@ -87,18 +89,14 @@ public class FavoriteFragment extends LazyFragment {
 
 		@Override
 		protected void onPostExecute(Void result) {
-			mSwipeRefreshLayout.setRefreshing(false);
 			mAdapter.notifyDataSetChanged();
+			mSwipeRefreshLayout.setRefreshing(false);
 		}
 
 	}
 
 	private FavoritesManager getFavoritesManager() {
-		if (getActivity() != null && getActivity() instanceof HomeActivity) {
-			return ((HomeActivity) getActivity()).getFavoritesManager();
-		} else {
 			return FavoritesManager.getInstance(getApplicationContext());
-		}
 	}
 
 }

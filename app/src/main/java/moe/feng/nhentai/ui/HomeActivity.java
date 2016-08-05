@@ -324,6 +324,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	}
 
 	@Override
+	protected void onResume(){
+		super.onResume();
+		Runtime.getRuntime().gc();
+	}
+
+	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		mDrawerToggle.syncState();

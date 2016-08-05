@@ -1,17 +1,13 @@
 package moe.feng.nhentai.ui.adapter;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.BookApi;
@@ -22,11 +18,19 @@ import moe.feng.nhentai.util.AsyncTask;
 public class BookPreviewGridAdapter extends AbsRecyclerViewAdapter {
 
 	private Book book;
-
 	public BookPreviewGridAdapter(RecyclerView rv, Book book) {
 		super(rv);
 		this.book = book;
 	}
+	@Override
+	public void onViewRecycled(ClickableViewHolder holder) {
+		super.onViewRecycled(holder);
+
+		((ViewHolder) holder).mBookImageView.setImageBitmap(null);
+		((ViewHolder) holder).mBookImageView.invalidate();
+	}
+
+
 
 	@Override
 	public ClickableViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -44,7 +48,7 @@ public class BookPreviewGridAdapter extends AbsRecyclerViewAdapter {
 		if (cvh instanceof ViewHolder) {
 			ViewHolder holder = (ViewHolder) cvh;
 
-			holder.mImageView.setVisibility(View.INVISIBLE);
+			holder.mBookImageView.setVisibility(View.INVISIBLE);
 			holder.mNumberText.setText(Integer.toString(position + 1));
 
 			new ImageDownloader().execute(holder.getParentView(), position + 1);
@@ -58,12 +62,12 @@ public class BookPreviewGridAdapter extends AbsRecyclerViewAdapter {
 
 	public class ViewHolder extends AbsRecyclerViewAdapter.ClickableViewHolder {
 
-		ImageView mImageView;
+		ImageView mBookImageView;
 		TextView mNumberText;
 
 		public ViewHolder(View itemView) {
 			super(itemView);
-			this.mImageView = (ImageView) itemView.findViewById(R.id.image_view);
+			this.mBookImageView = (ImageView) itemView.findViewById(R.id.image_view);
 			this.mNumberText = (TextView) itemView.findViewById(R.id.number_text);
 
 			itemView.setTag(this);
@@ -79,12 +83,12 @@ public class BookPreviewGridAdapter extends AbsRecyclerViewAdapter {
 			ViewHolder h = (ViewHolder) v.getTag();
 
 			if (v != null) {
-				ImageView imgView = h.mImageView;
-
-				File img = BookApi.getPageThumbFile(getContext(), book, (int) params[1]);
+				ImageView imageView = h.mBookImageView;
+				Bitmap img = BookApi.getPageThumb(getContext(), book, (int) params[1]);
 
 				if (img != null) {
-					publishProgress(new Object[]{v, img, imgView, book, params[1]});
+					publishProgress(new Object[]{v, img, imageView, book, params[1]});
+
 				}
 			}
 
@@ -107,23 +111,12 @@ public class BookPreviewGridAdapter extends AbsRecyclerViewAdapter {
 				return;
 			}
 
-			File img = (File) values[1];
-			final ImageView iv = (ImageView) values[2];
-			iv.setVisibility(View.VISIBLE);
-			iv.setTag(false);
-
-			Picasso.with(getContext())
-					.load(img)
-					.into(iv, new Callback() {
-						@Override
-						public void onSuccess() {
-						}
-
-						@Override
-						public void onError() {
-
-						}
-					});
+			Bitmap img = (Bitmap) values[1];
+			ImageView imageView = (ImageView) values [2];
+			imageView.setVisibility(View.VISIBLE);
+			imageView.setTag(false);
+			imageView.setImageBitmap(img);
+			imageView.invalidate();
 		}
 
 

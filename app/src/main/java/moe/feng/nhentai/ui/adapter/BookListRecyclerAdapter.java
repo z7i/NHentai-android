@@ -1,10 +1,9 @@
 package moe.feng.nhentai.ui.adapter;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +12,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.florent37.materialimageloading.MaterialImageLoading;
 import com.lid.lib.LabelView;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 import java.util.ArrayList;
 
 import moe.feng.nhentai.R;
@@ -37,7 +31,6 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 	private ArrayList<Book> data;
 	private FavoritesManager fm;
 	private Settings sets;
-
 	private ColorGenerator mColorGenerator;
 
 	public static final String TAG = BookListRecyclerAdapter.class.getSimpleName();
@@ -58,6 +51,11 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 	public void onViewRecycled(ClickableViewHolder holder) {
 		super.onViewRecycled(holder);
 		((ViewHolder) holder).labelView.remove();
+		((ViewHolder) holder).mPreviewImageView.setImageBitmap(null);
+		((ViewHolder) holder).mPreviewImageView.invalidate();
+
+		((ViewHolder) holder).mLangFieldView.setImageBitmap(null);
+		((ViewHolder) holder).mLangFieldView.invalidate();
 	}
 
 	@Override
@@ -89,8 +87,8 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
                     break;
             }
 
-			int color = mColorGenerator.getColor(data.get(position).getAvailableTitle());
-			TextDrawable drawable = TextDrawable.builder().buildRect(Utility.getFirstCharacter(data.get(position).getAvailableTitle()), color);
+			int color = mColorGenerator.getColor(data.get(position).getAvailableTitle() !=null ? data.get(position).getAvailableTitle() : "Doujin");
+			TextDrawable drawable = TextDrawable.builder().buildRect(Utility.getFirstCharacter(data.get(position).getAvailableTitle() != null? data.get(position).getAvailableTitle(): "Doujin"), color);
 			mHolder.mPreviewImageView.setImageDrawable(drawable);
 			mHolder.mImagePlaceholder = drawable;
 
@@ -143,13 +141,12 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 			Book book = h.book;
 
 			if (v != null && !TextUtils.isEmpty(book.previewImageUrl)) {
-				ImageView imgView = h.mPreviewImageView;
-
+				ImageView imageView = h.mPreviewImageView;
 				boolean useHdImage = sets != null && sets.getBoolean(Settings.KEY_LIST_HD_IMAGE, false);
-				File img = useHdImage ? BookApi.getCoverFile(getContext(), book) : BookApi.getThumbFile(getContext(), book);
+				Bitmap img = useHdImage ? BookApi.getCover(getContext(), book) : BookApi.getThumb(getContext(), book);
 
 				if (img != null) {
-					publishProgress(new Object[]{v, img, imgView, book});
+					publishProgress(new Object[]{v, img, imageView, book});
 				}
 			}
 
@@ -161,31 +158,17 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 			super.onProgressUpdate(values);
 
 			View v = (View) values[0];
-
+			Bitmap img = (Bitmap) values[1];
+			ImageView imageView = (ImageView) values [2];
 			if (!(v.getTag() instanceof ViewHolder) || (((ViewHolder) v.getTag()).book != null &&
-					((ViewHolder) v.getTag()).book.bookId != ((Book) values[3]).bookId)) {
+					!((ViewHolder) v.getTag()).book.bookId.equals(((Book) values[3]).bookId))) {
 				return;
 			}
 
-			File img = (File) values[1];
-			final ImageView iv = (ImageView) values[2];
-			iv.setVisibility(View.VISIBLE);
-			iv.setTag(false);
-
-			Picasso.with(getContext())
-					.load(img)
-					.placeholder(((ViewHolder) v.getTag()).mImagePlaceholder)
-					.into(iv, new Callback() {
-						@Override
-						public void onSuccess() {
-                            MaterialImageLoading.animate(iv).setDuration(1500).start();
-						}
-
-						@Override
-						public void onError() {
-
-						}
-					});
+			imageView.setVisibility(View.VISIBLE);
+			imageView.setTag(false);
+			imageView.setImageBitmap(img);
+			imageView.invalidate();
 		}
 
 

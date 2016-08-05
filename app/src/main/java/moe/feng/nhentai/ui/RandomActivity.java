@@ -72,6 +72,15 @@ public class RandomActivity extends AbsActivity {
 	}
 
 	@Override
+	public void onBackPressed(){
+		super.onBackPressed();
+		mCoverView.setImageBitmap(null);
+		mCoverView.invalidate();
+
+		mLangFieldView.setImageBitmap(null);
+		mLangFieldView.invalidate();
+	}
+	@Override
 	protected void setUpViews() {
 		mFAB = $(R.id.fab);
 		mCoverView = $(R.id.iv_cover);

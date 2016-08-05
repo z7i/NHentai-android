@@ -3,6 +3,7 @@ package moe.feng.nhentai.ui.fragment;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -31,8 +32,6 @@ public class BookPageFragment extends LazyFragment {
 	private PhotoViewAttacher mPhotoViewAttacher;
 	private AppCompatTextView mPageNumText, mTipsText;
 	private WheelProgressView mWheelProgress;
-
-	private Bitmap mBitmap;
 
 	private static final String ARG_BOOK_DATA = "arg_book_data", ARG_PAGE_NUM = "arg_page_num";
 
@@ -88,12 +87,6 @@ public class BookPageFragment extends LazyFragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (mBitmap!=null){
-			Log.d(TAG, "onDestroy: Bitmap Recycled");
-			mBitmap.recycle();
-			mBitmap=null;
-		}
-
 		try {
 			Drawable toRecycle = mImageView.getDrawable();
 			if ( toRecycle != null && toRecycle instanceof BitmapDrawable ) {
@@ -106,16 +99,16 @@ public class BookPageFragment extends LazyFragment {
 			mPhotoViewAttacher.cleanup();
 
 		} catch (Exception e) {
-			Log.d(TAG, "onDestroy: Error Recycling");
+			Log.d(TAG, "onPause: Error Recycling");
 		}
 
 	}
-
 	private class DownloadTask extends AsyncTask<Void, Void, Bitmap> {
 
 		@Override
 		protected Bitmap doInBackground(Void... params) {
 			return PageApi.getPageOriginImage(getApplicationContext(), book, pageNum);
+
 		}
 
 		@Override
@@ -146,13 +139,11 @@ public class BookPageFragment extends LazyFragment {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 				case MSG_FINISHED_LOADING:
-					if (PageApi.isPageOriginImageLocalFileExist(getApplicationContext(), book, pageNum)) {
-						mBitmap = PageApi.getPageOriginImage(getApplicationContext(), book, pageNum);
-						if (mBitmap != null) {
+					if (PageApi.isPageOriginImageLocalFileExist(getApplicationContext(), book, pageNum) || PageApi.isPageOriginImageLocalFileExist(getApplicationContext(),book,pageNum)) {
 							$(R.id.loading_content).setVisibility(View.GONE);
 							if (mImageView != null) {
 								Log.d(TAG, "onPostExecute: Donwload Handler");
-								mImageView.setImageBitmap(mBitmap);
+								mImageView.setImageBitmap(PageApi.getPageOriginImage(getApplicationContext(), book, pageNum));
 								if (mPhotoViewAttacher != null) {
 									mPhotoViewAttacher.update();
 									mPhotoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
@@ -165,7 +156,6 @@ public class BookPageFragment extends LazyFragment {
 									});
 								}
 							}
-						}
 					} else {
 						if (getActivity() != null && getActivity() instanceof GalleryActivity) {
 							PageDownloader downloader = ((GalleryActivity) getActivity()).getPageDownloader();

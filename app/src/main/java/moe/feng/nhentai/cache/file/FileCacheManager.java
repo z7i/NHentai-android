@@ -36,8 +36,6 @@ public class FileCacheManager {
 
 	private File mCacheDir, mExternalDir;
 
-	private Bitmap ret;
-
 	private FileCacheManager(Context context) {
 		try {
 			mCacheDir = context.getExternalCacheDir();
@@ -266,7 +264,7 @@ public class FileCacheManager {
 	}
 
 	public Bitmap getBitmapFile(File f) {
-		ret=null;
+		Bitmap result;
 		FileInputStream ipt= null;
 
 		try {
@@ -291,7 +289,7 @@ public class FileCacheManager {
 		}
 
 		bounds.inJustDecodeBounds=false;
-		ret=BitmapFactory.decodeStream(iptF,null, bounds);
+		result=BitmapFactory.decodeStream(iptF,null, bounds);
 
 		try {
 			ipt.close();
@@ -305,12 +303,12 @@ public class FileCacheManager {
 
 		}
 
-		return ret;
+		return result;
 	}
 
 
 	public Bitmap getBitmap(String type, String name, String title) {
-		ret=null;
+		Bitmap result;
 
 		FileInputStream ipt= openCacheStream(type, name, title);
 		if (ipt == null) return null;
@@ -324,7 +322,7 @@ public class FileCacheManager {
 		FileInputStream iptF=openCacheStream(type,name, title);
 
 		bounds.inJustDecodeBounds=false;
-		ret=BitmapFactory.decodeStream(iptF,null, bounds);
+		result=BitmapFactory.decodeStream(iptF,null, bounds);
 
 		try {
 			ipt.close();
@@ -338,7 +336,7 @@ public class FileCacheManager {
 
 		}
 
-		return ret;
+		return result;
 	}
 
 

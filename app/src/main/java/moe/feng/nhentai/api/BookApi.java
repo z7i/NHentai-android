@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import java.io.File;
-
 import moe.feng.nhentai.api.common.NHentaiUrl;
 import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.model.BaseMessage;
@@ -41,38 +39,54 @@ public class BookApi {
 
 	public static Bitmap getCover(Context context, Book book) {
 		String url = book.bigCoverImageUrl;
-		FileCacheManager m = FileCacheManager.getInstance(context);
-		
-		if (!m.cacheExistsUrl(CACHE_COVER, url, book.title) && !m.createCacheFromNetwork(CACHE_COVER, url, book.title)) {
+
+		if (FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_COVER, url, book.title)){
+			Log.d(TAG, "Cover: Loaded from cache");
+			return FileCacheManager.getInstance(context).getBitmapUrl(CACHE_COVER, url, book.title);
+		}
+		else if (FileCacheManager.getInstance(context).createCacheFromNetwork(CACHE_COVER, url, book.title)){
+			Log.d(TAG, "Cover: Downloaded from web");
+			return FileCacheManager.getInstance(context).getBitmapUrl(CACHE_COVER, url, book.title);
+		}
+		else {
 			return null;
 		}
 
-		return m.getBitmapUrl(CACHE_COVER, url, book.title);
 	}
 
 	public static Bitmap getThumb(Context context, Book book) {
 		String url = book.previewImageUrl;
-		FileCacheManager m = FileCacheManager.getInstance(context);
 
-		if (!m.cacheExistsUrl(CACHE_THUMB, url, book.title) && !m.createCacheFromNetwork(CACHE_THUMB, url, book.title)) {
+		if (FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_THUMB, url, book.title)){
+			Log.d(TAG, "Thumb: Loaded from cache");
+			return FileCacheManager.getInstance(context).getBitmapUrl(CACHE_THUMB, url, book.title);
+		}
+		else if (FileCacheManager.getInstance(context).createCacheFromNetwork(CACHE_THUMB, url, book.title)){
+			Log.d(TAG, "Thumb: Downloaded from web");
+			return FileCacheManager.getInstance(context).getBitmapUrl(CACHE_THUMB, url, book.title);
+		}
+		else {
 			return null;
 		}
 
-		return m.getBitmapUrl(CACHE_THUMB, url, book.title);
 	}
 
 	public static Bitmap getPageThumb(Context context, Book book, int position) {
 		String url = NHentaiUrl.getThumbPictureUrl(book.galleryId, Integer.toString(position));
-		FileCacheManager m = FileCacheManager.getInstance(context);
-
-		if (!m.cacheExistsUrl(CACHE_PAGE_THUMB, url, book.title) && !m.createCacheFromNetwork(CACHE_PAGE_THUMB, url, book.title)) {
+		if (FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_THUMB, url, book.title)){
+			Log.d(TAG, "Page Thumb: Loaded from cache");
+			return FileCacheManager.getInstance(context).getBitmapUrl(CACHE_PAGE_THUMB, url, book.title);
+		}
+		else if (FileCacheManager.getInstance(context).createCacheFromNetwork(CACHE_PAGE_THUMB, url, book.title)){
+			Log.d(TAG, "Page Thumb: Downloaded from web");
+			return FileCacheManager.getInstance(context).getBitmapUrl(CACHE_PAGE_THUMB, url, book.title);
+		}
+		else {
 			return null;
 		}
-
-		return m.getBitmapUrl(CACHE_PAGE_THUMB, url, book.title);
 	}
 
-	public static File getCoverFile(Context context, Book book) {
+	/*public static File getCoverFile(Context context, Book book) {
 		String url = book.bigCoverImageUrl;
 		FileCacheManager m = FileCacheManager.getInstance(context);
 
@@ -103,6 +117,6 @@ public class BookApi {
 		}
 
 		return m.getBitmapUrlFile(CACHE_PAGE_THUMB, url,book.title);
-	}
+	}*/
 
 }
