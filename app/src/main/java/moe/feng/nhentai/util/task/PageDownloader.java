@@ -36,8 +36,8 @@ public class PageDownloader {
 	}
 
 	private int nextToDownloadPosition() {
-		int pos = findFirstUndownloadedPosition(getCurrentPosition());
-		return pos;
+
+		return findFirstUndownloadedPosition(getCurrentPosition());
 	}
 
 	private int findFirstUndownloadedPosition(int start) {
@@ -73,6 +73,7 @@ public class PageDownloader {
 		mDownloadThread.start();
 	}
 
+	@SuppressWarnings("unused")
 	public void continueDownload() {
 		Log.i(TAG, "download continue");
 		if (mDownloadThread != null && mDownloadThread.isRunning) {
@@ -101,8 +102,8 @@ public class PageDownloader {
 	}
 
 	public boolean isAllDownloaded() {
-		boolean b = true;
-		for (int i = 0; i < book.pageCount && b; i++) {
+		boolean b;
+		for (int i = 0; i < book.pageCount; i++) {
 			b = isDownloaded[i];
 
 			if(!b)
@@ -125,18 +126,22 @@ public class PageDownloader {
 		return mDownloadThread != null && mDownloadThread.isRunning;
 	}
 
+	@SuppressWarnings("unused")
 	public boolean isStop() {
 		return state == STATE_STOP;
 	}
 
+	@SuppressWarnings("unused")
 	public boolean isPause() {
 		return state == STATE_PAUSE;
 	}
 
+	@SuppressWarnings("unused")
 	public boolean isThreadAllOk() {
 		return state == STATE_ALL_OK;
 	}
 
+	@SuppressWarnings("unused")
 	public OnDownloadListener getOnDownloadListener() {
 		return listener;
 	}
@@ -165,7 +170,6 @@ public class PageDownloader {
 				downloadingPosition = nextToDownloadPosition();
 				if (downloadingPosition == book.pageCount)
 					break;
-				Log.i(TAG, "Downloading Image: " + downloadingPosition);
 				if (state == STATE_PAUSE) {
 					Log.i(TAG, "download paused");
 					if (listener != null) listener.onStateChange(STATE_PAUSE, getDownloadedCount());
@@ -190,7 +194,7 @@ public class PageDownloader {
 					e.printStackTrace();
 				}
 				if (tempFile != null) {
-					Log.i(TAG, "download finish" + downloadingPosition);
+					Log.i(TAG, "download finish " + downloadingPosition);
 					isDownloaded[downloadingPosition] = true;
 					if (listener != null) listener.onFinish(currentPosition, getDownloadedCount());
 				} else {

@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,19 +23,16 @@ import java.util.Random;
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.BookApi;
 import moe.feng.nhentai.api.PageApi;
-import moe.feng.nhentai.dao.FavoriteCategoriesManager;
 import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.dao.LatestBooksKeeper;
 import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.common.AbsActivity;
 import moe.feng.nhentai.util.AsyncTask;
-import moe.feng.nhentai.util.Settings;
 import moe.feng.nhentai.view.WheelProgressView;
 
 public class RandomActivity extends AbsActivity {
 
-	private FavoriteCategoriesManager mFCM;
 	private FavoritesManager mFM;
 
 	private LatestBooksKeeper mLatestKeeper;
@@ -58,7 +56,6 @@ public class RandomActivity extends AbsActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		mLatestKeeper = LatestBooksKeeper.getInstance(getApplicationContext());
-		mFCM = FavoriteCategoriesManager.getInstance(getApplicationContext());
 		mFM = FavoritesManager.getInstance(getApplicationContext());
 
 		super.onCreate(savedInstanceState);
@@ -172,7 +169,8 @@ public class RandomActivity extends AbsActivity {
 					book = Book.toBookFromJson(msg.getData().getString("book"));
 					mCoverView.setVisibility(View.VISIBLE);
 					mLangFieldView.setVisibility(View.VISIBLE);
-					mTitleView.setText("     " + book.getAvailableTitle());
+					String text ="     " + book.getAvailableTitle();
+					mTitleView.setText(text);
 					switch (book.langField) {
 						case Book.LANG_GB:
 							mLangFieldView.setImageResource(R.drawable.ic_lang_gb);
@@ -228,8 +226,10 @@ public class RandomActivity extends AbsActivity {
 			if (shouldStop) return;
 			int repeatCount = 0;
 			BaseMessage data = null;
+			Book book2= new Book();
+			book2.bookId = String.valueOf(bookId);
 			while (repeatCount < 9) {
-				data = BookApi.getBook(getApplicationContext(), String.valueOf(bookId));
+				data = BookApi.getBook(getApplicationContext(),  book2);
 				if (data.getCode() == 0) break;
 				repeatCount++;
 			}
@@ -252,7 +252,7 @@ public class RandomActivity extends AbsActivity {
 			try {
 				this.interrupt();
 			} catch (Exception e) {
-
+				Log.d(TAG, "stopRandom: Interruption Error");
 			}
 		}
 	}

@@ -33,7 +33,6 @@ public class CategoryActivity extends AbsActivity {
 	private ShareActionProvider mShareActionProvider;
 
 	private ViewPager mPager;
-	private TabLayout mTabLayout;
 
 	private Category category;
 
@@ -93,7 +92,7 @@ public class CategoryActivity extends AbsActivity {
 		ViewCompat.setElevation($(R.id.appbar_container), getResources().getDimensionPixelSize(R.dimen.appbar_elevation));
 
 		mPager = $(R.id.pager);
-		mTabLayout = $(R.id.tab_layout);
+		TabLayout mTabLayout = $(R.id.tab_layout);
 		mPager.setAdapter(new PagerAdapter(getFragmentManager()));
 		mTabLayout.setupWithViewPager(mPager);
 	}

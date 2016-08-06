@@ -1,7 +1,6 @@
 package moe.feng.nhentai.ui.adapter;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -36,6 +35,7 @@ public class BookGridRecyclerAdapter extends AbsRecyclerViewAdapter {
 
 	public static final String TAG = BookGridRecyclerAdapter.class.getSimpleName();
 
+	@SuppressWarnings("unused")
 	public BookGridRecyclerAdapter(RecyclerView recyclerView, FavoritesManager fm, Settings sets) {
 		this(recyclerView, null, fm, sets);
 	}
@@ -67,12 +67,13 @@ public class BookGridRecyclerAdapter extends AbsRecyclerViewAdapter {
 	}
 	
 	@Override
-	public void onBindViewHolder(ClickableViewHolder holder, final int position) {
+	public void onBindViewHolder(final ClickableViewHolder holder,final int position) {
 		super.onBindViewHolder(holder, position);
 		if (holder instanceof ViewHolder) {
 			ArrayList<Book> data = this.data == null ? fm.toArray() : this.data;
 			final ViewHolder mHolder = (ViewHolder) holder;
-			mHolder.mTitleTextView.setText("       " + data.get(position).getAvailableTitle());
+			String text = "        "+ data.get(position).getAvailableTitle();
+			mHolder.mTitleTextView.setText(text);
 			String previewImageUrl = data.get(position).previewImageUrl;
 
             switch (data.get(position).langField) {
@@ -100,7 +101,7 @@ public class BookGridRecyclerAdapter extends AbsRecyclerViewAdapter {
 					public void onGlobalLayout() {
 						ArrayList<Book> data = BookGridRecyclerAdapter.this.data == null ?
 								fm.toArray() : BookGridRecyclerAdapter.this.data;
-						if (data.size() < position + 1) return;
+						if (data.size() < holder.getAdapterPosition() + 1) return;
 						int thumbWidth = data.get(position).thumbWidth;
 						int thumbHeight = data.get(position).thumbHeight;
 						if (thumbWidth > 0 && thumbHeight > 0) {
@@ -109,7 +110,7 @@ public class BookGridRecyclerAdapter extends AbsRecyclerViewAdapter {
 							mHolder.mPreviewImageView.getLayoutParams().height = height;
 							mHolder.mPreviewImageView.setMinimumHeight(height);
 						}
-						mHolder.mPreviewImageView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+						mHolder.mPreviewImageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
 					}
 				});
@@ -141,14 +142,14 @@ public class BookGridRecyclerAdapter extends AbsRecyclerViewAdapter {
 			ViewHolder h = (ViewHolder) v.getTag();
 			Book book = h.book;
 
-			if (v != null && !TextUtils.isEmpty(book.previewImageUrl)) {
+			if (!TextUtils.isEmpty(book.previewImageUrl)) {
 				ImageView imageView = h.mPreviewImageView;
 				boolean useHdImage = sets != null && sets.getBoolean(Settings.KEY_LIST_HD_IMAGE, false);
 				Bitmap img = useHdImage ? BookApi.getCover(getContext(), book) : BookApi.getThumb
 						(getContext(), book);
 
 				if (img != null) {
-					publishProgress(new Object[]{v, img, imageView, book});
+					publishProgress(v, img, imageView, book);
 				}
 			}
 

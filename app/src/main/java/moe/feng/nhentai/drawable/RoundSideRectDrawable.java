@@ -24,6 +24,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 public class RoundSideRectDrawable extends Drawable {
 
@@ -58,7 +59,7 @@ public class RoundSideRectDrawable extends Drawable {
         } else if (width == height) {
             path.addCircle(bounds.centerX(), bounds.centerY(), width / 2, Path.Direction.CW);
         } else {
-            // TODO
+            Log.d(RoundSideRectDrawable.class.getSimpleName(), "onBoundsChange: Do other thing here");
         }
     }
 

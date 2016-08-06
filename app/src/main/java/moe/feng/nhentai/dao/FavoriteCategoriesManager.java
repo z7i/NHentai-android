@@ -80,6 +80,7 @@ public class FavoriteCategoriesManager {
 		return categories.size();
 	}
 
+	@SuppressWarnings("unused")
 	public ArrayList<Category> toArray() {
 		return categories.data;
 	}

@@ -652,9 +652,9 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 	private void onActionDownloadClick() {
 		final String downloadPath = mFileCacheManager.getExternalPath(book);
-		final int count = mFileCacheManager.getExternalBookDownloadedCount(book.bookId);
+		final int count = mFileCacheManager.getExternalBookDownloadedCount(book);
 		if (mFileCacheManager.externalBookExists(book)) {
-			if (mFileCacheManager.isExternalBookAllDownloaded(book.bookId)) {
+			if (mFileCacheManager.isExternalBookAllDownloaded(book)) {
 				isDownloaded = true;
 				runOnUiThread(new Runnable() {
 					@Override
@@ -691,7 +691,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			@Override
 			public void run() {
 				isDownloaded = mFileCacheManager.externalBookExists(book)
-						&& mFileCacheManager.isExternalBookAllDownloaded(book.bookId);
+						&& mFileCacheManager.isExternalBookAllDownloaded(book);
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
@@ -980,13 +980,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 
 		@Override
 		protected BaseMessage doInBackground(String... params) {
-			Book externalBook = mFileCacheManager.getExternalBook(book.bookId);
-			if (externalBook == null){
-				return BookApi.getBook(getApplicationContext(), book.bookId);
-			}
-			else{
-				return new BaseMessage(0, externalBook);
-			}
+				return BookApi.getBook(getApplicationContext(), book);
 		}
 
 		@Override

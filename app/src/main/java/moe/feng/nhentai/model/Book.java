@@ -2,22 +2,14 @@ package moe.feng.nhentai.model;
 
 import android.content.Context;
 import android.util.Log;
-
 import com.google.gson.Gson;
-
-import org.jsoup.Connection;
-
 import java.util.ArrayList;
-
 import moe.feng.nhentai.api.BookApi;
-import moe.feng.nhentai.api.PageApi;
 
 public class Book {
 
-	/** 必须获取到的数据 */
 	public String title, other, bookId;
 
-	/** 次要数据 */
 	public String previewImageUrl, bigCoverImageUrl, titleJP, titlePretty, galleryId;
 	public int pageCount;
 
@@ -34,12 +26,8 @@ public class Book {
 	public ArrayList<String> artists = new ArrayList<>();
 	public ArrayList<String> artistsID = new ArrayList<>();
 
-    // cn = Chinese 29963 , jp = Japanese 6346, gb = Great Britain (English) 12227
     public String langField = LANG_UNKNOWN;
     public static final String LANG_CN = "29963", LANG_JP = "6346", LANG_GB = "12227", LANG_UNKNOWN = "0";
-
-	/** 旧数据 */
-	private String artist = null;
 
 	public String uploadTime, uploadTimeText;
 
@@ -63,6 +51,7 @@ public class Book {
 	public String getAvailableTitle() {
 
 		if (titlePretty== null) {
+			Log.d(Book.class.getSimpleName(), "getAvailableTitle: Pretty Title Not Available");
 		}
 
 		else if(!titlePretty.equals("")) {
@@ -81,9 +70,9 @@ public class Book {
 
 	public void updateDataFromOldData(Context context) {
 		Log.d("HEY", "updateDataFromOldData: " + this.bookId);
-		BaseMessage msg = BookApi.getBook(context,this.bookId);
+		BaseMessage msg = BookApi.getBook(context,this);
 		if (msg.getCode()==0){
-			Book result = (Book) msg.getData();
+			Book result = msg.getData();
 			this.title = result.title;
 			this.titleJP = result.titleJP;
 			this.titlePretty = result.titlePretty;
@@ -110,8 +99,7 @@ public class Book {
 	}
 
 	public static Book toBookFromJson(String json) {
-		Book book = new Gson().fromJson(json, Book.class);
-		return book;
+		return  new Gson().fromJson(json, Book.class);
 	}
 
 }

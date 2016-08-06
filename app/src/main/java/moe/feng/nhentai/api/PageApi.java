@@ -241,15 +241,15 @@ public class PageApi {
 		String url = NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(page_num));
 
         if (FileCacheManager.getInstance(context).externalPageExists(book, page_num)){
-            Log.d(TAG, "getPageOriginImage: Loaded from external");
+            Log.i(TAG, "getPageOriginImage: Loaded from external");
             return FileCacheManager.getInstance(context).getBitmapFile(FileCacheManager.getInstance(context).getBitmapAllowingExternalPic(book, page_num));
         }
         if (FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url, book.title)){
-            Log.d(TAG, "getPageOriginImage: Loaded from cache");
+            Log.i(TAG, "getPageOriginImage: Loaded from cache");
             return FileCacheManager.getInstance(context).getBitmapUrl(CACHE_PAGE_IMG, url, book.title);
         }
         else if(FileCacheManager.getInstance(context).createCacheFromNetwork(CACHE_PAGE_IMG, url, book.title)) {
-            Log.d(TAG, "getPageOriginImage: Downloaded from web");
+            Log.i(TAG, "getPageOriginImage: Downloaded from web");
 			return  FileCacheManager.getInstance(context).getBitmapUrl(CACHE_PAGE_IMG, url, book.title);
 		}
 
@@ -263,26 +263,22 @@ public class PageApi {
 		String url = NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(page_num));
 
 		if (FileCacheManager.getInstance(context).externalPageExists(book, page_num)){
-            Log.d(TAG, "getPageOriginImageFile: Loaded from external");
+            Log.i(TAG, "getPageOriginImageFile: Loaded from external");
            return FileCacheManager.getInstance(context).getBitmapAllowingExternalPic(book, page_num);
         }
 
         else if (FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url, book.title)){
-            Log.d(TAG, "getPageOriginImageFile: Loaded from cache");
+            Log.i(TAG, "getPageOriginImageFile: Loaded from cache");
             return FileCacheManager.getInstance(context).getBitmapAllowingExternalPic(book, page_num);
         }
         else if (FileCacheManager.getInstance(context).createCacheFromNetwork(CACHE_PAGE_IMG, url, book.title)){
-            Log.d(TAG, "getPageOriginImageFile: Downloaded from web");
+            Log.i(TAG, "getPageOriginImageFile: Downloaded from web");
             return FileCacheManager.getInstance(context).getBitmapAllowingExternalPic(book, page_num);
 		}
         else {
             return null;
         }
 	}
-
-    public static String getPageOriginImageURL(Context context, Book book, int page_num){
-        return NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(page_num));
-    }
 
 	public static boolean isPageOriginImageLocalFileExist(Context context, Book book, int page_num) {
         return FileCacheManager.getInstance(context).externalPageExists(book,page_num);

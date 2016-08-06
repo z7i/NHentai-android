@@ -9,6 +9,7 @@ import android.support.v7.widget.AppCompatTextView;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.SeekBar;
 
 import moe.feng.nhentai.R;
@@ -92,7 +93,7 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 	private void showCardCountCustomDialog() {
 		ContextThemeWrapper wrapper = new ContextThemeWrapper(getActivity().getApplicationContext(), R.style.Theme_NHBooks_Light);
 		View view = LayoutInflater.from(wrapper)
-				.inflate(R.layout.dialog_set_card_count, null);
+				.inflate(R.layout.dialog_set_card_count,(ViewGroup) getView());
 		final AppCompatTextView numberText = (AppCompatTextView) view.findViewById(R.id.number_text);
 		final AppCompatSeekBar seekBar = (AppCompatSeekBar) view.findViewById(R.id.seekbar);
 		int cardCount = mSets.getInt(Settings.KEY_CARDS_COUNT, 2);
