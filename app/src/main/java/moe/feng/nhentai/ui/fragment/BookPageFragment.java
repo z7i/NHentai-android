@@ -3,7 +3,6 @@ package moe.feng.nhentai.ui.fragment;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,7 +29,6 @@ public class BookPageFragment extends LazyFragment {
 	private int pageNum;
 	private ImageView mImageView;
 	private PhotoViewAttacher mPhotoViewAttacher;
-	private AppCompatTextView mPageNumText, mTipsText;
 	private WheelProgressView mWheelProgress;
 
 	private static final String ARG_BOOK_DATA = "arg_book_data", ARG_PAGE_NUM = "arg_page_num";
@@ -66,8 +64,7 @@ public class BookPageFragment extends LazyFragment {
 	public void finishCreateView(Bundle state) {
 		mImageView = $(R.id.image_view);
 		mPhotoViewAttacher = new PhotoViewAttacher(mImageView);
-		mPageNumText = $(R.id.page_number);
-		mTipsText = $(R.id.little_tips);
+		AppCompatTextView mPageNumText = $(R.id.page_number);
 		mWheelProgress = $(R.id.wheel_progress);
 
 		mPageNumText.setText(Integer.toString(pageNum));

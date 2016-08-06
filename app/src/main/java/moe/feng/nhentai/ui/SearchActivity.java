@@ -65,12 +65,10 @@ public class SearchActivity extends AbsActivity {
 	private BookListRecyclerAdapter mAdapter;
 	private HistoryRecyclerAdapter mHistoryAdapter;
 	private StaggeredGridLayoutManager mLayoutManager;
-	private LinearLayoutManager mHistoryLayoutManager;
 
 	private ArrayList<Book> mBooks;
 	private int mNowPage = 1, mHorCardCount = 2;
 	private String keyword;
-	private boolean isAllowToLoadNextPage = true;
 	private FileCacheManager mFileCacheManager;
 	private FavoritesManager mFM;
 	private SearchHistoryManager mHM;
@@ -116,7 +114,7 @@ public class SearchActivity extends AbsActivity {
 		mSwipeRefreshLayout = $(R.id.swipe_refresh_layout);
 
 		/** Init History List */
-		mHistoryLayoutManager = new LinearLayoutManager(this);
+		LinearLayoutManager mHistoryLayoutManager = new LinearLayoutManager(this);
 		mHistoryList.setLayoutManager(mHistoryLayoutManager);
 		mHistoryList.setHasFixedSize(true);
 
@@ -154,7 +152,6 @@ public class SearchActivity extends AbsActivity {
 					mSwipeRefreshLayout.setRefreshing(true);
 				}
 
-				isAllowToLoadNextPage = true;
 				mBooks = new ArrayList<>();
 				mAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM, mSets);
 				setResultListAdapter(mAdapter);
@@ -163,7 +160,7 @@ public class SearchActivity extends AbsActivity {
 			}
 		});
 
-		mEditText.setTextAppearance(this, R.style.TextAppearance_AppCompat_Widget_ActionBar_Title);
+		mEditText.setTextAppearance(this, R.style.Base_Theme_NHBooks_Light);
 		mEditText.setSingleLine(true);
 		mEditText.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		mEditText.setHint(R.string.search_text_hint);
@@ -337,7 +334,7 @@ public class SearchActivity extends AbsActivity {
 					msg.setCode(0);
 					InputStream in = null;
 					BufferedReader br = null;
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					sb.append("");
 					try {
 						in = getResources().openRawResource(R.raw.happylabor);
@@ -349,10 +346,13 @@ public class SearchActivity extends AbsActivity {
 						}
 					} catch (Resources.NotFoundException e) {
 						e.printStackTrace();
+						Log.d(SearchActivity.class.getSimpleName(), "doInBackground: Resource Not Found");
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
+						Log.d(SearchActivity.class.getSimpleName(), "doInBackground: Error on Encoding");
 					} catch (IOException e) {
 						e.printStackTrace();
+						Log.d(SearchActivity.class.getSimpleName(), "doInBackground: Error while Reading");
 					} finally {
 						try {
 							if (in != null) {
@@ -404,14 +404,15 @@ public class SearchActivity extends AbsActivity {
 				switch (msg.getCode()) {
 					case 0:
 						if (msg.getData() != null) {
-							if (!((ArrayList<Book>) msg.getData()).isEmpty()) {
-								mBooks.addAll((ArrayList<Book>) msg.getData());
-								for(Book b : (ArrayList<Book>) msg.getData()){
+							ArrayList<Book> mArray =  msg.getData();
+
+							if (!mArray.isEmpty()) {
+								mBooks.addAll(mArray);
+								for(Book b : mArray){
 									mFileCacheManager.createCacheFromBook(b);
 								}
 								mAdapter.notifyDataSetChanged();
 								if (mNowPage == 1) {
-									isAllowToLoadNextPage = true;
 									mResultList.setAdapter(mAdapter);
 								}
 							} else {
@@ -420,7 +421,6 @@ public class SearchActivity extends AbsActivity {
 						}
 						break;
 					case MSG_CODE_NO_MORE_RESULTS:
-						isAllowToLoadNextPage = false;
 						Snackbar.make($(R.id.root_layout), R.string.tips_no_more_results, Snackbar.LENGTH_LONG).show();
 						break;
                     case MSG_CODE_DIRECT_TO_BOOK:

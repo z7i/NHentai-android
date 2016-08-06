@@ -40,7 +40,6 @@ public class GalleryActivity extends AbsActivity implements OnTouchListener {
 	private GalleryPagerAdapter mPagerAdpater;
 	private View mAppBar, mBottomBar;
 	private AppCompatSeekBar mSeekBar;
-	private AppCompatTextView mTotalPagesText;
 	private int orientation;
 	private int lastOrientation;
 	private int lastPositon;
@@ -188,7 +187,7 @@ public class GalleryActivity extends AbsActivity implements OnTouchListener {
 		mBottomBar = $(R.id.bottom_bar);
 		mPager = $(R.id.pager);
 		mSeekBar = $(R.id.seekbar);
-		mTotalPagesText = $(R.id.total_pages_text);
+		AppCompatTextView mTotalPagesText = $(R.id.total_pages_text);
 		mPagerAdpater = new GalleryPagerAdapter(getFragmentManager(), book);
 		mPager.setAdapter(mPagerAdpater);
 		mPager.setOffscreenPageLimit(1);

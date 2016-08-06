@@ -24,7 +24,7 @@ public class SearchHistoryManager {
 	public static SearchHistoryManager getInstance(Context context, String sectionName) {
 		SearchHistoryManager sInstance = null;
 		for (Instance i : sInstances) {
-			if (i.sectionName == sectionName) {
+			if (i.sectionName.equals(sectionName)) {
 				sInstance = i.manager;
 				break;
 			}
@@ -88,6 +88,7 @@ public class SearchHistoryManager {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public void cleanAll() {
 		mDB.clear();
 		mDB.persist();

@@ -167,8 +167,9 @@ public class PageListFragment extends LazyFragment {
 				switch (msg.getCode()) {
 					case 0:
 						if (msg.getData() != null) {
-							if (!((ArrayList<Book>) msg.getData()).isEmpty()) {
-								mBooks.addAll((ArrayList<Book>) msg.getData());
+							ArrayList<Book> mArray = msg.getData();
+							if (!mArray.isEmpty()) {
+								mBooks.addAll(mArray);
 								mAdapter.notifyDataSetChanged();
 								if (mNowPage == 1) {
 									isAllowToLoadNextPage = true;

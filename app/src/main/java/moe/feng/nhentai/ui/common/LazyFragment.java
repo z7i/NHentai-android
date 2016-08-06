@@ -33,9 +33,13 @@ public abstract class LazyFragment extends Fragment {
 	public abstract void finishCreateView(Bundle state);
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		this.activity = activity;
+	public void onAttach(Context context) {
+		super.onAttach(context);
+
+		if (context instanceof Activity){
+			this.activity=(Activity) context;
+		}
+
 		if (mSets == null) {
 			mSets = Settings.getInstance(getApplicationContext());
 		}

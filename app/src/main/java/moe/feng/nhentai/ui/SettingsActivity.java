@@ -21,7 +21,7 @@ public class SettingsActivity extends AbsActivity {
 	private int flag;
 
 	public static final String EXTRA_FLAG = "flag";
-	public static final int FLAG_MAIN = 0, FLAG_LICENSE = 1, FLAG_GUI = 2, FLAG_NETWORK = 3, FLAG_STORAGE = 4;
+	public static final int FLAG_MAIN = 0, FLAG_LICENSE = 1, FLAG_GUI = 2, FLAG_STORAGE = 4;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

@@ -8,7 +8,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.ui.BookDetailsActivity;
-import moe.feng.nhentai.ui.HomeActivity;
 import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.ui.common.LazyFragment;

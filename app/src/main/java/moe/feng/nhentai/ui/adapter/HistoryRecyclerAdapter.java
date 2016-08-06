@@ -22,6 +22,7 @@ public class HistoryRecyclerAdapter extends AbsRecyclerViewAdapter {
 		this.mHM = hm;
 	}
 
+	@SuppressWarnings("unused")
 	public AddTextListener getAddTextListener() {
 		return this.mAddTextListener;
 	}

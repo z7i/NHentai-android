@@ -12,7 +12,7 @@ public abstract class AbsRecyclerViewAdapter extends RecyclerView.Adapter<AbsRec
 	private Context context;
 
 	protected RecyclerView mRecyclerView;
-	protected List<RecyclerView.OnScrollListener> mListeners = new ArrayList<RecyclerView.OnScrollListener>();
+	protected List<RecyclerView.OnScrollListener> mListeners = new ArrayList<>();
 
 	public AbsRecyclerViewAdapter(RecyclerView recyclerView) {
 		this.mRecyclerView = recyclerView;
@@ -38,11 +38,11 @@ public abstract class AbsRecyclerViewAdapter extends RecyclerView.Adapter<AbsRec
 	}
 
 	public interface OnItemClickListener {
-		public void onItemClick(int position, ClickableViewHolder holder);
+		void onItemClick(int position, ClickableViewHolder holder);
 	}
 
 	public interface OnItemLongClickListener {
-		public boolean onItemLongClick(int position, ClickableViewHolder holder);
+		 boolean onItemLongClick(int position, ClickableViewHolder holder);
 	}
 
 	private OnItemClickListener itemClickListener;
@@ -51,7 +51,7 @@ public abstract class AbsRecyclerViewAdapter extends RecyclerView.Adapter<AbsRec
 	public void setOnItemClickListener(OnItemClickListener listener) {
 		this.itemClickListener = listener;
 	}
-
+	@SuppressWarnings("unused")
 	public void setOnItemLongClickListener(OnItemLongClickListener listener) {
 		this.itemLongClickListener = listener;
 	}
@@ -65,12 +65,12 @@ public abstract class AbsRecyclerViewAdapter extends RecyclerView.Adapter<AbsRec
 	}
 
 	@Override
-	public void onBindViewHolder(final ClickableViewHolder holder, final int position) {
+	public void onBindViewHolder(final ClickableViewHolder holder, int position) {
 		holder.getParentView().setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (itemClickListener != null) {
-					itemClickListener.onItemClick(position, holder);
+					itemClickListener.onItemClick(holder.getAdapterPosition(), holder);
 				}
 			}
 		});
@@ -78,7 +78,7 @@ public abstract class AbsRecyclerViewAdapter extends RecyclerView.Adapter<AbsRec
 			@Override
 			public boolean onLongClick(View v) {
 				if (itemLongClickListener != null) {
-					return itemLongClickListener.onItemLongClick(position, holder);
+					return itemLongClickListener.onItemLongClick(holder.getAdapterPosition(), holder);
 				} else {
 					return false;
 				}

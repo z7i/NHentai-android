@@ -13,7 +13,6 @@ import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.dao.FavoritesManager;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.BookDetailsActivity;
-import moe.feng.nhentai.ui.HomeActivity;
 import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.ui.common.LazyFragment;
@@ -25,7 +24,6 @@ public class DownloadManagerFragment extends LazyFragment {
 
 	private RecyclerView mRecyclerView;
 	private BookListRecyclerAdapter mAdapter;
-	private StaggeredGridLayoutManager mLayoutManager;
 
 	private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -48,7 +46,7 @@ public class DownloadManagerFragment extends LazyFragment {
 			mHorCardCount = Utility.getHorizontalCardCountInScreen(getActivity());
 		}
 
-		mLayoutManager = new StaggeredGridLayoutManager(mHorCardCount, StaggeredGridLayoutManager.VERTICAL);
+		StaggeredGridLayoutManager mLayoutManager = new StaggeredGridLayoutManager(mHorCardCount, StaggeredGridLayoutManager.VERTICAL);
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		mRecyclerView.setHasFixedSize(true);
 

@@ -1,10 +1,10 @@
 package moe.feng.nhentai.ui.common;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,26 +24,25 @@ public abstract class AbsActivity extends AppCompatActivity {
 
 	protected int statusBarHeight = 0;
 
-	@SuppressLint("MissingSuperCall")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		this.onCreate(savedInstanceState, true);
+		SetTranslucent(true);
+		mSets = Settings.getInstance(getApplicationContext());
+		super.onCreate(savedInstanceState);
+
 	}
 
-	protected void onCreate(Bundle savedInstanceState, boolean statusBarTranslucent) {
+	protected void SetTranslucent (boolean statusBarTranslucent) {
 		/** Set up translucent status bar */
 		if (statusBarTranslucent) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ) {
 				getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 				statusBarHeight = Utility.getStatusBarHeight(getApplicationContext());
 				getWindow().setStatusBarColor(Color.TRANSPARENT);
-				getWindow().setNavigationBarColor(getResources().getColor(R.color.deep_purple_800));
+				getWindow().setNavigationBarColor(ContextCompat.getColor(getApplicationContext(), R.color.deep_purple_800));
 			}
 		}
 
-		super.onCreate(savedInstanceState);
-
-		mSets = Settings.getInstance(getApplicationContext());
 	}
 
 	protected abstract void setUpViews();

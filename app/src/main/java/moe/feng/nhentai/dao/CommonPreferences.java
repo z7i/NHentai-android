@@ -18,7 +18,7 @@ public class CommonPreferences {
 	public static CommonPreferences getInstance(Context context, String dbName) {
 		CommonPreferences sInstance = null;
 		for (Instance i : sInstances) {
-			if (i.dbName == dbName) {
+			if (i.dbName.equals(dbName)) {
 				sInstance = i.preferences;
 				break;
 			}
@@ -36,6 +36,7 @@ public class CommonPreferences {
 		reload();
 	}
 
+	@SuppressWarnings("unused")
 	public void sync() {
 		this.mKVDB.sync(true);
 	}
@@ -60,10 +61,12 @@ public class CommonPreferences {
 		return contains(key) ? (boolean) mKVDB.get(key) : defValue;
 	}
 
+	@SuppressWarnings("unused")
 	public long getLong(String key, long defValue) {
 		return contains(key) ? (long) mKVDB.get(key) : defValue;
 	}
 
+	@SuppressWarnings("unused")
 	public float getFloat(String key, float defValue) {
 		return contains(key) ? (float) mKVDB.get(key) : defValue;
 	}
@@ -95,11 +98,13 @@ public class CommonPreferences {
 			return this;
 		}
 
+		@SuppressWarnings("unused")
 		public Editor putLong(String key, long value) {
 			this.mKVDB.put(key, value);
 			return this;
 		}
 
+		@SuppressWarnings("unused")
 		public Editor putFloat(String key, float value) {
 			this.mKVDB.put(key, value);
 			return this;

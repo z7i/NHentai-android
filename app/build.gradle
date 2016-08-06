@@ -8,8 +8,8 @@ android {
 		applicationId "moe.feng.nhentai"
 		minSdkVersion 17
 		targetSdkVersion 24
-		versionCode 27
-		versionName "1.6.0"
+		versionCode 28
+		versionName "1.6.1"
 	}
 
 	buildTypes {
@@ -27,6 +27,7 @@ dependencies {
 	compile 'com.android.support:appcompat-v7:24.1.1'
 	compile 'com.android.support:cardview-v7:24.1.1'
 	compile 'com.android.support:recyclerview-v7:24.1.1'
+	compile 'com.android.support:support-v4:24.1.1'
 	compile 'com.google.code.gson:gson:2.4'
 	compile 'org.jsoup:jsoup:1.8.2'
 	compile 'com.github.chrisbanes.photoview:library:1.2.3'

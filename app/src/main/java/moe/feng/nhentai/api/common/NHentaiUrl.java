@@ -8,20 +8,12 @@ public class NHentaiUrl {
 	public static final String NHENTAI_I = "https://i.nhentai.net";
 	public static final String NHENTAI_T = "https://t.nhentai.net";
 
-	public static String getSearchUrl(String content) {
-		return getSearchUrl(content, 1);
-	}
-
 	public static String getSearchUrl(String content, int page_num) {
 		String targetContent = content;
 		if (targetContent.contains(" ")) {
 			targetContent = targetContent.replaceAll(" ", "+");
 		}
 		return NHENTAI_HOME + "/api/galleries/search?query=" + targetContent + "&page=" + page_num;
-	}
-
-	public static String getSearchUrlByTag(String content, String tag, int page_num) {
-		return getSearchUrl("parodies%3A" + content + "+-tag%3A\"" + tag + "\"", page_num);
 	}
 
 	public static String getBookDetailsUrl(String book_id) {
@@ -61,60 +53,6 @@ public class NHentaiUrl {
 
 	public static String getThumbPictureUrl(String g_id, String page_num, String file_type) {
 		return getThumbGalleryUrl(g_id) + "/" + page_num +  "." + file_type;
-	}
-
-	@Deprecated
-	public static String getParodyUrl(String name) {
-		String targetName = name;
-		if (targetName.contains(" ")) {
-			targetName = targetName.replaceAll(" ", "-");
-		}
-		return NHENTAI_HOME + "/parody/" + targetName;
-	}
-
-	@Deprecated
-	public static String getCharacterUrl(String name) {
-		String targetName = name;
-		if (targetName.contains(" ")) {
-			targetName = targetName.replaceAll(" ", "-");
-		}
-		return NHENTAI_HOME + "/character/" + targetName;
-	}
-
-	@Deprecated
-	public static String getTagUrl(String tag) {
-		String targetTag = tag;
-		if (targetTag.contains(" ")) {
-			targetTag = targetTag.replaceAll(" ", "-");
-		}
-		return NHENTAI_HOME + "/tagged/" + targetTag;
-	}
-
-	@Deprecated
-	public static String getArtistUrl(String name) {
-		String targetName = name;
-		if (targetName.contains(" ")) {
-			targetName = targetName.replaceAll(" ", "-");
-		}
-		return NHENTAI_HOME + "/artist/" + targetName;
-	}
-
-	@Deprecated
-	public static String getGroupUrl(String name) {
-		String targetName = name;
-		if (targetName.contains(" ")) {
-			targetName = targetName.replaceAll(" ", "-");
-		}
-		return NHENTAI_HOME + "/group/" + targetName;
-	}
-
-	@Deprecated
-	public static String getLanguageUrl(String name) {
-		String targetName = name;
-		if (targetName.contains(" ")) {
-			targetName = targetName.replaceAll(" ", "-");
-		}
-		return NHENTAI_HOME + "/language/" + targetName;
 	}
 
 	public static String getCategoryUrl(Category category, boolean isPopularType) {

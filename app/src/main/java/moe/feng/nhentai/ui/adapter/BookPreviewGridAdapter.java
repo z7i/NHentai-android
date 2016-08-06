@@ -1,7 +1,6 @@
 package moe.feng.nhentai.ui.adapter;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,8 +48,8 @@ public class BookPreviewGridAdapter extends AbsRecyclerViewAdapter {
 			ViewHolder holder = (ViewHolder) cvh;
 
 			holder.mBookImageView.setVisibility(View.INVISIBLE);
-			holder.mNumberText.setText(Integer.toString(position + 1));
-
+			String text = Integer.toString(position + 1);
+			holder.mNumberText.setText(text);
 			new ImageDownloader().execute(holder.getParentView(), position + 1);
 		}
 	}
@@ -82,14 +81,12 @@ public class BookPreviewGridAdapter extends AbsRecyclerViewAdapter {
 			View v = (View) params[0];
 			ViewHolder h = (ViewHolder) v.getTag();
 
-			if (v != null) {
-				ImageView imageView = h.mBookImageView;
-				Bitmap img = BookApi.getPageThumb(getContext(), book, (int) params[1]);
+			ImageView imageView = h.mBookImageView;
+			Bitmap img = BookApi.getPageThumb(getContext(), book, (int) params[1]);
 
-				if (img != null) {
-					publishProgress(new Object[]{v, img, imageView, book, params[1]});
+			if (img != null) {
+				publishProgress(v, img, imageView, book, params[1]);
 
-				}
 			}
 
 			return null;

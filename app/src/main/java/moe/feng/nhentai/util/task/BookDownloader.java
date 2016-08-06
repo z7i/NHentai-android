@@ -34,6 +34,7 @@ public class BookDownloader {
 		this.currentPosition = currentPosition;
 	}
 
+	@SuppressWarnings("unused")
 	public int getCurrentPosition() {
 		return this.currentPosition;
 	}
@@ -77,10 +78,12 @@ public class BookDownloader {
 		state = STATE_STOP;
 	}
 
+	@SuppressWarnings("unused")
 	public boolean isDownloaded(int position) {
 		return isDownloaded[position];
 	}
 
+	@SuppressWarnings("unused")
 	public void setDownloaded(int position, boolean bool) {
 		isDownloaded[position] = bool;
 	}
@@ -107,6 +110,7 @@ public class BookDownloader {
 		return mDownloadThread != null && mDownloadThread.isRunning;
 	}
 
+	@SuppressWarnings("unused")
 	public boolean isStop() {
 		return state == STATE_STOP;
 	}
@@ -119,6 +123,7 @@ public class BookDownloader {
 		return state == STATE_ALL_OK;
 	}
 
+	@SuppressWarnings("unused")
 	public OnDownloadListener getOnDownloadListener() {
 		return listener;
 	}

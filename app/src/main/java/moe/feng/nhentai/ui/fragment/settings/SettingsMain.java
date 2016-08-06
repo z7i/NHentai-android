@@ -1,6 +1,7 @@
 package moe.feng.nhentai.ui.fragment.settings;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.ui.SettingsActivity;
@@ -8,7 +9,6 @@ import moe.feng.nhentai.view.pref.Preference;
 
 public class SettingsMain extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
-	private Preference mVersionPref;
 	private Preference mLicensePref;
 	private Preference mGooglePlusPref;
 	private Preference mGithubPref;
@@ -23,7 +23,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.settings_main);
 
-		mVersionPref = (Preference) findPreference("version");
+		Preference mVersionPref = (Preference) findPreference("version");
 		mLicensePref = (Preference) findPreference("license");
 		mGooglePlusPref = (Preference) findPreference("google_plus");
 		mGithubPref = (Preference) findPreference("github");
@@ -37,7 +37,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 			version = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
 			version += " (" + getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionCode + ")";
 		} catch (Exception e) {
-
+			Log.d(SettingsMain.class.getSimpleName(), "onCreate: Error getting version");
 		}
 		mVersionPref.setSummary(version);
 
