@@ -48,6 +48,16 @@ public class FavoritesManager {
 		}
 
 		books = new Gson().fromJson(json, MyArray.class);
+
+		ArrayList<Book> toRemove = new ArrayList<>();
+		for (Book book : books.data){
+			if (book.bookId == null){
+				toRemove.add(book);
+			}
+		}
+		books.data.removeAll(toRemove);
+
+
 		if (!FileCacheManager.getInstance(context).checkUpdateFavorites()){
 			new UpdateFavorites().execute(context);
 		}
@@ -55,8 +65,6 @@ public class FavoritesManager {
 			save();
 		}
 	}
-
-
 
 	public Book get(int position) {
 		return books.get(position);
