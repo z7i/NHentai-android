@@ -13,10 +13,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.common.NHentaiUrl;
 import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
+import moe.feng.nhentai.ui.HomeActivity;
 
 import static moe.feng.nhentai.cache.common.Constants.CACHE_PAGE_IMG;
 
@@ -31,9 +33,9 @@ public class PageApi {
         boolean chinese = false;
         Book book = new Book();
         try {
-            String json = Jsoup.connect(url).ignoreContentType(true).execute().body();
+            String json = Jsoup.connect(url).userAgent(HomeActivity.myContext.getString(R.string.user_agent)).ignoreContentType(true).execute().body();
 
-            Log.d(TAG, "getPageListAPI: "+ json);
+            Log.d(TAG, "getPageListAPI: "+ json );
             try {
                 JSONObject inspect = new JSONObject(json);
                 JSONObject titles = inspect.getJSONObject("title");
@@ -118,7 +120,7 @@ public class PageApi {
         BaseMessage result = new BaseMessage();
         result.setCode(0);
         try {
-            String json = Jsoup.connect(url).ignoreContentType(true).execute().body();
+            String json = Jsoup.connect(url).userAgent(HomeActivity.myContext.getString(R.string.user_agent)).ignoreContentType(true).execute().body();
             try {
                 JSONObject obj = new JSONObject(json);
                 JSONArray books = obj.getJSONArray("result");

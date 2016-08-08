@@ -4,20 +4,21 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
-import android.app.Notification;
-import android.app.PendingIntent;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.NotificationCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -92,7 +93,8 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	private boolean isDownloaded = false;
 
 	private final static String EXTRA_BOOK_DATA = "book_data", EXTRA_POSITION = "item_position";
-
+	private NotificationManager mNotifyManager;
+	private NotificationCompat.Builder mBuilder;
 	public final static int REQUEST_MAIN = 1001, RESULT_HAVE_FAV = 100;
 	public final static int NOTIFICATION_ID_FINISH = 10000;
 
@@ -280,7 +282,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			new CoverTask().execute(book);
 		}
 
-		Recommend = new ArrayList<Book>();
+		Recommend = new ArrayList<>();
 
 		checkIsDownloaded();
 		setUpShareAction();
@@ -687,9 +689,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	}
 
 	private void checkIsDownloaded() {
-		new Thread() {
-			@Override
-			public void run() {
+
 				isDownloaded = mFileCacheManager.externalBookExists(book)
 						&& mFileCacheManager.isExternalBookAllDownloaded(book);
 				runOnUiThread(new Runnable() {
@@ -698,8 +698,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 						invalidateOptionsMenu();
 					}
 				});
-			}
-		}.start();
+
 	}
 
 	private void showDeleteDialog() {
@@ -733,9 +732,75 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 					.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialogInterface, int i) {
-							startDownload(count);
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+									mBuilder= new NotificationCompat.Builder(getApplicationContext());
+									mBuilder.setContentTitle(getString(R.string.dialog_download_title) + book.titlePretty)
+											.setContentText(getString(R.string.dialog_download_progress))
+											.setSmallIcon(R.drawable.ic_file_download_white_24dp);
+
+									mNotifyManager.notify(1,mBuilder.build());
+
+									if (mDownloader == null) {
+
+										mDownloader = new BookDownloader(getApplicationContext(), book);
+										mDownloader.setOnDownloadListener(new BookDownloader.OnDownloadListener() {
+											@Override
+											public void onFinish(final int position, final int progress) {
+												runOnUiThread(new Runnable() {
+													@Override
+													public void run() {
+														if (progress != position) {
+															mBuilder.setProgress(position, progress, false);
+															mBuilder.setContentText(getString(R.string.dialog_download_progress) +"		" + progress +" / " +position);
+
+														} else {
+															mBuilder.setProgress(0, 0, false);
+															mFileCacheManager.saveBookDataToExternalPath(mDownloader.getBook());
+															mBuilder.setContentText(getString(R.string.dialog_download_finished));
+															isDownloaded=true;
+															if(book != null) invalidateOptionsMenu();
+														}
+														mNotifyManager.notify(1, mBuilder.build());
+													}
+												});
+
+											}
+
+											@Override
+											public void onError(int position, int errorCode) {
+												runOnUiThread(new Runnable() {
+													@Override
+													public void run() {
+															mBuilder.setProgress(0, 0, false);
+															mBuilder.setContentText(getString(R.string.dialog_download_error));
+															mDownloader.stop();
+															mNotifyManager.notify(1, mBuilder.build());
+														}
+												});
+											}
+
+											@Override
+											public void onStateChange(int state, final int progress) {
+												switch (state) {
+													case BookDownloader.STATE_STOP:
+														break;
+													case BookDownloader.STATE_PAUSE:
+														break;
+
+												}
+											}
+										});
+									}
+									mDownloader.start();
+									mDialogDownload.dismiss();
+								}
+							});
 						}
-					})
+						})
 					.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialogInterface, int i) {
@@ -753,16 +818,82 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			mDialogDelOrDownload = new AlertDialog.Builder(this)
 					.setTitle(R.string.dialog_ask_d_or_d_title)
 					.setMessage(getString(R.string.dialog_ask_d_or_d_summary, count, downloadPath))
-					.setPositiveButton(R.string.dialog_ask_d_or_d_continue, new DialogInterface.OnClickListener() {
+					.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialogInterface, int i) {
-							startDownload(count);
+							runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+									mBuilder= new NotificationCompat.Builder(getApplicationContext());
+									mBuilder.setContentTitle(getString(R.string.dialog_download_title))
+											.setContentText(getString(R.string.dialog_download_progress))
+											.setSmallIcon(R.drawable.ic_file_download_white_24dp);
+
+									mNotifyManager.notify(1,mBuilder.build());
+
+									if (mDownloader == null) {
+
+										mDownloader = new BookDownloader(getApplicationContext(), book);
+										mDownloader.setOnDownloadListener(new BookDownloader.OnDownloadListener() {
+											@Override
+											public void onFinish(final int position, final int progress) {
+												runOnUiThread(new Runnable() {
+													@Override
+													public void run() {
+														if (progress != position) {
+															mBuilder.setProgress(position, progress, false);
+															mBuilder.setContentText(getString(R.string.dialog_download_progress) + "		" + progress +" / " + position);
+														} else {
+															mBuilder.setProgress(0, 0, false);
+															mFileCacheManager.saveBookDataToExternalPath(mDownloader.getBook());
+														mBuilder.setContentText(getString(R.string.dialog_download_finished));
+															isDownloaded=true;
+															if(book != null) invalidateOptionsMenu();
+														}
+														mNotifyManager.notify(1, mBuilder.build());
+													}
+												});
+
+											}
+
+											@Override
+											public void onError(int position, int errorCode) {
+												runOnUiThread(new Runnable() {
+													@Override
+													public void run() {
+														mBuilder.setProgress(0, 0, false);
+														mBuilder.setContentText(getString(R.string.dialog_download_error));
+														mDownloader.stop();
+														mNotifyManager.notify(1, mBuilder.build());
+													}
+												});
+											}
+
+											@Override
+											public void onStateChange(int state, final int progress) {
+												switch (state) {
+													case BookDownloader.STATE_STOP:
+														break;
+													case BookDownloader.STATE_PAUSE:
+														break;
+
+												}
+											}
+										});
+									}
+									mDownloader.start();
+									mDialogDelOrDownload.dismiss();
+								}
+							});
 						}
 					})
 					.setNeutralButton(R.string.dialog_ask_d_or_d_delete, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialogInterface, int i) {
 							new DeleteTask().execute();
+							mDialogDelOrDownload.dismiss();
 						}
 					})
 					.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -775,145 +906,6 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		}
 
 		mDialogDelOrDownload.show();
-	}
-
-	private void startDownload(int progress) {
-		progress = Math.max(0, progress);
-		if (mDownloader == null) {
-			mDownloader = new BookDownloader(getApplicationContext(), book);
-			mDownloader.setCurrentPosition(0);
-			mDownloader.setOnDownloadListener(new BookDownloader.OnDownloadListener() {
-				@Override
-				public void onFinish(int position, final int progress) {
-					if (mDialogDownloading == null) return;
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							mDialogDownloading.setProgress(Utility.calcProgress(progress, book.pageCount));
-							mDialogDownloading.setMessage(
-									(mDownloader.isPause() ? getString(R.string.dialog_download_paused) : "")
-											+ getString(
-											R.string.dialog_download_progress,
-											progress,
-											book.pageCount
-									)
-							);
-						}
-					});
-				}
-
-				@Override
-				public void onError(int position, int errorCode) {
-
-				}
-
-				@Override
-				public void onStateChange(int state, final int progress) {
-					switch (state) {
-						case BookDownloader.STATE_STOP:
-							if (mDialogDownloading == null) return;
-							runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									mDialogDownloading.dismiss();
-								}
-							});
-							break;
-						case BookDownloader.STATE_PAUSE:
-							if (mDialogDownloading == null) return;
-							runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									mDialogDownloading.setMessage(
-											(mDownloader.isPause() ? getString(R.string.dialog_download_paused) : "")
-													+ getString(
-													R.string.dialog_download_progress,
-													progress,
-													book.pageCount
-											)
-									);
-								}
-							});
-							break;
-						case BookDownloader.STATE_ALL_OK:
-							runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									isDownloaded = true;
-									invalidateOptionsMenu();
-
-									NotificationManagerCompat nm = NotificationManagerCompat.from(getApplicationContext());
-
-									Intent intent = new Intent(getApplicationContext(), BookDetailsActivity.class);
-									intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-									intent.putExtra(EXTRA_BOOK_DATA, book.toJSONString());
-
-									Notification n = new NotificationCompat.Builder(BookDetailsActivity.this)
-											.setContentTitle(getString(R.string.dialog_download_notification_title))
-											.setTicker(getString(R.string.dialog_download_notification_title))
-											.setSubText(book.getAvailableTitle())
-											.setContentIntent(
-													PendingIntent.getActivity(
-															getApplicationContext(),
-															0,
-															intent,
-															PendingIntent.FLAG_CANCEL_CURRENT
-													)
-											)
-											.setAutoCancel(true)
-											.setSmallIcon(R.drawable.ic_file_download_white_24dp)
-											.setPriority(Notification.PRIORITY_MAX)
-											.build();
-
-									nm.notify(NOTIFICATION_ID_FINISH, n);
-
-									if (mDialogDownloading == null) return;
-									mDialogDownloading.dismiss();
-								}
-							});
-							break;
-					}
-				}
-			});
-		}
-
-		mDialogDownloading = new ProgressDialog(BookDetailsActivity.this);
-		mDialogDownloading.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		mDialogDownloading.setCancelable(false);
-		mDialogDownloading.setCanceledOnTouchOutside(false);
-		mDialogDownloading.setMax(100);
-		mDialogDownloading.setProgress(Utility.calcProgress(progress, book.pageCount));
-		mDialogDownloading.setTitle(getString(R.string.dialog_download_title, book.getAvailableTitle()));
-		mDialogDownloading.setMessage(getString(R.string.dialog_download_progress, progress, book.pageCount));
-		mDialogDownloading.setButton(
-				DialogInterface.BUTTON_POSITIVE,
-				getString(R.string.dialog_download_pause),
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialogInterface, int i) {
-						if (mDownloader.isThreadAllOk()) return;
-						if (mDownloader.isDownloading()) {
-							mDownloader.pause();
-						} else {
-							mDownloader.continueDownload();
-						}
-					}
-				}
-		);
-		mDialogDownloading.setButton(
-				DialogInterface.BUTTON_NEGATIVE,
-				getString(android.R.string.cancel),
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialogInterface, int i) {
-						mDownloader.stop();
-					}
-				}
-		);
-
-		mDialogDownloading.show();
-		mFileCacheManager.saveBookDataToExternalPath(book);
-		mDownloader.start();
 	}
 
 	private void showFAB() {

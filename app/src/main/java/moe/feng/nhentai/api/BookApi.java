@@ -28,7 +28,7 @@ public class BookApi {
 			BaseMessage ms = PageApi.getBookDetailList(source.bookId);
 			m.createCacheFromBook((Book) ms.getData());
 
-			Log.d(TAG, "getBook 2: "+((Book) ms.getData()).titlePretty);
+			Log.d(TAG, "getBook: "+((Book) ms.getData()).titlePretty);
 
 			return ms;
 
@@ -89,38 +89,5 @@ public class BookApi {
 			return null;
 		}
 	}
-
-	/*public static File getCoverFile(Context context, Book book) {
-		String url = book.bigCoverImageUrl;
-		FileCacheManager m = FileCacheManager.getInstance(context);
-
-		if (!m.cacheExistsUrl(CACHE_COVER, url, book.title) && !m.createCacheFromNetwork(CACHE_COVER, url, book.title)) {
-			return null;
-		}
-
-		return m.getBitmapUrlFile(CACHE_COVER, url, book.title);
-	}
-
-	public static File getThumbFile(Context context, Book book) {
-		String url = book.previewImageUrl;
-		FileCacheManager m = FileCacheManager.getInstance(context);
-
-		if (!m.cacheExistsUrl(CACHE_THUMB, url, book.title) && !m.createCacheFromNetwork(CACHE_THUMB, url, book.title)) {
-			return null;
-		}
-
-		return m.getBitmapUrlFile(CACHE_THUMB, url, book.title);
-	}
-
-	public static File getPageThumbFile(Context context, Book book, int position) {
-		String url = NHentaiUrl.getThumbPictureUrl(book.galleryId, Integer.toString(position));
-		FileCacheManager m = FileCacheManager.getInstance(context);
-
-		if (!m.cacheExistsUrl(CACHE_PAGE_THUMB, url, book.title) && !m.createCacheFromNetwork(CACHE_PAGE_THUMB, url, book.title)) {
-			return null;
-		}
-
-		return m.getBitmapUrlFile(CACHE_PAGE_THUMB, url,book.title);
-	}*/
 
 }

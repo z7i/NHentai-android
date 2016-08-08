@@ -13,7 +13,7 @@ public class BookDownloader {
 
 	private Context context;
 	private Book book;
-	private int currentPosition, downloadingPosition = -1;
+	private int downloadingPosition = -1;
 	private OnDownloadListener listener;
 	private DownloadThread mDownloadThread;
 	private FileCacheManager mFCM;
@@ -24,19 +24,14 @@ public class BookDownloader {
 
 	public static final String TAG = BookDownloader.class.getSimpleName();
 
+	public Book getBook() {
+		return book;
+	}
+
 	public BookDownloader(Context context, Book book) {
 		this.context = context;
 		this.book = book;
 		this.mFCM = FileCacheManager.getInstance(context);
-	}
-
-	public void setCurrentPosition(int currentPosition) {
-		this.currentPosition = currentPosition;
-	}
-
-	@SuppressWarnings("unused")
-	public int getCurrentPosition() {
-		return this.currentPosition;
 	}
 
 	public void start() {
@@ -151,7 +146,6 @@ public class BookDownloader {
 			downloadingPosition = -1;
 			while (isRunning && !isAllDownloaded()) {
 				downloadingPosition++;
-				Log.i(TAG, "downloadingPosition:" + downloadingPosition);
 				if (state == STATE_PAUSE) {
 					Log.i(TAG, "download paused");
 					if (listener != null) listener.onStateChange(STATE_PAUSE, getDownloadedCount());
@@ -177,12 +171,12 @@ public class BookDownloader {
 					e.printStackTrace();
 				}
 				if (tempFile != null) {
-					Log.i(TAG, "download finish");
+					Log.i(TAG, "Finished downloading page " + downloadingPosition+1);
 					isDownloaded[downloadingPosition] = true;
-					if (listener != null) listener.onFinish(currentPosition, getDownloadedCount());
+					if (listener != null) listener.onFinish(book.pageCount,getDownloadedCount());
 				} else {
 					Log.i(TAG, "download error");
-					if (listener != null) listener.onError(currentPosition, -1);
+					if (listener != null) listener.onError(book.pageCount, -1);
 				}
 			}
 			Log.i(TAG, "all downloaded");

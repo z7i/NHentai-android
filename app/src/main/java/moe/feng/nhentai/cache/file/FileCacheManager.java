@@ -22,10 +22,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.BookApi;
 import moe.feng.nhentai.api.common.NHentaiUrl;
 import moe.feng.nhentai.cache.common.Constants;
 import moe.feng.nhentai.model.Book;
+import moe.feng.nhentai.ui.HomeActivity;
 
 import static moe.feng.nhentai.BuildConfig.DEBUG;
 
@@ -75,15 +77,15 @@ public class FileCacheManager {
 		}
 
 		HttpURLConnection conn;
-
 		try {
-			conn = (HttpURLConnection) u.openConnection();
+			conn =  (HttpURLConnection)  u.openConnection();
+			conn.setRequestProperty("User-Agent",HomeActivity.myContext.getString(R.string.user_agent));
+			conn.connect();
 		} catch (IOException e) {
 			return false;
 		}
 
 		conn.setConnectTimeout(5000);
-
 		try {
 			if (conn.getResponseCode() != 200) {
 				if (url.contains("jpg")) {
@@ -94,6 +96,7 @@ public class FileCacheManager {
 					}
 					try {
 						conn = (HttpURLConnection) u.openConnection();
+						conn.setRequestProperty("User-Agent",HomeActivity.myContext.getString(R.string.user_agent));
 					} catch (IOException ex) {
 						return false;
 					}
@@ -627,6 +630,12 @@ public class FileCacheManager {
 		String src = getCachePath(Constants.CACHE_PAGE_IMG, getCacheName(NHentaiUrl.getOriginPictureUrl(book.galleryId, Integer.toString(page))), book.title);
 		File target = new File(path);
 		File srcFile = new File(src);
+
+		if (target.exists()&& target.isFile()){
+			Log.d(TAG, "saveToExternalPath: File Alredy Downloaded");
+			return true;
+		}
+
 
 		File targetParent = new File(mExternalDir.getAbsolutePath() + "/Books/" + book.title);
 		if (targetParent.isFile()) {

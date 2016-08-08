@@ -76,9 +76,9 @@
     <string name="dialog_ask_d_or_d_delete">删除</string>
     <string name="dialog_ask_d_or_d_continue">继续下载</string>
 
-    <string name="dialog_download_title">正在下载 %s....</string>
+    <string name="dialog_download_title">下载图书：</string>
     <string name="dialog_download_restart">卡住不动了?</string>
-    <string name="dialog_download_progress">%1$d/%2$d</string>
+    <string name="dialog_download_progress">下载进度：</string>
     <string name="dialog_download_paused">(已暂停)</string>
     <string name="dialog_download_notification_title">下载完毕!</string>
     <string name="dialog_download_pause">暂停/继续</string>
@@ -158,5 +158,8 @@
 		如果你非常喜欢 NH 本子并且乐意捐助我们，请发送到支付宝：316643843\@qq.com</string>
     <string name="favorite_categories_add_finished">类别成功添加到收藏。</string>
     <string name="favorite_categories_remove_finished">從分類收集成功取出。</string>
+    <string name="user_agent">NHBooks/Android Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.0.0 Mobile</string>
+    <string name="dialog_download_finished">下载完成！</string>
+    <string name="dialog_download_error">錯誤下載！</string>
 
 </resources>
