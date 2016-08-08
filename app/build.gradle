@@ -8,8 +8,8 @@ android {
 		applicationId "moe.feng.nhentai"
 		minSdkVersion 17
 		targetSdkVersion 24
-		versionCode 29
-		versionName "1.6.2"
+		versionCode 30
+		versionName "1.6.3"
 	}
 
 	buildTypes {
