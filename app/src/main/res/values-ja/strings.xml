@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">NHBooks</string>
+    <string name="action_settings">設定</string>
+    <string name="action_search">検索</string>
+    <string name="action_next_page">次のページの読み込み</string>
+
+	<!-- Initial -->
+	<string name="dialog_permission_title">アクセス許可が必要です</string>
+	<string name="dialog_permission_msg">NHBooks は画像を保存するために外部ストレージへの読み書きのアクセス許可が必要です。アクセス許可がないとこのアプリは正しく動作することができません。</string>
+	<string name="snack_permission_failed">アクセス許可の要求が拒否されました!</string>
+
+	<!-- New Home Design -->
+    <string name="search_bar_hint">ここで本の検索....</string>
+	<string name="title_bar_main_recent">最新の本</string>
+	<string name="title_bar_updated_time_just_now">今更新したばかり</string>
+    <string name="title_bar_updated_time_at">%s に更新</string>
+	<string name="title_bar_updated_time_null">プルダウンで最新の情報を取得</string>
+
+    <string name="item_home">Home</string>
+    <string name="item_download">保存した本</string>
+    <string name="item_favorite_books">お気に入りの本</string>
+    <string name="item_favorite_categories">お気に入りの分類</string>
+    <string name="item_tag">タグ</string>
+    <string name="item_character">キャラクター</string>
+	<string name="item_group_other">その他</string>
+	<string name="item_settings">設定</string>
+	<string name="item_open_nhentai">NHentai.net を開く</string>
+
+    <string name="title_page_latest">最新</string>
+    <string name="title_page_download">保存した本</string>
+    <string name="title_page_favorite">お気に入りの本</string>
+    <string name="title_page_favorite_category">お気に入りの分類</string>
+    <string-array name="page_titles">
+        <item>@string/title_page_latest</item>
+        <item>@string/title_page_download</item>
+        <item>@string/title_page_favorite</item>
+        <item>@string/title_page_favorite_category</item>
+    </string-array>
+    <string name="tips_network_error">NHentai への接続に失敗しました。</string>
+    <string name="snack_action_try_again">再試行</string>
+    <string name="snack_action_get_it">うまくいきました</string>
+
+    <string name="label_added_to_favorite">FAV.</string>
+
+    <!-- Random -->
+    <string name="activity_random">自分はついてると思う</string>
+	<string name="random_failed_set">NHentai から何も取得できませんでした。再試行しますか?</string>
+	<string name="random_no_data">先にシャッフルボタンをクリックしてください。</string>
+
+    <!-- Details -->
+    <string name="activity_details">詳細</string>
+    <string name="tag_type_tag">タグ: </string>
+    <string name="tag_type_parodies">パロディ: </string>
+    <string name="tag_type_language">言語: </string>
+    <string name="tag_type_characters">キャラクター: </string>
+    <string name="tag_type_artists">アーティスト: </string>
+    <string name="tag_type_group">グループ: </string>
+    <string name="tag_type_upload_time">アップロード時刻: </string>
+    <string name="action_favorite_false">お気に入りに追加</string>
+    <string name="action_favorite_true">お気に入りから削除</string>
+    <string name="favorite_add_finished">本をお気に入りに追加しました。</string>
+    <string name="favorite_categories_add_finished">分類をお気に入りに追加しました。</string>
+    <string name="favorite_remove_finished">本をお気に入りから削除しました。</string>
+    <string name="favorite_categories_remove_finished">分類をお気に入りから削除しました。</string>
+    <string name="action_share">共有....</string>
+	<string name="action_share_send_text">面白い本を見つけました:\"%1$s\" リンク:%2$s (R-18 ご注意ください! Share from NHBooks クライアントから共有 https://github.com/fython/NHentai-android )</string>
+	<string name="action_share_send_category">%1$s は素晴らしいです。 リンク:%2$s (R-18 ご注意ください! NHBooks クライアントから共有 https://github.com/fython/NHentai-android )</string>
+    <string name="action_download_none">外部に保存</string>
+    <string name="action_download_okay">削除</string>
+    <string name="dialog_ask_download_title">この本をダウンロードしますか?</string>
+    <string name="dialog_ask_download_summary">\"%s\" に保存されます。</string>
+    <string name="dialog_ask_delete_title">この本を削除しますか?</string>
+    <string name="dialog_ask_delete_summary">ご注意ください! 削除した後で、操作は取り消しできません。</string>
+    <string name="dialog_ask_d_or_d_title">この本は完全にダウンロードされていません。</string>
+    <string name="dialog_ask_d_or_d_summary">\"%2$s\" の %1$d ページ、ダウンロードしました。</string>
+    <string name="dialog_ask_d_or_d_delete">削除</string>
+    <string name="dialog_ask_d_or_d_continue">ダウンロードを継続</string>
+
+    <string name="dialog_download_title">ダウンロード中の本: </string>
+	<string name="dialog_download_progress">ダウンロードの状況: </string>
+    <string name="dialog_download_finished">ダウンロード完了!</string>
+    <string name="dialog_download_error"> ダウンロードのエラー!</string>
+
+	<string name="dialog_download_paused">(一時停止)</string>
+    <string name="dialog_download_restart">問題がありますか?</string>
+    <string name="dialog_download_notification_title">ダウンロードが完了しました!</string>
+    <string name="dialog_download_pause">一時停止/継続</string>
+	<string name="dialog_download_copying">画像を外部ストレージにコピー中.... しばらくお待ちください。</string>
+
+	<string name="title_preview">プレビュー</string>
+	<string name="title_recommend">お薦めの本</string>
+
+    <string name="activity_gallery">ギャラリー</string>
+    <string name="info_total_pages">"%d ページ"</string>
+	<string name="action_save">保存</string>
+	<string name="action_save_succeed">現在の画像を \"%s\" に保存しました。</string>
+	<string name="action_save_failed">現在の画像はダウンロードされていません。 完了するまでお待ちください。</string>
+	<string name="action_save_unknown">画像の保存に失敗しました。</string>
+
+    <string name="activity_search">本を検索</string>
+	<string name="search_text_hint">本の名前を入力....</string>
+	<string name="tips_search_text_empty">本の名前を入力してください!</string>
+    <string name="action_clear">テキストをクリア</string>
+
+    <string name="activity_search_result">検索結果</string>
+    <string name="title_search_result">検索結果: %s</string>
+    <string name="tips_no_result">結果はありません。</string>
+    <string name="tips_no_more_results">これは最後のページです。</string>
+
+	<!-- Category -->
+	<string-array name="category_tabs_title">
+		<item>最新</item>
+		<item>人気</item>
+	</string-array>
+
+    <!-- Settings -->
+    <string name="settings_main">設定</string>
+	<string name="snackbar_need_restart">設定を適用するためアプリの再起動が必要です。</string>
+	<string name="snackbar_need_restart_action">今すぐ再起動</string>
+	<string name="category_options">アプリケーションのオプション</string>
+    <string name="category_about">アプリについて</string>
+    <string name="set_title_app_version">アプリケーションのバージョン</string>
+    <string name="settings_license">ライセンス</string>
+    <string name="set_title_google_plus">Google+</string>
+    <string name="set_title_google_plus_summary">+Fung Jichun</string>
+    <string name="set_title_github">Github リポジトリ</string>
+    <string name="set_title_github_website">"https://github.com/fython/NHentai-android"</string>
+	<string name="set_title_gpgroup">Google+ グループ</string>
+	<string name="set_title_gpgroup_link">"https://plus.google.com/communities/106652485673516183999"</string>
+    <string name="set_title_telegram">Telegram グループ</string>
+    <string name="set_title_telegram_link">"https://telegram.me/joinchat/0668165200bd194d0a89b8995057e330"</string>
+	<string name="set_title_alipay">Alipay 経由で寄付する</string>
+	<string name="set_title_alipay_address">316643843\@qq.com</string>
+    <string name="category_ui">外観</string>
+    <string name="category_list">リスト</string>
+    <string name="set_title_hd_image">高品質のプレビュー画像を読み込む</string>
+    <string name="set_title_hd_image_summary">さらにデータとメモリを使用します</string>
+    <string name="set_title_cards_count">横方向のカード件数</string>
+    <string name="set_title_cards_count_summary">現在の値: %s</string>
+    <string-array name="set_cards_count_options">
+        <item>自動計算</item>
+        <item>カスタム</item>
+    </string-array>
+    <string-array name="set_cards_count_options_value">
+        <item>-1</item>
+        <item>0</item>
+    </string-array>
+	<string name="category_details">情報ページ</string>
+	<string name="set_title_full_image_in_details">プレビューとしてフル HD 画像を読み込む</string>
+	<string name="set_title_full_image_in_details_summary">多くのデータとメモリを消費します。</string>
+	<string name="set_title_allow_standalone_task">スタンドアロンタスクを許可</string>
+	<string name="set_title_allow_standalone_task_desc">それぞれの本が、スタンドアロンタスクとして表示されます。</string>
+	<string name="set_title_android_too_old_desc">この機能はお使いの Android バージョンでサポートされていません</string>
+	<string name="settings_storage">ストレージ</string>
+	<string name="category_folder">フォルダー</string>
+	<string name="set_title_nomedia">保存した本をギャラリーに表示しない</string>
+	<string name="set_title_nomedia_summary">ディレクトリーに \".nomedia\" を作成して、秘密の場所を保護します</string>
+
+	<!-- Donate -->
+	<string name="dialog_donate_title">寄付してください</string>
+	<string name="dialog_donate_message">素敵なアプリケーションには、時間、エネルギー、そしてあなたのサポートが必要です。
+		NHBooks を気に入っていただけた場合、私たちに寄付をいただけませんでしょうか。 ここ (Alipay):316643843\@qq.com にご支援をお送りください</string>
+
+    <!--User Agent -->
+    <string name="user_agent">NHBooks/Android Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.0.0 Mobile</string>
+
+</resources>
