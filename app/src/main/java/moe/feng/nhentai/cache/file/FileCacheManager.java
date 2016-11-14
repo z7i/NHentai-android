@@ -118,13 +118,18 @@ public class FileCacheManager {
 	public boolean createCacheFromBook(Book book){
 		String path = mCacheDir.getAbsolutePath() + "/Books/" + book.title;
 		File d = new File(path);
-
-		if (!d.isDirectory()) {
-			if(!d.delete()){
-				Log.i(TAG, "createCacheFromBook: Error Deleting File");
-			}
+		if (!d.exists()){
 			if(!d.mkdirs()){
-				Log.i(TAG, "createCacheFromBook: Error Creating Directory");
+				Log.i(TAG, "createCacheFromBook: Error Creating Cache Directory");
+			}
+			else{
+				Log.i(TAG, "createCacheFromBook: Cache Directory created succesfully");
+			}
+		}
+
+		else if(!d.isDirectory()) {
+			if(!d.mkdirs()){
+				Log.i(TAG, "createCacheFromBook: Error Creating Cache Directory");
 			}
 		}
 
@@ -132,18 +137,14 @@ public class FileCacheManager {
 
 		if(!f.exists()){
 			try {
-
 				OutputStream out = new FileOutputStream(f);
-
 				out.write(book.toJSONString().getBytes());
-
 				out.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 				return false;
 			}
 		}
-
 
 		return true;
 	}
@@ -280,7 +281,7 @@ public class FileCacheManager {
 		bounds.inJustDecodeBounds=true;
 		BitmapFactory.decodeStream(ipt,null,bounds);
 
-		bounds.inSampleSize = calculateInSampleSize(bounds,480, 640);
+		bounds.inSampleSize = calculateInSampleSize(bounds,720, 1280);
 
 		Log.d(TAG, "getBitmap: " + bounds.inSampleSize);
 		FileInputStream iptF;

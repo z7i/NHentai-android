@@ -2,10 +2,14 @@ package moe.feng.nhentai.ui.fragment.settings;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import moe.feng.nhentai.R;
+import moe.feng.nhentai.dao.SearchHistoryManager;
 import moe.feng.nhentai.ui.SettingsActivity;
 import moe.feng.nhentai.view.pref.Preference;
+
+import static android.R.attr.duration;
 
 public class SettingsMain extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
@@ -17,12 +21,13 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 
 	private Preference mAppearancePref;
 	private Preference mStoragePref;
+	private Preference mSearchPref;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.settings_main);
-
+		mSearchPref = (Preference) findPreference("search");
 		Preference mVersionPref = (Preference) findPreference("version");
 		mLicensePref = (Preference) findPreference("license");
 		mGooglePlusPref = (Preference) findPreference("google_plus");
@@ -40,7 +45,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 			Log.d(SettingsMain.class.getSimpleName(), "onCreate: Error getting version");
 		}
 		mVersionPref.setSummary(version);
-
+		mSearchPref.setOnPreferenceClickListener(this);
 		mLicensePref.setOnPreferenceClickListener(this);
 		mGooglePlusPref.setOnPreferenceClickListener(this);
 		mGithubPref.setOnPreferenceClickListener(this);
@@ -78,6 +83,11 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 		}
 		if (pref == mGoogleGroupPref) {
 			openWebUrl(getString(R.string.set_title_gpgroup_link));
+		}
+		if (pref == mSearchPref) {
+			SearchHistoryManager.getInstance(getParentActivity().getBaseContext(), "all").cleanAll();
+			Toast.makeText(getParentActivity().getBaseContext(), R.string.search_cleared, Toast.LENGTH_LONG).show();
+			return true;
 		}
 		return false;
 	}

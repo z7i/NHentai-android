@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
@@ -62,11 +63,10 @@ public class SearchActivity extends AbsActivity {
 	private SwipeRefreshLayout mSwipeRefreshLayout;
 
 	private RecyclerView mHistoryList, mResultList;
-	private BookListRecyclerAdapter mAdapter;
 	private HistoryRecyclerAdapter mHistoryAdapter;
 	private StaggeredGridLayoutManager mLayoutManager;
-
-	private ArrayList<Book> mBooks;
+	private Handler mHandler = new Handler();
+	private ArrayList<Book> mBooks = new ArrayList<>();
 	private int mNowPage = 1, mHorCardCount = 2;
 	private String keyword;
 	private FileCacheManager mFileCacheManager;
@@ -100,7 +100,7 @@ public class SearchActivity extends AbsActivity {
 	public void onBackPressed(){
 		super.onBackPressed();
 		mBooks =null;
-		mAdapter.notifyDataSetChanged();
+		mResultList.getAdapter().notifyDataSetChanged();
 		mResultList.setAdapter(null);
 		Runtime.getRuntime().gc();
 	}
@@ -134,12 +134,9 @@ public class SearchActivity extends AbsActivity {
 		}
 
 		mLayoutManager = new StaggeredGridLayoutManager(mHorCardCount, StaggeredGridLayoutManager.VERTICAL);
+		mFileCacheManager = FileCacheManager.getInstance(getApplicationContext());
 		mResultList.setLayoutManager(mLayoutManager);
 		mResultList.setHasFixedSize(true);
-
-		mBooks = new ArrayList<>();
-		mAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM, mSets);
-		setResultListAdapter(mAdapter);
 
 		mSwipeRefreshLayout.setColorSchemeResources(
 				R.color.deep_purple_500, R.color.pink_500, R.color.orange_500, R.color.brown_500,
@@ -152,9 +149,6 @@ public class SearchActivity extends AbsActivity {
 					mSwipeRefreshLayout.setRefreshing(true);
 				}
 
-				mBooks = new ArrayList<>();
-				mAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM, mSets);
-				setResultListAdapter(mAdapter);
 				mNowPage=1;
 				new PageGetTask().execute(getApplicationContext());
 			}
@@ -209,7 +203,7 @@ public class SearchActivity extends AbsActivity {
 		});
 	}
 
-	private void setResultListAdapter(BookListRecyclerAdapter adapter) {
+	private void setResultListAdapter(final BookListRecyclerAdapter adapter) {
 		adapter.setOnItemClickListener(new AbsRecyclerViewAdapter.OnItemClickListener() {
 			@Override
 			public void onItemClick(int position, AbsRecyclerViewAdapter.ClickableViewHolder viewHolder) {
@@ -220,7 +214,7 @@ public class SearchActivity extends AbsActivity {
 		adapter.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
 			public void onScrolled(RecyclerView rv, int dx, int dy) {
-				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[mHorCardCount])[0] >= mAdapter.getItemCount() - 2) {
+				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[mHorCardCount])[0] >= adapter.getItemCount() - 2) {
 					mSwipeRefreshLayout.setRefreshing(true);
 					++mNowPage;
 					new PageGetTask().execute(getApplicationContext());
@@ -228,9 +222,14 @@ public class SearchActivity extends AbsActivity {
 			}
 		});
 
-		mResultList.setAdapter(adapter);
-
-		mFileCacheManager = FileCacheManager.getInstance(getApplicationContext());
+		if (mResultList.getAdapter()== null){
+			Log.d("Me", "set");
+			mResultList.setAdapter(adapter);
+		}
+		else{
+			Log.d("Me", "swap");
+			mResultList.swapAdapter(adapter, false);
+		}
 	}
 
 	private void setHistoryListAdapter(HistoryRecyclerAdapter adapter) {
@@ -262,9 +261,6 @@ public class SearchActivity extends AbsActivity {
 		mResultList.setVisibility(View.VISIBLE);
 
 		mSwipeRefreshLayout.setRefreshing(true);
-		mBooks = new ArrayList<>();
-		mAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM, mSets);
-		setResultListAdapter(mAdapter);
 		mNowPage=1;
 		new PageGetTask().execute(getApplicationContext());
 
@@ -379,6 +375,7 @@ public class SearchActivity extends AbsActivity {
 
 				msg = PageApi.getSearchPageList(keyword, mNowPage);
 				if (msg.getCode() == 0 && msg.getData() != null) {
+
 					ArrayList<Book> temp = msg.getData();
 					if (temp.isEmpty()) {
 						msg.setCode(MSG_CODE_NO_MORE_RESULTS);
@@ -388,7 +385,7 @@ public class SearchActivity extends AbsActivity {
 						for (int i = 0; i < mBooks.size() && !hasExist; i++) {
 							hasExist = mBooks.get(i).bookId.equals(firstBook.bookId);
 						}
-						if (hasExist) {
+						if (hasExist && !mSwipeRefreshLayout.isRefreshing()) {
 							msg.setCode(MSG_CODE_NO_MORE_RESULTS);
 						}
 					}
@@ -405,16 +402,24 @@ public class SearchActivity extends AbsActivity {
 					case 0:
 						if (msg.getData() != null) {
 							ArrayList<Book> mArray =  msg.getData();
-
 							if (!mArray.isEmpty()) {
+								if (mNowPage ==1) {
+									mBooks.clear();
+								}
 								mBooks.addAll(mArray);
-								for(Book b : mArray){
+
+								for(Book b : mBooks){
 									mFileCacheManager.createCacheFromBook(b);
 								}
-								mAdapter.notifyDataSetChanged();
-								if (mNowPage == 1) {
-									mResultList.setAdapter(mAdapter);
+
+								if (mNowPage ==1){
+									BookListRecyclerAdapter newAdapter = new BookListRecyclerAdapter(mResultList, mBooks, mFM, mSets);
+									setResultListAdapter(newAdapter);
 								}
+								else{
+									mResultList.getAdapter().notifyDataSetChanged();
+								}
+
 							} else {
 								Snackbar.make($(R.id.root_layout), R.string.tips_no_result, Snackbar.LENGTH_LONG).show();
 							}
