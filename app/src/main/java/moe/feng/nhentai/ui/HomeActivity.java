@@ -170,6 +170,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				FilesUtil.createNewFile(FilesUtil.NOMEDIA_FILE);
 			}
 			onLoadMain();
+            Updates.check(this);
 		} else {
 			new AlertDialog.Builder(this)
 					.setTitle(R.string.dialog_permission_title)
