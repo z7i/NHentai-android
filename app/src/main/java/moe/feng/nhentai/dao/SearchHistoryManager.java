@@ -88,7 +88,6 @@ public class SearchHistoryManager {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	public void cleanAll() {
 		mDB.clear();
 		mDB.persist();

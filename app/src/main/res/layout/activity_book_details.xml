@@ -97,6 +97,7 @@
 	                android:layout_marginTop="16dp"
 	                android:layout_marginBottom="16dp"
 	                android:layout_marginStart="16dp"
+					android:layout_marginLeft="16dp"
 	                android:text="@string/title_preview"
 		            android:textColor="?attr/colorAccent"
 		            android:textAppearance="@style/TextAppearance.AppCompat.Button"/>
@@ -122,7 +123,9 @@
 		            android:layout_width="wrap_content"
 		            android:layout_marginTop="16dp"
 		            android:layout_marginBottom="16dp"
-		            android:layout_marginStart="16dp"
+					android:layout_marginEnd="@dimen/floating_action_button_margin"
+					android:layout_marginLeft="@dimen/floating_action_button_margin"
+					android:layout_marginRight="@dimen/floating_action_button_margin"
 		            android:text="@string/title_recommend"
 		            android:textColor="?attr/colorAccent"
 		            android:textAppearance="@style/TextAppearance.AppCompat.Button"/>
@@ -220,6 +223,7 @@
         android:layout_gravity="end"
         android:layout_marginTop="@dimen/appbar_parallax_max_height"
         android:layout_marginEnd="@dimen/floating_action_button_margin"
+		android:layout_marginRight="@dimen/floating_action_button_margin"
         android:src="@drawable/ic_photo_library_black_24dp"
         android:tint="@android:color/white"
         app:borderWidth="0dp"

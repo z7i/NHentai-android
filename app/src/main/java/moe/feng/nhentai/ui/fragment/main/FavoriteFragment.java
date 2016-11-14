@@ -69,7 +69,6 @@ public class FavoriteFragment extends LazyFragment {
 			}
 		});
 		mRecyclerView.setAdapter(adapter);
-		adapter.notifyDataSetChanged();
 	}
 
 	public void scrollToTop() {

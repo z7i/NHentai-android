@@ -29,7 +29,6 @@ import moe.feng.nhentai.util.Utility;
 public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 
 	private ArrayList<Book> data;
-	private FavoritesManager fm;
 	private Settings sets;
 	private ColorGenerator mColorGenerator;
 
@@ -41,10 +40,14 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 
 	public BookListRecyclerAdapter(RecyclerView recyclerView, ArrayList<Book> data, FavoritesManager fm, Settings sets) {
 		super(recyclerView);
-		this.data = data;
-		this.fm = fm;
+		if (data == null){
+			this.data = fm.toArray();
+		}
+		else	this.data = data;
+
 		this.sets = sets;
 		mColorGenerator = ColorGenerator.MATERIAL;
+		setHasStableIds(true);
 	}
 
 	@Override
@@ -53,7 +56,6 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 		((ViewHolder) holder).labelView.remove();
 		((ViewHolder) holder).mPreviewImageView.setImageBitmap(null);
 		((ViewHolder) holder).mPreviewImageView.invalidate();
-
 		((ViewHolder) holder).mLangFieldView.setImageBitmap(null);
 		((ViewHolder) holder).mLangFieldView.invalidate();
 	}
@@ -69,7 +71,6 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 	public void onBindViewHolder(final ClickableViewHolder holder, final int position) {
 		super.onBindViewHolder(holder, position);
 		if (holder instanceof ViewHolder) {
-			ArrayList<Book> data = this.data == null ? fm.toArray() : this.data;
 			final ViewHolder mHolder = (ViewHolder) holder;
 			String text = "        " + data.get(position).getAvailableTitle();
 			mHolder.mTitleTextView.setText(text);
@@ -94,31 +95,12 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 			mHolder.mImagePlaceholder = drawable;
 
 			if (previewImageUrl != null) {
-				ViewTreeObserver vto = mHolder.mPreviewImageView.getViewTreeObserver();
-				vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-					@Override
-					public void onGlobalLayout() {
-						ArrayList<Book> data = BookListRecyclerAdapter.this.data == null ?
-								fm.toArray() : BookListRecyclerAdapter.this.data;
-						if (data.size() < holder.getAdapterPosition()+ 1) return;
-						int thumbWidth = data.get(position).thumbWidth;
-						int thumbHeight = data.get(position).thumbHeight;
-						if (thumbWidth > 0 && thumbHeight > 0) {
-							int width = mHolder.mPreviewImageView.getMeasuredWidth();
-							int height = Math.round(width * ((float) thumbHeight / thumbWidth));
-							mHolder.mPreviewImageView.getLayoutParams().height = height;
-							mHolder.mPreviewImageView.setMinimumHeight(height);
-						}
-						mHolder.mPreviewImageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-					}
-				});
 				new ImageDownloader().execute(mHolder.getParentView());
 			}
 
 			mHolder.book = data.get(position);
 
-			if (fm.contains(mHolder.book.bookId)) {
+			if (FavoritesManager.getInstance(getContext()).contains(mHolder.book.bookId)) {
 				Log.i(TAG, "Find favorite: " + mHolder.book.bookId);
 				mHolder.labelView.setText(R.string.label_added_to_favorite);
 				mHolder.labelView.setBackgroundResource(R.color.blue_500);
@@ -126,10 +108,13 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 			}
 		}
 	}
+	@Override
+	public long getItemId(int position) {
+		return Long.valueOf(data.get(position).galleryId);
+	}
 
 	@Override
 	public int getItemCount() {
-		ArrayList<Book> data = this.data == null ? fm.toArray() : this.data;
 		return data.size();
 	}
 

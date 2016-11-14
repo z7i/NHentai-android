@@ -5,7 +5,7 @@
 	<item android:id="@+id/action_favorite"
 	      android:title="@string/action_favorite_false"
 	      android:orderInCategory="0"
-	      android:icon="@drawable/ic_favorite_outline_white_24dp"
+	      android:icon="@drawable/ic_favorite_category_white_24dp"
 	      app:showAsAction="ifRoom"/>
 
 	<item android:id="@+id/action_share"

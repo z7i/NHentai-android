@@ -742,7 +742,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 											.setContentText(getString(R.string.dialog_download_progress))
 											.setSmallIcon(R.drawable.ic_file_download_white_24dp);
 
-									mNotifyManager.notify(1,mBuilder.build());
+									mNotifyManager.notify(Integer.valueOf(book.bookId),mBuilder.build());
 
 									if (mDownloader == null) {
 
@@ -764,7 +764,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 															isDownloaded=true;
 															if(book != null) invalidateOptionsMenu();
 														}
-														mNotifyManager.notify(1, mBuilder.build());
+														mNotifyManager.notify(Integer.valueOf(mDownloader.getBook().bookId), mBuilder.build());
 													}
 												});
 

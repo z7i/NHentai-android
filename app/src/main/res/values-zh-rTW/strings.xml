@@ -161,5 +161,8 @@
     <string name="user_agent">NHBooks/Android Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.0.0 Mobile</string>
     <string name="dialog_download_finished">下載完成！</string>
     <string name="dialog_download_error">錯誤下載！</string>
+    <string name="clear_search_inputs">清除所有保存的搜索</string>
+    <string name="clear_search_title">清除保存的搜索</string>
+    <string name="search_cleared">搜索结果成功地清除</string>
 
 </resources>

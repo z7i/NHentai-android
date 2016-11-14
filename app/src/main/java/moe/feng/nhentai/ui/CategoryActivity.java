@@ -48,12 +48,10 @@ public class CategoryActivity extends AbsActivity {
 
 		Intent intent = getIntent();
 		category = new Gson().fromJson(intent.getStringExtra(EXTRA_CATEGORY_JSON), Category.class);
+		setContentView(R.layout.activity_search_result);
 
 		mFCM = FavoriteCategoriesManager.getInstance(getApplicationContext());
-
 		isFavorite = mFCM.contains(category);
-
-		setContentView(R.layout.activity_search_result);
 
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -85,6 +83,9 @@ public class CategoryActivity extends AbsActivity {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			mActionBar.setElevation(getResources().getDimension(R.dimen.appbar_elevation));
 		}
+
+		invalidateOptionsMenu();
+
 	}
 
 	@Override
@@ -135,6 +136,7 @@ public class CategoryActivity extends AbsActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
+
 		if (id == R.id.action_favorite) {
 			if (isFavorite) {
 				mFCM.remove(mFCM.find(category));

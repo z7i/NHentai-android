@@ -95,25 +95,6 @@ public class BookGridRecyclerAdapter extends AbsRecyclerViewAdapter {
 			mHolder.mImagePlaceholder = drawable;
 
 			if (previewImageUrl != null) {
-				ViewTreeObserver vto = mHolder.mPreviewImageView.getViewTreeObserver();
-				vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-					@Override
-					public void onGlobalLayout() {
-						ArrayList<Book> data = BookGridRecyclerAdapter.this.data == null ?
-								fm.toArray() : BookGridRecyclerAdapter.this.data;
-						if (data.size() < holder.getAdapterPosition() + 1) return;
-						int thumbWidth = data.get(position).thumbWidth;
-						int thumbHeight = data.get(position).thumbHeight;
-						if (thumbWidth > 0 && thumbHeight > 0) {
-							int width = mHolder.mPreviewImageView.getMeasuredWidth();
-							int height = Math.round(width * ((float) thumbHeight / thumbWidth));
-							mHolder.mPreviewImageView.getLayoutParams().height = height;
-							mHolder.mPreviewImageView.setMinimumHeight(height);
-						}
-						mHolder.mPreviewImageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-					}
-				});
 				new ImageDownloader().execute(mHolder.getParentView());
 			}
 

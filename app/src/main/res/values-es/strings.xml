@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">NHBooks</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="action_search">Buscar</string>
+    <string name="action_next_page">Cargar página siguiente</string>
+
+    <!-- Initial -->
+    <string name="dialog_permission_title">Se requiere permiso</string>
+    <string name="dialog_permission_msg">NHBooks necesita permiso para leer y escribir en el almacenamiento externo para guardar imágenes. Sin esto, la aplicación podría no funcionar correctamente.</string>
+    <string name="snack_permission_failed">¡La solicitud de permiso fe denegada!</string>
+
+    <!-- New Home Design -->
+    <string name="search_bar_hint">Busca libros aquí....</string>
+    <string name="title_bar_main_recent">Últimos libros</string>
+    <string name="title_bar_updated_time_just_now">Actualizado hace un momento</string>
+    <string name="title_bar_updated_time_at">Actualizado el %s</string>
+    <string name="title_bar_updated_time_null">Tira hacia abajo para obtener la información más reciente</string>
+
+    <string name="item_home">Inicio</string>
+    <string name="item_download">Libros guardados</string>
+    <string name="item_favorite_books">Libros favoritos</string>
+    <string name="item_favorite_categories">Categorías favoritos</string>
+    <string name="item_tag">Etiquetas</string>
+    <string name="item_character">Personajes</string>
+    <string name="item_group_other">Otro</string>
+    <string name="item_settings">Ajustes</string>
+    <string name="item_open_nhentai">Abrir NHentai.net</string>
+
+    <string name="title_page_latest">Recientes</string>
+    <string name="title_page_download">Libros guardados</string>
+    <string name="title_page_favorite">Libros favoritos</string>
+    <string name="title_page_favorite_category">Categorías favoritas</string>
+    <string-array name="page_titles">
+        <item>@string/title_page_latest</item>
+        <item>@string/title_page_download</item>
+        <item>@string/title_page_favorite</item>
+        <item>@string/title_page_favorite_category</item>
+    </string-array>
+    <string name="tips_network_error">No se pudo conectar con NHentai.</string>
+    <string name="snack_action_try_again">Intentar de nuevo</string>
+    <string name="snack_action_get_it">Entiendo</string>
+
+    <string name="label_added_to_favorite">FAV.</string>
+
+    <!-- Random -->
+    <string name="activity_random">Me siento con suerte</string>
+    <string name="random_failed_set">No se pudo obtener nada de NHentai. ¿Probar de nuevo?</string>
+    <string name="random_no_data">Por favor toca el botón SHUFFLE primero.</string>
+
+    <!-- Details -->
+    <string name="activity_details">Detalles</string>
+    <string name="tag_type_tag">Etiquetas: </string>
+    <string name="tag_type_parodies">Parodias: </string>
+    <string name="tag_type_language">Idioma: </string>
+    <string name="tag_type_characters">Personajes: </string>
+    <string name="tag_type_artists">Artistas: </string>
+    <string name="tag_type_group">Grupos: </string>
+    <string name="tag_type_upload_time">Hora de subida: </string>
+    <string name="action_favorite_false">Añadir a favoritos</string>
+    <string name="action_favorite_true">Remover de favoritos</string>
+    <string name="favorite_add_finished">Libro añadido a favoritos.</string>
+    <string name="favorite_categories_add_finished">Categoría añadida a favoritos.</string>
+    <string name="favorite_remove_finished">Libro removido de favoritos.</string>
+    <string name="favorite_categories_remove_finished">Categoría removida de favoritos.</string>
+    <string name="action_share">Compartir...</string>
+    <string name="action_share_send_text">Encontré un libro interesante:\"%1$s\" Link:%2$s (R-18 ¡ADVERTENCIA! Compartido desde NHBooks Client https://github.com/fython/NHentai-android )</string>
+    <string name="action_share_send_category">%1$s es genial. Link:%2$s (R-18 ¡ADVERTENCIA! Compartido desde NHBooks Client https://github.com/fython/NHentai-android )</string>
+    <string name="action_download_none">Guardar en almacenamiento</string>
+    <string name="action_download_okay">Borrar</string>
+    <string name="dialog_ask_download_title">¿Quieres descargar este libro?</string>
+    <string name="dialog_ask_download_summary">Se guardará en \"%s\".</string>
+    <string name="dialog_ask_delete_title">¿Quieres borrar este libro?</string>
+    <string name="dialog_ask_delete_summary">¡Advertencia! Esta operación NO puede deshacerse.</string>
+    <string name="dialog_ask_d_or_d_title">Este libro no se ha descargado por completo.</string>
+    <string name="dialog_ask_d_or_d_summary">Has descargado %1$d páginas en \"%2$s\".</string>
+    <string name="dialog_ask_d_or_d_delete">Borrar</string>
+    <string name="dialog_ask_d_or_d_continue">Continuar descarga</string>
+
+    <string name="dialog_download_title">Descargando libro: </string>
+    <string name="dialog_download_progress">Progreso de la descarga: </string>
+    <string name="dialog_download_finished">¡Descarga completada!</string>
+    <string name="dialog_download_error">¡Error al descargar!</string>
+
+    <string name="dialog_download_paused">(Pausado)</string>
+    <string name="dialog_download_restart">¿Tienes problemas?</string>
+    <string name="dialog_download_notification_title">¡Descarga terminada!</string>
+    <string name="dialog_download_pause">Pausar/Continuar</string>
+    <string name="dialog_download_copying">Copiando imágenes a almacenamiento externo... Por favor espera.</string>
+
+    <string name="title_preview">Vista previa</string>
+    <string name="title_recommend">Libros recomendados</string>
+
+    <string name="activity_gallery">Galería</string>
+    <string name="info_total_pages">"%d PÁGINAS"</string>
+    <string name="action_save">Guardar</string>
+    <string name="action_save_succeed">La imágen actual se ha guardado en \"%s\".</string>
+    <string name="action_save_failed">La imagen actual aún no se ha descargado. Por favor espera a que termine.</string>
+    <string name="action_save_unknown">No se pudieron guardar las imágenes.</string>
+
+    <string name="activity_search">Buscar libros</string>
+    <string name="search_text_hint">Escribe el nombre del libro...</string>
+    <string name="tips_search_text_empty">¡Por favor escribe el nombre del libro!</string>
+    <string name="action_clear">Limpiar texto</string>
+
+    <string name="activity_search_result">Resultados de búsqueda</string>
+    <string name="title_search_result">Resultados de búsqueda: %s</string>
+    <string name="tips_no_result">No hay resultados.</string>
+    <string name="tips_no_more_results">Esta es la última página.</string>
+
+    <!-- Category -->
+    <string-array name="category_tabs_title">
+        <item>Recientes</item>
+        <item>Populares</item>
+    </string-array>
+
+    <!-- Settings -->
+    <string name="settings_main">Ajustes</string>
+    <string name="snackbar_need_restart">Necesitas reiniciar la aplicación para aplicar los cambios.</string>
+    <string name="snackbar_need_restart_action">Reiniciar ahora</string>
+    <string name="category_options">Opciones de la aplicación</string>
+    <string name="category_about">Acerca de</string>
+    <string name="set_title_app_version">Versión de la aplicación</string>
+    <string name="settings_license">Licencias</string>
+    <string name="set_title_google_plus">Google Plus</string>
+    <string name="set_title_google_plus_summary">+Fung Jichun</string>
+    <string name="set_title_github">Repo en Github</string>
+    <string name="set_title_github_website">"https://github.com/fython/NHentai-android"</string>
+    <string name="set_title_gpgroup">Grupo en Google+</string>
+    <string name="set_title_gpgroup_link">"https://plus.google.com/communities/106652485673516183999"</string>
+    <string name="set_title_telegram">Grupo en Telegram</string>
+    <string name="set_title_telegram_link">"https://telegram.me/joinchat/0668165200bd194d0a89b8995057e330"</string>
+    <string name="set_title_alipay">Donanos algo por Alipay</string>
+    <string name="set_title_alipay_address">316643843\@qq.com</string>
+    <string name="category_ui">Apariencia</string>
+    <string name="category_list">Lista</string>
+    <string name="set_title_hd_image">Cargar imágenes de vista previa de alta calidad</string>
+    <string name="set_title_hd_image_summary">Utiliza más datos y memoria</string>
+    <string name="set_title_cards_count">Cantidad horizontal de tarjetas</string>
+    <string name="set_title_cards_count_summary">Valor actual: %s</string>
+    <string-array name="set_cards_count_options">
+        <item>Calcular automáticamente</item>
+        <item>Personalizado</item>
+    </string-array>
+    <string-array name="set_cards_count_options_value">
+        <item>-1</item>
+        <item>0</item>
+    </string-array>
+    <string name="category_details">Página de información</string>
+    <string name="set_title_full_image_in_details">Cargar imágenes Full HD como vista previa</string>
+    <string name="set_title_full_image_in_details_summary">Consumirá muchos datos y memoria.</string>
+    <string name="set_title_allow_standalone_task">Permitir tareas independientes</string>
+    <string name="set_title_allow_standalone_task_desc">Cada libro se mostrará como una tarea independiente.</string>
+    <string name="set_title_android_too_old_desc">Esta función no está soportada en tu versión de Android</string>
+    <string name="settings_storage">Almacenamiento</string>
+    <string name="category_folder">Carpeta</string>
+    <string name="set_title_nomedia">No mostrar libros guardados en la galería</string>
+    <string name="set_title_nomedia_summary">Proteje tu privacidad creando \".nomedia\" en el directorio</string>
+
+    <!-- Donate -->
+    <string name="dialog_donate_title">Donanos algo</string>
+	<string name="dialog_donate_message">Una buena aplicación requiere tiempo, energía y tu apoyo.
+		Si te gusta mucho NHBooks y quieres donar algo, por favor envíanos tu apoyo aquí (Alipay):316643843\@qq.com</string>
+
+    <!--User Agent -->
+    <string name="user_agent">NHBooks/Android Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.0.0 Mobile</string>
+    <string name="celebrate_2016">Feliz Año 2016 ( ゜- ゜)つ</string>
+    <string name="celebrate_mid_autumn">Feliz Festival de Otoño</string>
+    <string name="clear_search_inputs">Eliminar todas las busquedas recientes</string>
+    <string name="clear_search_title">Eliminar Busquedas Recientes</string>
+
+</resources>
