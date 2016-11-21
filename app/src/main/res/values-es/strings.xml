@@ -170,5 +170,9 @@
     <string name="clear_search_inputs">Eliminar todas las busquedas recientes</string>
     <string name="clear_search_title">Eliminar Busquedas Recientes</string>
     <string name="search_cleared">Historal de busquedas eliminado con éxito</string>
+    <string name="new_version_available">Nueva Version Detectada:</string>
+    <string name="button_update">Actualizar</string>
+    <string name="updated_apk_download_error">Error descargando la actualización</string>
+    <string name="updating">Descargando la Actualización</string>
 
 </resources>

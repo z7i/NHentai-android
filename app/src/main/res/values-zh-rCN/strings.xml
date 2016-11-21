@@ -164,5 +164,9 @@
     <string name="clear_search_inputs">清除所有保存的搜索</string>
     <string name="clear_search_title">清除保存的搜索</string>
     <string name="search_cleared">搜索结果成功地清除</string>
+    <string name="new_version_available">检测到新版本</string>
+    <string name="button_update">更新：</string>
+    <string name="updated_apk_download_error">下载更新时出错</string>
+    <string name="updating">下载更新</string>
 
 </resources>
