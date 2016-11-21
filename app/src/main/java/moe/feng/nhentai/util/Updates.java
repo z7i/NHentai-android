@@ -1,9 +1,7 @@
 package moe.feng.nhentai.util;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -11,7 +9,7 @@ import android.os.Build;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -35,6 +33,8 @@ public class Updates {
             protected Void doInBackground(Void... params) {
                 try {
                     String version=HttpTools.getStringFromUrl(LATEST_GRADLE_FILE).trim().replace(" ","");
+
+                    Log.d("Update", "doInBackground: " + getAPKversionCode(activity));
                     int code=Integer.parseInt(version.substring(version.indexOf("versionCode")+11,version.indexOf("versionName")).trim());
                     if (code>getAPKversionCode(activity)){// >= Test
                         final JSONObject object=new JSONObject(HttpTools.getStringFromUrl(LATEST_RELEASE));
@@ -53,7 +53,7 @@ public class Updates {
                                                         @Override
                                                         protected Void doInBackground(Void... params) {
                                                             Looper.prepare();
-                                                            final File downloadedUpdate = new File(activity.getCacheDir()+"/updates/", "app-update.apk");
+                                                            final File downloadedUpdate = new File(activity.getExternalCacheDir()+"/updates/", "app-update.apk");
                                                             if (!downloadedUpdate.getParentFile().exists())
                                                                 downloadedUpdate.getParentFile().mkdirs();
                                                             if (downloadedUpdate.exists())
@@ -69,8 +69,9 @@ public class Updates {
                                                                 int count;
                                                                 final MaterialDialog progress=new MaterialDialog.Builder(activity)
                                                                         .title(R.string.updating)
-                                                                        .progress(false,100)
+                                                                        .progress(false,100,false)
                                                                         .build();
+
                                                                 activity.runOnUiThread(new Runnable() {
                                                                     @Override
                                                                     public void run() {
@@ -85,22 +86,24 @@ public class Updates {
                                                                             @Override
                                                                             public void run() {
                                                                                 progress.setProgress(tprog);
+                                                                                progress.show();
                                                                             }
                                                                         });
                                                                         prog = tprog;
                                                                     }
                                                                     outputStream.write(data, 0, count);
                                                                     outputStream.flush();
+
                                                                 }
-                                                                outputStream.close();
                                                                 outputStream.close();
                                                                 connection.disconnect();
                                                                 activity.runOnUiThread(new Runnable() {
                                                                     @Override
                                                                     public void run() {
                                                                         progress.dismiss();
-                                                                    }
-                                                                });
+                                                                        }
+                                                                    });
+
                                                                 Intent promptInstall = new Intent(Intent.ACTION_VIEW);
                                                                 if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
                                                                     Uri uri = FileProvider.getUriForFile(activity, "moe.feng.nhentai.ui.HomeActivity", downloadedUpdate);

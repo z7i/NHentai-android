@@ -168,5 +168,6 @@
     <string name="button_update">更新：</string>
     <string name="updated_apk_download_error">下载更新时出错</string>
     <string name="updating">下载更新</string>
+    <string name="update_complete">更新已成功下载</string>
 
 </resources>
