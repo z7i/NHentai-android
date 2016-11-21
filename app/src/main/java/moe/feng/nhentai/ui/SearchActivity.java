@@ -100,7 +100,9 @@ public class SearchActivity extends AbsActivity {
 	public void onBackPressed(){
 		super.onBackPressed();
 		mBooks =null;
-		mResultList.getAdapter().notifyDataSetChanged();
+		if (mResultList.getAdapter()!=null){
+			mResultList.getAdapter().notifyDataSetChanged();
+		}
 		mResultList.setAdapter(null);
 		Runtime.getRuntime().gc();
 	}

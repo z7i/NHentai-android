@@ -343,6 +343,15 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					Recommend.clear();
+					mRecommendList.getAdapter().notifyDataSetChanged();
+					mRecommendList.setAdapter(null);
+
+
+					book = null;
+					mPreviewList.getAdapter().notifyDataSetChanged();
+					mPreviewList.setAdapter(null);
+
 					CategoryActivity.launch(
 							BookDetailsActivity.this,
 							new Category(Category.Type.PARODY, book.parodies, book.parodiesID)
@@ -383,6 +392,15 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				tagView.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
+						Recommend.clear();
+						mRecommendList.getAdapter().notifyDataSetChanged();
+						mRecommendList.setAdapter(null);
+
+
+						book = null;
+						mPreviewList.getAdapter().notifyDataSetChanged();
+						mPreviewList.setAdapter(null);
+
 						CategoryActivity.launch(
 								BookDetailsActivity.this,
 								new Category(Category.Type.CHARACTER, tag, tagID)
@@ -423,6 +441,15 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				tagView.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
+						Recommend.clear();
+						mRecommendList.getAdapter().notifyDataSetChanged();
+						mRecommendList.setAdapter(null);
+
+
+						book = null;
+						mPreviewList.getAdapter().notifyDataSetChanged();
+						mPreviewList.setAdapter(null);
+
 						CategoryActivity.launch(
 								BookDetailsActivity.this,
 								new Category(Category.Type.TAG, tag,tagID)
@@ -463,6 +490,15 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				tagView.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
+						Recommend.clear();
+						mRecommendList.getAdapter().notifyDataSetChanged();
+						mRecommendList.setAdapter(null);
+
+
+						book = null;
+						mPreviewList.getAdapter().notifyDataSetChanged();
+						mPreviewList.setAdapter(null);
+
 						CategoryActivity.launch(
 								BookDetailsActivity.this,
 								new Category(Category.Type.ARTIST, tag, tagID)
@@ -500,6 +536,15 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					Recommend.clear();
+					mRecommendList.getAdapter().notifyDataSetChanged();
+					mRecommendList.setAdapter(null);
+
+
+					book = null;
+					mPreviewList.getAdapter().notifyDataSetChanged();
+					mPreviewList.setAdapter(null);
+
 					CategoryActivity.launch(
 							BookDetailsActivity.this,
 							new Category(Category.Type.GROUP, book.group, book.groupID)
@@ -535,6 +580,15 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					Recommend.clear();
+					mRecommendList.getAdapter().notifyDataSetChanged();
+					mRecommendList.setAdapter(null);
+
+
+					book = null;
+					mPreviewList.getAdapter().notifyDataSetChanged();
+					mPreviewList.setAdapter(null);
+
 					CategoryActivity.launch(
 							BookDetailsActivity.this,
 							new Category(Category.Type.LANGUAGE, book.language ,book.langField)

@@ -169,4 +169,9 @@
     <string name="clear_search_title">Clear Saved Searches</string>
     <string name="search_cleared">Search results cleared succesfully</string>
 
+    <!-- AutoUpdate -->
+    <string name="new_version_available">New version detected: </string>
+    <string name="button_update">Update</string>
+    <string name="updated_apk_download_error">Error downloading update</string>
+    <string name="updating">Downloading Update</string>
 </resources>

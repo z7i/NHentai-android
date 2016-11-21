@@ -89,6 +89,13 @@ public class CategoryActivity extends AbsActivity {
 	}
 
 	@Override
+	public void onBackPressed(){
+		mPager.setAdapter(null);
+		super.onBackPressed();
+
+	}
+
+	@Override
 	protected void setUpViews() {
 		ViewCompat.setElevation($(R.id.appbar_container), getResources().getDimensionPixelSize(R.dimen.appbar_elevation));
 

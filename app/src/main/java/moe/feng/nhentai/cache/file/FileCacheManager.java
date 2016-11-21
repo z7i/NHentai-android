@@ -567,9 +567,9 @@ public class FileCacheManager {
 			File[] files = parentDir.listFiles();
 			ArrayList<Book> result = new ArrayList<>();
 			for (File file : files) {
-				if (file.isDirectory()) {
+				if (file.isDirectory()  && !file.getName().equals("null")) {
 					File bookFile = new File(file.getAbsolutePath() + "/book.json");
-					if (bookFile.isFile()) {
+					if (bookFile.exists() && bookFile.isFile()) {
 						try {
 							FileInputStream ins = new FileInputStream(bookFile);
 
