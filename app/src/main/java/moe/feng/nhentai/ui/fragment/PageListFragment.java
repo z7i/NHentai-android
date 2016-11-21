@@ -88,7 +88,8 @@ public class PageListFragment extends LazyFragment {
 				mBooks = new ArrayList<>();
 				mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
 				setRecyclerViewAdapter(mAdapter);
-				new PageGetTask().execute(mNowPage = 1);
+				mNowPage=1;
+				new PageGetTask().execute(mNowPage);
 			}
 		});
 
@@ -131,8 +132,15 @@ public class PageListFragment extends LazyFragment {
 				}
 			}
 		});
+		if (mRecyclerView.getAdapter()== null){
+			Log.d("Me", "set");
+			mRecyclerView.setAdapter(adapter);
+		}
+		else{
+			Log.d("Me", "swap");
+			mRecyclerView.swapAdapter(adapter, false);
+		}
 
-		mRecyclerView.setAdapter(adapter);
 	}
 
 	private class PageGetTask extends AsyncTask<Integer, Void, BaseMessage> {
@@ -152,7 +160,7 @@ public class PageListFragment extends LazyFragment {
 					for (int i = 0; i < mBooks.size() && !hasExist; i++) {
 						hasExist = mBooks.get(i).bookId.equals(firstBook.bookId);
 					}
-					if (hasExist) {
+					if (hasExist && !mSwipeRefreshLayout.isRefreshing()) {
 						msg.setCode(MSG_CODE_NO_MORE_RESULTS);
 					}
 				}
@@ -169,11 +177,19 @@ public class PageListFragment extends LazyFragment {
 						if (msg.getData() != null) {
 							ArrayList<Book> mArray = msg.getData();
 							if (!mArray.isEmpty()) {
+								if (mNowPage ==1) {
+									mBooks.clear();
+								}
 								mBooks.addAll(mArray);
+
 								mAdapter.notifyDataSetChanged();
 								if (mNowPage == 1) {
 									isAllowToLoadNextPage = true;
-									mRecyclerView.setAdapter(mAdapter);
+									BookListRecyclerAdapter newAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
+									setRecyclerViewAdapter(newAdapter);
+								}
+								else{
+									mRecyclerView.getAdapter().notifyDataSetChanged();
 								}
 							} else {
 								Snackbar.make(mRecyclerView, R.string.tips_no_result, Snackbar.LENGTH_LONG).show();
