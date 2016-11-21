@@ -174,5 +174,6 @@
     <string name="button_update">更新:</string>
     <string name="updated_apk_download_error">アップデートをダウンロード中にエラーが発生しました</string>
     <string name="updating">アップデートのダウンロード</string>
+    <string name="update_complete">ダウンロードが順調に更新されました</string>
 
 </resources>

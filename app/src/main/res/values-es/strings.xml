@@ -174,5 +174,6 @@
     <string name="button_update">Actualizar</string>
     <string name="updated_apk_download_error">Error descargando la actualización</string>
     <string name="updating">Descargando la Actualización</string>
+    <string name="update_complete">Actualización descargada exitosamente</string>
 
 </resources>

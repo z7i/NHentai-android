@@ -343,14 +343,6 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 			tagView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Recommend.clear();
-					mRecommendList.getAdapter().notifyDataSetChanged();
-					mRecommendList.setAdapter(null);
-
-
-					book = null;
-					mPreviewList.getAdapter().notifyDataSetChanged();
-					mPreviewList.setAdapter(null);
 
 					CategoryActivity.launch(
 							BookDetailsActivity.this,
@@ -885,7 +877,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 											.setContentText(getString(R.string.dialog_download_progress))
 											.setSmallIcon(R.drawable.ic_file_download_white_24dp);
 
-									mNotifyManager.notify(1,mBuilder.build());
+									mNotifyManager.notify(Integer.valueOf(mDownloader.getBook().bookId),mBuilder.build());
 
 									if (mDownloader == null) {
 
@@ -906,7 +898,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 															isDownloaded=true;
 															if(book != null) invalidateOptionsMenu();
 														}
-														mNotifyManager.notify(1, mBuilder.build());
+														mNotifyManager.notify(Integer.valueOf(mDownloader.getBook().bookId), mBuilder.build());
 													}
 												});
 
@@ -920,7 +912,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 														mBuilder.setProgress(0, 0, false);
 														mBuilder.setContentText(getString(R.string.dialog_download_error));
 														mDownloader.stop();
-														mNotifyManager.notify(1, mBuilder.build());
+														mNotifyManager.notify(Integer.valueOf(mDownloader.getBook().bookId), mBuilder.build());
 													}
 												});
 											}

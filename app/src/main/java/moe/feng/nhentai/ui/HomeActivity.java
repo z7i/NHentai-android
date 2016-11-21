@@ -165,13 +165,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 		getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.background_material_light)));
 
-
 		if (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 			if (mSets.getBoolean(Settings.KEY_NO_MEDIA, true)) {
 				FilesUtil.createNewFile(FilesUtil.NOMEDIA_FILE);
 			}
 			onLoadMain();
-			Updates.check(this);
 		} else {
 			new AlertDialog.Builder(this)
 					.setTitle(R.string.dialog_permission_title)
@@ -316,8 +314,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 						}
 					}
 				}, 200);
+
+
 			}
 		}, 300);
+
+		Updates.check(this);
 	}
 
 	@Override
@@ -668,6 +670,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				});
 				return true;
 			case R.id.navigation_item_download:
+
 				mActionBar.setTitle(R.string.item_download);
 				mFragmentLayout.setVisibility(View.VISIBLE);
 				ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
@@ -685,6 +688,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				});
 				return true;
 			case R.id.navigation_item_fav_books:
+				mFM.reload(getApplicationContext());
 				mActionBar.setTitle(R.string.item_favorite_books);
 				mFragmentLayout.setVisibility(View.VISIBLE);
 				ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
@@ -702,6 +706,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 				});
 				return true;
 			case R.id.navigation_item_fav_categories:
+				FavoriteCategoriesManager.getInstance(getApplicationContext()).reload();
 				mActionBar.setTitle(R.string.item_favorite_categories);
 				mFragmentLayout.setVisibility(View.VISIBLE);
 				ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
