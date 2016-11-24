@@ -319,8 +319,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 			}
 		}, 300);
-
-		Updates.check(this);
 	}
 
 	@Override

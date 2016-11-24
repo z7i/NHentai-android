@@ -1,5 +1,6 @@
 package moe.feng.nhentai.ui.fragment.settings;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -7,6 +8,7 @@ import android.widget.Toast;
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.dao.SearchHistoryManager;
 import moe.feng.nhentai.ui.SettingsActivity;
+import moe.feng.nhentai.util.Updates;
 import moe.feng.nhentai.view.pref.Preference;
 
 import static android.R.attr.duration;
@@ -23,12 +25,14 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 	private Preference mStoragePref;
 	private Preference mSearchPref;
 
+	private Preference mVersionPref;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.settings_main);
 		mSearchPref = (Preference) findPreference("search");
-		Preference mVersionPref = (Preference) findPreference("version");
+		mVersionPref = (Preference) findPreference("version");
 		mLicensePref = (Preference) findPreference("license");
 		mGooglePlusPref = (Preference) findPreference("google_plus");
 		mGithubPref = (Preference) findPreference("github");
@@ -45,6 +49,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 			Log.d(SettingsMain.class.getSimpleName(), "onCreate: Error getting version");
 		}
 		mVersionPref.setSummary(version);
+		mVersionPref.setOnPreferenceClickListener(this);
 		mSearchPref.setOnPreferenceClickListener(this);
 		mLicensePref.setOnPreferenceClickListener(this);
 		mGooglePlusPref.setOnPreferenceClickListener(this);
@@ -88,6 +93,23 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 			SearchHistoryManager.getInstance(getParentActivity().getBaseContext(), "all").cleanAll();
 			Toast.makeText(getParentActivity().getBaseContext(), R.string.search_cleared, Toast.LENGTH_LONG).show();
 			return true;
+		}
+		if (pref == mVersionPref) {
+            final ProgressDialog progressDialog=ProgressDialog.show(getActivity(),null,getActivity().getResources().getString(R.string.checking),true,false);
+			Updates.check(getActivity(), new Updates.UpdateInterface() {
+                @Override
+                public void onChecked(boolean isUpdated) {
+                    progressDialog.dismiss();
+                    if (isUpdated){
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(),R.string.no_update,Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            });
 		}
 		return false;
 	}

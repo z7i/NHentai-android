@@ -84,7 +84,7 @@ public class CategoryActivity extends AbsActivity {
 			mActionBar.setElevation(getResources().getDimension(R.dimen.appbar_elevation));
 		}
 
-		invalidateOptionsMenu();
+		supportInvalidateOptionsMenu();
 
 	}
 
@@ -157,7 +157,7 @@ public class CategoryActivity extends AbsActivity {
 					isFavorite ? R.string.favorite_categories_add_finished : R.string.favorite_categories_remove_finished,
 					Snackbar.LENGTH_LONG
 			).show();
-			invalidateOptionsMenu();
+			supportInvalidateOptionsMenu();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
