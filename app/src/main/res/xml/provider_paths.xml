@@ -2,5 +2,6 @@
 <paths>
     <external-cache-path
         name="downloaded_updates"
-        path="updates"/>
+        path="updates"
+        />
 </paths>

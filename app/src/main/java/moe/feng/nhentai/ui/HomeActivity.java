@@ -315,8 +315,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 						}
 					}
 				}, 200);
-
-
 			}
 		}, 300);
 	}

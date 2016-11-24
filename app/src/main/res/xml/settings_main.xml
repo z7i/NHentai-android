@@ -18,6 +18,7 @@
 
 	</PreferenceCategory>
 
+
 	<PreferenceCategory android:key="about" android:title="@string/category_about">
 
 		<moe.feng.nhentai.view.pref.Preference

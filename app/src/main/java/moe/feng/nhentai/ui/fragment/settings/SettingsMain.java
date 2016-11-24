@@ -48,6 +48,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 		} catch (Exception e) {
 			Log.d(SettingsMain.class.getSimpleName(), "onCreate: Error getting version");
 		}
+
 		mVersionPref.setSummary(version);
 		mVersionPref.setOnPreferenceClickListener(this);
 		mSearchPref.setOnPreferenceClickListener(this);

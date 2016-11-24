@@ -85,7 +85,6 @@ public class CategoryActivity extends AbsActivity {
 		}
 
 		supportInvalidateOptionsMenu();
-
 	}
 
 	@Override
