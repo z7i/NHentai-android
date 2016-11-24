@@ -164,7 +164,7 @@
 		If you love NHBooks very much and you\'re willing to donate us, please send your support to here (Alipay):316643843\@qq.com</string>
 
     <!--User Agent -->
-    <string name="user_agent">NHBooks/Android Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.0.0 Mobile</string>
+    <string name="user_agent" translatable="false">NHBooks/Android Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.0.0 Mobile</string>
     <string name="clear_search_inputs">Clear All Saved Searches</string>
     <string name="clear_search_title">Clear Saved Searches</string>
     <string name="search_cleared">Search results cleared succesfully</string>

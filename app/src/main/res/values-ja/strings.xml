@@ -164,7 +164,6 @@
 		NHBooks を気に入っていただけた場合、私たちに寄付をいただけませんでしょうか。 ここ (Alipay):316643843\@qq.com にご支援をお送りください</string>
 
     <!--User Agent -->
-    <string name="user_agent">NHBooks/Android Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.0.0 Mobile</string>
     <string name="clear_search_inputs">すべてクリア保存された検索</string>
     <string name="clear_search_title">" クリア保存した検索"</string>
     <string name="search_cleared">検索結果が正常にクリア</string>
@@ -175,5 +174,6 @@
     <string name="updated_apk_download_error">アップデートをダウンロード中にエラーが発生しました</string>
     <string name="updating">アップデートのダウンロード</string>
     <string name="update_complete">ダウンロードが順調に更新されました</string>
+    <string name="user_agent" translatable="false"></string>
 
 </resources>
