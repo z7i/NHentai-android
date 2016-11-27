@@ -164,7 +164,6 @@
 		Si te gusta mucho NHBooks y quieres donar algo, por favor envíanos tu apoyo aquí (Alipay):316643843\@qq.com</string>
 
     <!--User Agent -->
-    <string name="user_agent">NHBooks/Android Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.0.0 Mobile</string>
     <string name="celebrate_2016">Feliz Año 2016 ( ゜- ゜)つ</string>
     <string name="celebrate_mid_autumn">Feliz Festival de Otoño</string>
     <string name="clear_search_inputs">Eliminar todas las busquedas recientes</string>
@@ -175,5 +174,9 @@
     <string name="updated_apk_download_error">Error descargando la actualización</string>
     <string name="updating">Descargando la Actualización</string>
     <string name="update_complete">Actualización descargada exitosamente</string>
+    <string name="checking">Buscando Actualizacion</string>
+    <string name="close">Cerrar</string>
+    <string name="ignore">Ignorar</string>
+    <string name="no_update">La app esta actualizada</string>
 
 </resources>
