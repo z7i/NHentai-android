@@ -1,5 +1,6 @@
 package moe.feng.nhentai.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -140,7 +141,7 @@ public class RandomActivity extends AbsActivity {
 		});
 	}
 
-	public static void launch(AppCompatActivity activity, FloatingActionButton fab) {
+	public static void launch(Activity activity, FloatingActionButton fab) {
 		ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, fab, ELEMENT_FAB);
 		Intent intent = new Intent(activity, RandomActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

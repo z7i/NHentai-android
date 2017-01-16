@@ -2,10 +2,12 @@ package moe.feng.nhentai.dao;
 
 import android.content.Context;
 
+import com.github.sumimakito.quickkv.QuickKV;
+import com.github.sumimakito.quickkv.database.KeyValueDatabase;
+
 import java.util.ArrayList;
 
-import sumimakito.android.quickkv.QuickKV;
-import sumimakito.android.quickkv.database.KeyValueDatabase;
+
 
 public class CommonPreferences {
 

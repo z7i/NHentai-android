@@ -5,9 +5,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.dao.FavoriteCategoriesManager;
+import moe.feng.nhentai.dao.HistoryManager;
 import moe.feng.nhentai.ui.CategoryActivity;
 import moe.feng.nhentai.ui.adapter.FavoriteCategoriesRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
@@ -25,7 +28,11 @@ public class FavoriteCategoryFragment extends LazyFragment {
 	private FavoriteCategoriesManager mFCM;
 
 	public static final String TAG = FavoriteCategoryFragment.class.getSimpleName();
-
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		setHasOptionsMenu(true);
+		super.onCreate(savedInstanceState);
+	}
 	@Override
 	public int getLayoutResId() {
 		return R.layout.fragment_home_recycler;
@@ -59,9 +66,20 @@ public class FavoriteCategoryFragment extends LazyFragment {
 				if (!mSwipeRefreshLayout.isRefreshing()) {
 					mSwipeRefreshLayout.setRefreshing(true);
 				}
-				new FavoritesRefreshTask().execute();
+				new FavoriteCategoriesRefreshTask().execute();
 			}
 		});
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		return super.onOptionsItemSelected(item);
 	}
 
 	private void setRecyclerViewAdapter(FavoriteCategoriesRecyclerAdapter adapter) {
@@ -80,7 +98,11 @@ public class FavoriteCategoryFragment extends LazyFragment {
 		}
 	}
 
-	private class FavoritesRefreshTask extends AsyncTask<Void, Void, Void> {
+	public void update() {
+		new FavoriteCategoriesRefreshTask().execute();
+	}
+
+	private class FavoriteCategoriesRefreshTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
 		protected Void doInBackground(Void... params) {

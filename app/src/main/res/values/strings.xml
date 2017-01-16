@@ -19,6 +19,7 @@
     <string name="title_bar_updated_time_null">Pull down to get the latest information</string>
 
     <string name="item_home">Home</string>
+    <string name="item_recent">Recents</string>
     <string name="item_download">Saved Books</string>
     <string name="item_favorite_books">Favorite Books</string>
     <string name="item_favorite_categories">Favorite Categories</string>
@@ -103,7 +104,7 @@
     <string name="search_text_hint">Enter Book name....</string>
     <string name="tips_search_text_empty">Please input the name of the book!</string>
     <string name="action_clear">Clear text</string>
-
+    <string name="action_clear_recents">Clear all Recents</string>
     <string name="activity_search_result">Search Results</string>
     <string name="title_search_result">Search Results: %s</string>
     <string name="tips_no_result">No Results.</string>
@@ -175,7 +176,7 @@
     <string name="updated_apk_download_error">Error downloading update</string>
     <string name="updating">Downloading Update</string>
     <string name="update_complete">Update Downloaded Succesfully</string>
-    <string name="checking">Checking Update</string>
+    <string name="checking">Checking for Update</string>
     <string name="no_update">The app is updated</string>
     <string name="ignore">Ignore</string>
     <string name="close">Close</string>

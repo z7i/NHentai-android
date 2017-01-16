@@ -12,8 +12,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
@@ -47,6 +45,7 @@ import moe.feng.nhentai.api.PageApi;
 import moe.feng.nhentai.api.common.NHentaiUrl;
 import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.dao.FavoritesManager;
+import moe.feng.nhentai.dao.HistoryManager;
 import moe.feng.nhentai.drawable.RoundSideRectDrawable;
 import moe.feng.nhentai.model.BaseMessage;
 import moe.feng.nhentai.model.Book;
@@ -158,8 +157,6 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mImageView.getMovingAnimator().setMovementType(MovingViewAnimator.VERTICAL_MOVE);
 
 		startBookGet();
-
-
 
 		if (!isFromExternal) checkIsDownloaded();
 	}
@@ -288,6 +285,11 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		setUpShareAction();
 		updatePreviewList();
 		updateTagsContent();
+
+		if(!HistoryManager.getInstance(getApplicationContext()).contains(book)){
+			HistoryManager.getInstance(getApplicationContext()).add(book);
+			HistoryManager.getInstance(getApplicationContext()).save();
+		}
 	}
 
 	private void updatePreviewList() {
@@ -568,7 +570,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		getMenuInflater().inflate(R.menu.menu_details, menu);
-
+		Log.d("Nice", "onPrepareOptionsMenu: " + isFavorite);
 		MenuItem mFavItem = menu.findItem(R.id.action_fav);
 		mFavItem.setIcon(isFavorite ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_outline_white_24dp);
 		mFavItem.setTitle(isFavorite ? R.string.action_favorite_true : R.string.action_favorite_false);
@@ -599,13 +601,14 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 				fm.add(book);
 			}
 			fm.save();
+
 			isFavorite = !isFavorite;
 			Snackbar.make(
 					$(R.id.main_content),
 					isFavorite ? R.string.favorite_add_finished : R.string.favorite_remove_finished,
 					Snackbar.LENGTH_LONG
 			).show();
-			invalidateOptionsMenu();
+			supportInvalidateOptionsMenu();
 			return true;
 		}
 		if (id == R.id.action_download) {
@@ -639,6 +642,7 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		mPreviewList.getAdapter().notifyDataSetChanged();
 		mPreviewList.setAdapter(null);
 		Runtime.getRuntime().gc();
+
 		super.onBackPressed();
 
 	}

@@ -1,1 +1,1 @@
-include ':app', ':libraries:movingimageview'
+include ':app'

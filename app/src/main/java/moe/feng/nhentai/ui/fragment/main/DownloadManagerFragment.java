@@ -5,12 +5,15 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import java.util.ArrayList;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.dao.FavoritesManager;
+import moe.feng.nhentai.dao.HistoryManager;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.BookDetailsActivity;
 import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
@@ -30,6 +33,11 @@ public class DownloadManagerFragment extends LazyFragment {
 	private ArrayList<Book> mBooks;
 
 	public static final String TAG = DownloadManagerFragment.class.getSimpleName();
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
 
 	@Override
 	public int getLayoutResId() {
@@ -88,11 +96,26 @@ public class DownloadManagerFragment extends LazyFragment {
 		adapter.notifyDataSetChanged();
 	}
 
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		return super.onOptionsItemSelected(item);
+	}
+
 	public void scrollToTop() {
 		if (mAdapter.getItemCount() > 0) {
 			mRecyclerView.smoothScrollToPosition(0);
 		}
 	}
+	public void update() {
+		new BooksGetTask().execute();
+	}
+
 
 	private class BooksGetTask extends AsyncTask<Void, Void, ArrayList<Book>> {
 

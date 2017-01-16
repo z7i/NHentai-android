@@ -179,7 +179,6 @@ public class FavoritesManager {
 			return null;
 		}
 
-
 		@Override
 		protected void onPostExecute(BaseMessage msg) {
 			Log.d(TAG, "Favorites Update Complete ");

@@ -174,9 +174,11 @@
     <string name="updated_apk_download_error">Error descargando la actualización</string>
     <string name="updating">Descargando la Actualización</string>
     <string name="update_complete">Actualización descargada exitosamente</string>
-    <string name="checking">Buscando Actualizacion</string>
+    <string name="checking">Buscando Actualización</string>
     <string name="close">Cerrar</string>
     <string name="ignore">Ignorar</string>
     <string name="no_update">La app esta actualizada</string>
+    <string name="item_recent">Recientes</string>
+    <string name="action_clear_recents">Limpiar Recientes</string>
 
 </resources>

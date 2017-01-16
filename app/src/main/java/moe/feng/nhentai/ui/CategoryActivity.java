@@ -14,6 +14,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -83,7 +84,6 @@ public class CategoryActivity extends AbsActivity {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			mActionBar.setElevation(getResources().getDimension(R.dimen.appbar_elevation));
 		}
-
 		supportInvalidateOptionsMenu();
 	}
 
@@ -121,13 +121,14 @@ public class CategoryActivity extends AbsActivity {
 			mShareActionProvider.setShareHistoryFileName("custom_share_history.xml");
 			mShareActionProvider.setShareIntent(intent);
 		}
+		Log.d("Me", "onPrepareOptionsMenu: Hey its not me 3");
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		getMenuInflater().inflate(R.menu.menu_category, menu);
-
+		Log.d("Me", "onPrepareOptionsMenu: Hey its not me 1");
 		MenuItem mFavItem = menu.findItem(R.id.action_favorite);
 		mFavItem.setIcon(isFavorite ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_outline_white_24dp);
 		mFavItem.setTitle(isFavorite ? R.string.action_favorite_true : R.string.action_favorite_false);
@@ -142,7 +143,7 @@ public class CategoryActivity extends AbsActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
-
+		Log.d("Me", "onPrepareOptionsMenu: Hey its not me 2");
 		if (id == R.id.action_favorite) {
 			if (isFavorite) {
 				mFCM.remove(mFCM.find(category));

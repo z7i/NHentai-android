@@ -1,5 +1,6 @@
 package moe.feng.nhentai.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -14,7 +15,6 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -464,13 +464,14 @@ public class SearchActivity extends AbsActivity {
 
 	}
 
-	public static void launch(AppCompatActivity activity, View sharedCardView) {
+	public static void launch(Activity activity, View sharedCardView) {
 		ActivityOptionsCompat options = ActivityOptionsCompat
 				.makeSceneTransitionAnimation(activity, sharedCardView, TRANSITION_NAME_CARD);
 		Intent intent = new Intent(activity, SearchActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		activity.startActivity(intent, options.toBundle());
 	}
+
 
 	private class MyArray {
 

@@ -8,13 +8,18 @@
 		      android:icon="@drawable/ic_home_black_24dp"
 		      android:title="@string/item_home"/>
 
+		<item android:id="@+id/navigation_item_recent"
+			android:checked="true"
+			android:icon="@drawable/ic_schedule_black_24dp"
+			android:title="@string/item_recent"/>
+
+		<item android:id="@+id/navigation_item_fav_books"
+			android:icon="@drawable/ic_grade_black_24dp"
+			android:title="@string/item_favorite_books"/>
+
 		<item android:id="@+id/navigation_item_download"
 		      android:icon="@drawable/ic_get_app_black_24dp"
 		      android:title="@string/item_download"/>
-
-		<item android:id="@+id/navigation_item_fav_books"
-		      android:icon="@drawable/ic_grade_black_24dp"
-		      android:title="@string/item_favorite_books"/>
 
 		<item android:id="@+id/navigation_item_fav_categories"
 		      android:icon="@drawable/ic_style_black_24dp"

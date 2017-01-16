@@ -4,9 +4,12 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.dao.FavoritesManager;
+import moe.feng.nhentai.dao.HistoryManager;
 import moe.feng.nhentai.ui.BookDetailsActivity;
 import moe.feng.nhentai.ui.adapter.BookListRecyclerAdapter;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
@@ -22,6 +25,11 @@ public class FavoriteFragment extends LazyFragment {
 	private SwipeRefreshLayout mSwipeRefreshLayout;
 
 	public static final String TAG = FavoriteFragment.class.getSimpleName();
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
 
 	@Override
 	public int getLayoutResId() {
@@ -60,6 +68,17 @@ public class FavoriteFragment extends LazyFragment {
 		new FavoritesRefreshTask().execute();
 	}
 
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		return super.onOptionsItemSelected(item);
+	}
+
 	private void setRecyclerViewAdapter(BookListRecyclerAdapter adapter) {
 		adapter.setOnItemClickListener(new AbsRecyclerViewAdapter.OnItemClickListener() {
 			@Override
@@ -77,6 +96,10 @@ public class FavoriteFragment extends LazyFragment {
 		}
 	}
 
+	public void update() {
+		new FavoritesRefreshTask().execute();
+	}
+
 	private class FavoritesRefreshTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
@@ -87,6 +110,7 @@ public class FavoriteFragment extends LazyFragment {
 
 		@Override
 		protected void onPostExecute(Void result) {
+			mAdapter.update(getFavoritesManager());
 			mAdapter.notifyDataSetChanged();
 			mSwipeRefreshLayout.setRefreshing(false);
 		}

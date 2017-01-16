@@ -55,6 +55,11 @@ public class PageListFragment extends LazyFragment {
 	}
 
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
+	@Override
 	public void finishCreateView(Bundle state) {
 		mFM = FavoritesManager.getInstance(getApplicationContext());
 
@@ -99,8 +104,7 @@ public class PageListFragment extends LazyFragment {
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		menu.clear();
-		getActivity().getMenuInflater().inflate(R.menu.menu_category, menu);
+		super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override

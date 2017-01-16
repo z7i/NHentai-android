@@ -5,8 +5,9 @@ import android.text.TextUtils;
 
 import java.util.ArrayList;
 
-import sumimakito.android.quickkv.QuickKV;
-import sumimakito.android.quickkv.database.KeyValueDatabase;
+import com.github.sumimakito.quickkv.QuickKV;
+import com.github.sumimakito.quickkv.database.KeyValueDatabase;
+
 
 public class SearchHistoryManager {
 

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import moe.feng.nhentai.R;
 import moe.feng.nhentai.api.BookApi;
 import moe.feng.nhentai.dao.FavoritesManager;
+import moe.feng.nhentai.dao.HistoryManager;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.common.AbsRecyclerViewAdapter;
 import moe.feng.nhentai.util.AsyncTask;
@@ -34,8 +35,19 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 
 	public static final String TAG = BookListRecyclerAdapter.class.getSimpleName();
 
+	public void update(FavoritesManager fm){
+		this.data = fm.toArray();
+	}
+
+	public void update(HistoryManager hm){
+		this.data = hm.toArray();
+	}
+
 	public BookListRecyclerAdapter(RecyclerView recyclerView, FavoritesManager fm, Settings sets) {
 		this(recyclerView, null, fm, sets);
+	}
+	public BookListRecyclerAdapter(RecyclerView recyclerView, HistoryManager hm, Settings sets) {
+		this(recyclerView, null, hm, sets);
 	}
 
 	public BookListRecyclerAdapter(RecyclerView recyclerView, ArrayList<Book> data, FavoritesManager fm, Settings sets) {
@@ -49,6 +61,19 @@ public class BookListRecyclerAdapter extends AbsRecyclerViewAdapter {
 		mColorGenerator = ColorGenerator.MATERIAL;
 		setHasStableIds(true);
 	}
+
+	public BookListRecyclerAdapter(RecyclerView recyclerView, ArrayList<Book> data, HistoryManager hm, Settings sets) {
+		super(recyclerView);
+		if (data == null){
+			this.data = hm.toArray();
+		}
+		else	this.data = data;
+
+		this.sets = sets;
+		mColorGenerator = ColorGenerator.MATERIAL;
+		setHasStableIds(true);
+	}
+
 
 	@Override
 	public void onViewRecycled(ClickableViewHolder holder) {

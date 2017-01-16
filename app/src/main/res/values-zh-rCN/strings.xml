@@ -168,5 +168,11 @@
     <string name="updated_apk_download_error">下载更新时出错</string>
     <string name="updating">下载更新</string>
     <string name="update_complete">更新已成功下载</string>
+    <string name="checking">檢查更新</string>
+    <string name="close">關</string>
+    <string name="item_recent">最近</string>
+    <string name="no_update">應用程式已更新</string>
+    <string name="ignore">忽視</string>
+    <string name="action_clear_recents">清除所有最近</string>
 
 </resources>
