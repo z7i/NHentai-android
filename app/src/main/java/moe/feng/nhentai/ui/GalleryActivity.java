@@ -292,12 +292,12 @@ public class GalleryActivity extends AbsActivity implements OnTouchListener {
 
 	public void toggleControlBar() {
 		if (mAppBar.getAlpha() != 0f) {
-			ViewCompat.animate(mAppBar).alpha(0f).start();
-			ViewCompat.animate(mBottomBar).alpha(0f).start();
+			ViewCompat.animate(mAppBar).alpha(0f).setDuration(10).start();
+			ViewCompat.animate(mBottomBar).alpha(0f).setDuration(10).start();
 			mFullScreenHelper.setFullScreen(true);
 		} else if (mAppBar.getAlpha() != 1f) {
-			ViewCompat.animate(mAppBar).alpha(1f).start();
-			ViewCompat.animate(mBottomBar).alpha(1f).start();
+			ViewCompat.animate(mAppBar).alpha(1f).setDuration(10).start();
+			ViewCompat.animate(mBottomBar).alpha(1f).setDuration(10).start();
 			mFullScreenHelper.setFullScreen(false);
 		}
 	}

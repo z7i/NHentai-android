@@ -272,14 +272,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		mDrawerToggle = new MyDrawerToggle();
 		mNavigationView.setNavigationItemSelectedListener(this);
 		mNavigationView.setBackgroundResource(R.color.background_material_light);
-		mDrawerLayout.setDrawerListener(new MyDrawerListener());
+		mDrawerLayout.addDrawerListener(new MyDrawerListener());
 		mDrawerLayout.post(new Runnable() {
 			@Override
 			public void run() {
 				mDrawerToggle.syncState();
 			}
 		});
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mDrawerLayout.addDrawerListener(mDrawerToggle);
 
 		mFragmentLayout = $(R.id.fragment_layout);
 
@@ -297,8 +297,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 		int id = item.getItemId();
 		switch (id) {
 			case R.id.navigation_item_home:
+
 				mActionBar.setTitle(R.string.app_name);
-				mFragmentLayout.setVisibility(View.VISIBLE);
+				ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
 				if (mFragmentHome == null) mFragmentHome = new HomeFragment();
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentHome)
@@ -310,15 +311,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 					}
 				});
 				return true;
+
 			case R.id.navigation_item_download:
 
 				mActionBar.setTitle(R.string.item_download);
-				mFragmentLayout.setVisibility(View.VISIBLE);
 				ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
 				if (mFragmentDownload == null) mFragmentDownload = new DownloadManagerFragment();
-				else{
-					mFragmentDownload.update();
-				}
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentDownload)
 						.commit();
@@ -329,14 +327,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 					}
 				});
 				return true;
+
 			case R.id.navigation_item_fav_books:
+
 				mActionBar.setTitle(R.string.item_favorite_books);
-				mFragmentLayout.setVisibility(View.VISIBLE);
 				ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
 				if (mFragmentFavBooks == null) mFragmentFavBooks = new FavoriteFragment();
-				else {
-					mFragmentFavBooks.update();
-				}
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentFavBooks)
 						.commit();
@@ -347,14 +343,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 					}
 				});
 				return true;
+
 			case R.id.navigation_item_recent:
+
 				mActionBar.setTitle(R.string.item_recent);
 				mFragmentLayout.setVisibility(View.VISIBLE);
 				ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
 				if (mFragmentHistory == null) mFragmentHistory = new HistoryFragment();
-				else{
-					mFragmentHistory.update();
-				}
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentHistory)
 						.commit();
@@ -365,16 +360,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 					}
 				});
 				return true;
+
 			case R.id.navigation_item_fav_categories:
+
 				FavoriteCategoriesManager.getInstance(getApplicationContext()).reload();
 				mActionBar.setTitle(R.string.item_favorite_categories);
 				mFragmentLayout.setVisibility(View.VISIBLE);
 				ViewCompat.setElevation(mToolbar, calcDimens(R.dimen.appbar_elevation));
 				if (mFragmentFavCategory == null)
 					mFragmentFavCategory = new FavoriteCategoryFragment();
-				else{
-					mFragmentFavCategory.update();
-				}
 				getFragmentManager().beginTransaction()
 						.replace(R.id.fragment_layout, mFragmentFavCategory)
 						.commit();
@@ -385,10 +379,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 					}
 				});
 				return true;
+
 			case R.id.navigation_item_settings:
+
 				SettingsActivity.launchActivity(this, SettingsActivity.FLAG_MAIN);
 				return true;
+
 			case R.id.navigation_item_donate:
+
 				new AlertDialog.Builder(this)
 						.setTitle(R.string.dialog_donate_title)
 						.setMessage(R.string.dialog_donate_message)
@@ -401,24 +399,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 						.show();
 				return true;
 			case R.id.navigation_item_open_nhentai:
-				Uri uri = Uri.parse("http://nhentai.net");
+				Uri uri = Uri.parse("https://nhentai.net");
 				startActivity(new Intent(Intent.ACTION_VIEW, uri));
 				return true;
 		}
 
 		return false;
-	}
-
-	private void revealFrom(int cx, int cy, View root) {
-		Resources r = getResources();
-		float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 96, r.getDisplayMetrics());
-
-		int finalRadius = (int) Math.max(root.getWidth(), px);
-
-		Animator animator = ViewAnimationUtils.createCircularReveal(root, cx, cy, 0, finalRadius);
-		animator.setInterpolator(new AccelerateDecelerateInterpolator());
-		animator.setDuration(200);
-		animator.start();
 	}
 
 	private int calcDimens(@DimenRes int... dimenIds) {

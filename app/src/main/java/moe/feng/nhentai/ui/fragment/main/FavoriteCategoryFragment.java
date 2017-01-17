@@ -69,6 +69,8 @@ public class FavoriteCategoryFragment extends LazyFragment {
 				new FavoriteCategoriesRefreshTask().execute();
 			}
 		});
+		mSwipeRefreshLayout.setRefreshing(true);
+		new FavoriteCategoriesRefreshTask().execute();
 	}
 
 	@Override
@@ -96,10 +98,6 @@ public class FavoriteCategoryFragment extends LazyFragment {
 		if (mAdapter.getItemCount() > 0) {
 			mRecyclerView.smoothScrollToPosition(0);
 		}
-	}
-
-	public void update() {
-		new FavoriteCategoriesRefreshTask().execute();
 	}
 
 	private class FavoriteCategoriesRefreshTask extends AsyncTask<Void, Void, Void> {

@@ -64,6 +64,8 @@ public class HistoryFragment extends LazyFragment {
                 new HistoryRefreshTask().execute();
             }
         });
+
+        mSwipeRefreshLayout.setRefreshing(true);
         new HistoryRefreshTask().execute();
     }
 
@@ -100,9 +102,6 @@ public class HistoryFragment extends LazyFragment {
         if (mAdapter.getItemCount() > 0) {
             mRecyclerView.smoothScrollToPosition(0);
         }
-    }
-    public void update() {
-        new HistoryRefreshTask().execute();
     }
 
     private class HistoryRefreshTask extends AsyncTask<Void, Void, Void> {

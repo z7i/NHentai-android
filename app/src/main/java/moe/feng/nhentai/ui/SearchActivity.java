@@ -216,7 +216,7 @@ public class SearchActivity extends AbsActivity {
 		adapter.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
 			public void onScrolled(RecyclerView rv, int dx, int dy) {
-				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[mHorCardCount])[0] >= adapter.getItemCount() - 2) {
+				if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[mHorCardCount])[0] >= adapter.getItemCount() - 3) {
 					mSwipeRefreshLayout.setRefreshing(true);
 					++mNowPage;
 					new PageGetTask().execute(getApplicationContext());

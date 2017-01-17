@@ -7,20 +7,25 @@ import android.support.annotation.DimenRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import io.codetail.widget.RevealFrameLayout;
 import moe.feng.nhentai.R;
@@ -42,7 +47,8 @@ import moe.feng.nhentai.util.Utility;
 
 
 public class HomeFragment extends LazyFragment {
-
+    private int mSectionType = SECTION_LATEST;
+    private static final int SECTION_LATEST = 0;
     private ObservableRecyclerView mRecyclerView;
     private BookListRecyclerAdapter mAdapter;
     private StaggeredGridLayoutManager mLayoutManager;
@@ -59,6 +65,10 @@ public class HomeFragment extends LazyFragment {
     private boolean  isSearchBoxShowing = true;
     public static final String TAG = HomeFragment.class.getSimpleName();
     private int currentY = 0;
+
+    // Title Bar
+    private LinearLayout mTitleBarLayout;
+    private AppCompatTextView mTitleMain, mTitleSub;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -80,6 +90,9 @@ public class HomeFragment extends LazyFragment {
         mLuckyFAB = $(R.id.fab);
         mSearchBar = $(R.id.search_bar);
         mSearchBarCard = $(R.id.card_view);
+        mTitleBarLayout = $(R.id.title_bar_layout);
+        mTitleMain = $(R.id.tv_title_main);
+        mTitleSub = $(R.id.tv_title_sub);
 
         if ((mHorCardCount = Settings.getInstance(getApplicationContext()).getInt(Settings.KEY_CARDS_COUNT, -1)) < 1) {
             mHorCardCount = Utility.getHorizontalCardCountInScreen(getActivity());
@@ -121,11 +134,17 @@ public class HomeFragment extends LazyFragment {
             }
         });
 
-
-        mBooks = new ArrayList<>();
-        mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
-        setRecyclerAdapter(mAdapter);
-        new PageGetTask().execute(mNowPage);
+        if (mListKeeper.getData() != null && !mListKeeper.getData().isEmpty() && mListKeeper.getUpdatedMiles() != -1) {
+            mBooks = mListKeeper.getData();
+            mNowPage = mListKeeper.getNowPage();
+            mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
+            setRecyclerAdapter(mAdapter);
+        } else {
+            mBooks = new ArrayList<>();
+            mAdapter = new BookListRecyclerAdapter(mRecyclerView, mBooks, mFM, mSets);
+            setRecyclerAdapter(mAdapter);
+            new PageGetTask().execute(mNowPage);
+        }
 
 
         mSwipeRefreshLayout.setColorSchemeResources(
@@ -133,15 +152,20 @@ public class HomeFragment extends LazyFragment {
                 R.color.indigo_500, R.color.blue_500, R.color.teal_500, R.color.green_500
         );
 
+        mSwipeRefreshLayout.setProgressViewOffset (true,0,180);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                mNowPage = 1;
                 if (!mSwipeRefreshLayout.isRefreshing()) {
                     mSwipeRefreshLayout.setRefreshing(true);
                 }
-                mBooks = new ArrayList<>();
-                mNowPage = 1;
-                new PageGetTask().execute(mNowPage);
+                if (mAdapter.getItemCount() >= 1) {
+                    mRecyclerView.smoothScrollToPosition(0);
+                }
+                mBooks.clear();
+                mAdapter.notifyDataSetChanged();
+                new PageGetTask().execute(mNowPage = 1);
             }
         });
 
@@ -159,17 +183,46 @@ public class HomeFragment extends LazyFragment {
             }
         });
 
+        updateTitleBar(SECTION_LATEST);
     }
 
     private void updateTranslation(int currentY) {
         int titleBarDistance = calcDimens(R.dimen.title_bar_height);
         float titleAlpha = Math.min(currentY, titleBarDistance);
         titleAlpha /= (float) titleBarDistance;
+        mTitleBarLayout.setAlpha(1 - titleAlpha);
+        titleAlpha /= (float) titleBarDistance;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mSearchBarCard.setCardElevation(titleAlpha * calcDimens(R.dimen.searchbar_elevation_raised));
         }
     }
 
+    private void updateTitleBar(int type) {
+        switch (type) {
+            case SECTION_LATEST:
+                mTitleMain.setText(R.string.title_bar_main_recent);
+                if (mListKeeper.getUpdatedMiles() != -1) {
+                    if (System.currentTimeMillis() - mListKeeper.getUpdatedMiles() < 1 * 60 * 1000) {
+                        mTitleSub.setText(R.string.title_bar_updated_time_just_now);
+                    } else {
+                        Calendar c = Calendar.getInstance();
+                        c.setTimeInMillis(mListKeeper.getUpdatedMiles());
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy/M/d H:mm:ss");
+                        String result;
+                        try {
+                            result = format.format(c.getTime());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            result = "null";
+                        }
+                        mTitleSub.setText(getString(R.string.title_bar_updated_time_at, result));
+                    }
+                } else {
+                    mTitleSub.setText(R.string.title_bar_updated_time_null);
+                }
+                break;
+        }
+    }
     private void showSearchBox() {
         isSearchBoxShowing = true;
         if (currentY < 10) {
@@ -191,7 +244,7 @@ public class HomeFragment extends LazyFragment {
             mSearchBar.animate()
                     .translationY(-calcDimens(R.dimen.logo_fade_out_translation_y))
                     .alpha(0f)
-                    .setDuration(200)
+                    .setDuration(100)
                     .start();
         }
     }
@@ -214,6 +267,13 @@ public class HomeFragment extends LazyFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        if (id == R.id.action_load_next_page) {
+            if(!mSwipeRefreshLayout.isRefreshing()){
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+
+            new PageGetTask().execute(++mNowPage);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -229,7 +289,7 @@ public class HomeFragment extends LazyFragment {
             @Override
             public void onScrolled(RecyclerView rv, int dx, int dy) {
                 super.onScrolled(rv, dx, dy);
-                if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[mHorCardCount])[0] >= mAdapter.getItemCount() - 2) {
+                if (!mSwipeRefreshLayout.isRefreshing() && mLayoutManager.findLastCompletelyVisibleItemPositions(new int[mHorCardCount])[0] >= mAdapter.getItemCount() - 3) {
                     mSwipeRefreshLayout.setRefreshing(true);
                     new PageGetTask().execute(++mNowPage);
                 }
@@ -250,6 +310,7 @@ public class HomeFragment extends LazyFragment {
 
         @Override
         protected BaseMessage doInBackground(Integer... params) {
+            Log.d(TAG, "doInBackground: mNowPage = " + params[0]);
             return PageApi.getHomePageList(params[0]);
         }
 
@@ -275,6 +336,7 @@ public class HomeFragment extends LazyFragment {
                                 mListKeeper.save();
                             }
                         }.start();
+                        updateTitleBar(mSectionType);
                         mHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {

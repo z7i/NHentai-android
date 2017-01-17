@@ -13,6 +13,43 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- Title Bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:paddingTop="@dimen/search_bar_height"
+                android:paddingBottom="@dimen/title_bar_content_margin_bottom"
+                android:id="@+id/title_bar_layout"
+                android:background="@color/deep_purple_500">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tv_title_main"
+                        android:text="@string/title_bar_main_recent"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:textColor="@android:color/white"/>
+
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tv_title_sub"
+                        android:layout_marginTop="2dp"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/white"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
             <android.support.v4.widget.SwipeRefreshLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -24,8 +61,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/recycler_view"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
+                    android:paddingTop="@dimen/list_margin_top"
+                    android:paddingBottom="16dp"
                     android:clipToPadding="false"/>
             </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -39,7 +76,7 @@
                 android:layout_gravity="end|bottom"
                 android:layout_margin="16dp"
                 android:src="@drawable/ic_shuffle_white_24dp" />
-            s
+
         </FrameLayout>
     </FrameLayout>
 </FrameLayout>

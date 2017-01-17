@@ -72,7 +72,6 @@ public class DownloadManagerFragment extends LazyFragment {
 				if (!mSwipeRefreshLayout.isRefreshing()) {
 					mSwipeRefreshLayout.setRefreshing(true);
 				}
-
 				new BooksGetTask().execute();
 			}
 		});
@@ -112,10 +111,6 @@ public class DownloadManagerFragment extends LazyFragment {
 			mRecyclerView.smoothScrollToPosition(0);
 		}
 	}
-	public void update() {
-		new BooksGetTask().execute();
-	}
-
 
 	private class BooksGetTask extends AsyncTask<Void, Void, ArrayList<Book>> {
 
