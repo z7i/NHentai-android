@@ -180,4 +180,7 @@
     <string name="no_update">The app is updated</string>
     <string name="ignore">Ignore</string>
     <string name="close">Close</string>
+    <string name="clear_cache_title">Clear Cache</string>
+    <string name="clear_cache">Clear Cache From Device</string>
+    <string name="cache_cleared">Cache Cleared Successfully</string>
 </resources>

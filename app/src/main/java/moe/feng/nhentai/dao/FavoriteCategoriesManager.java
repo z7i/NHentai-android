@@ -48,12 +48,7 @@ public class FavoriteCategoriesManager {
 		}
 
 		categories = new Gson().fromJson(json, MyArray.class);
-		if (!FileCacheManager.getInstance(context).checkUpdateCategories()){
-			new UpdateCategories().execute(context);
-		}
-		else {
-			save();
-		}
+		save();
 	}
 
 	public Category get(int position) {
@@ -141,25 +136,6 @@ public class FavoriteCategoriesManager {
 		public void remove(int position) {
 			data.remove(position);
 		}
-
-	}
-
-	private class UpdateCategories extends AsyncTask<Context, Void, BaseMessage> {
-		@Override
-		protected BaseMessage doInBackground(Context... params) {
-			categories.data = new ArrayList<>();
-			FileCacheManager.getInstance(params[0]).UpdateFavoriteCategories();
-
-			return null;
-		}
-
-
-		@Override
-		protected void onPostExecute(BaseMessage msg) {
-			Log.d(TAG, "Favorites Update Complete ");
-			save();
-		}
-
 
 	}
 

@@ -139,6 +139,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 		mFileCacheManager = FileCacheManager.getInstance(getApplicationContext());
 		if(!mFileCacheManager.checkUpdate()){
+			mFileCacheManager.deleteCache();
 			new UpdateData().execute(1);
 		}
 
@@ -427,7 +428,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 	private class UpdateData extends AsyncTask<Integer, Void, BaseMessage> {
 		@Override
 		protected BaseMessage doInBackground(Integer... params) {
-			mFileCacheManager.updateSaved(getApplicationContext());
+			mFileCacheManager.updateExternalBooks();
 
 			return null;
 		}

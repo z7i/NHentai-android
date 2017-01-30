@@ -180,5 +180,8 @@
     <string name="no_update">アプリが更新されました</string>
     <string name="ignore">無視する</string>
     <string name="action_clear_recents">すべてのRecentsをクリア</string>
+    <string name="clear_cache_title">キャッシュの消去</string>
+    <string name="clear_cache">デバイスからキャッシュをクリアする</string>
+    <string name="cache_cleared">キャッシュが正常にクリアされました</string>
 
 </resources>

@@ -56,14 +56,7 @@ public class FavoritesManager {
 			}
 		}
 		books.data.removeAll(toRemove);
-
-
-		if (!FileCacheManager.getInstance(context).checkUpdateFavorites()){
-			new UpdateFavorites().execute(context);
-		}
-		else{
-			save();
-		}
+		save();
 	}
 
 	public Book get(int position) {
@@ -167,24 +160,6 @@ public class FavoritesManager {
 				}
 			}
 		}
-
-	}
-
-	private class UpdateFavorites extends AsyncTask<Context, Void, BaseMessage> {
-		@Override
-		protected BaseMessage doInBackground(Context... params) {
-			books.updateBooksData(params[0]);
-			FileCacheManager.getInstance(params[0]).UpdateFavorites();
-
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(BaseMessage msg) {
-			Log.d(TAG, "Favorites Update Complete ");
-			save();
-		}
-
 
 	}
 

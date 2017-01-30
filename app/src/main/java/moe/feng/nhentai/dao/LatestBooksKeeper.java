@@ -48,12 +48,7 @@ public class LatestBooksKeeper {
 		}
 
 		data = new Gson().fromJson(json, MyData.class);
-		if(!FileCacheManager.getInstance(context).checkUpdateLatest()){
-			new UpdateLatest().execute(context);
-		}
-		else {
-			save();
-		}
+		save();
 
 	}
 
@@ -103,22 +98,6 @@ public class LatestBooksKeeper {
 			if (books != null) {
 				books = new ArrayList<>();
 			}
-		}
-
-	}
-
-	private class UpdateLatest extends AsyncTask<Context, Void, BaseMessage> {
-		@Override
-		protected BaseMessage doInBackground(Context... params) {
-			data.updateBooksData();
-			FileCacheManager.getInstance(params[0]).UpdateLatest();
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(BaseMessage msg) {
-			Log.d(TAG, "latest Books Update Complete ");
-			save();
 		}
 
 	}

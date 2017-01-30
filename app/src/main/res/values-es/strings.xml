@@ -180,5 +180,8 @@
     <string name="no_update">La app esta actualizada</string>
     <string name="item_recent">Recientes</string>
     <string name="action_clear_recents">Limpiar Recientes</string>
+    <string name="clear_cache_title">Eliminar Cache</string>
+    <string name="clear_cache">Eliminar Cache del Dispositivo</string>
+    <string name="cache_cleared">Cache Eliminado Exitosamente</string>
 
 </resources>

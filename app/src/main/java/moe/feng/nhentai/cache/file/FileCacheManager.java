@@ -116,7 +116,7 @@ public class FileCacheManager {
 	}
 
 	public boolean createCacheFromBook(Book book){
-		String path = mCacheDir.getAbsolutePath() + "/Books/" + book.title;
+		String path = mCacheDir.getAbsolutePath() + "/Books/" + book.bookId;
 		File d = new File(path);
 		if (!d.exists()){
 			if(!d.mkdirs()){
@@ -237,7 +237,7 @@ public class FileCacheManager {
 	}
 
 	public boolean externalBookExists(Book book) {
-		return new File(mExternalDir.getAbsolutePath()+ "/Books/" + book.title + "/book.json").isFile();
+		return new File(mExternalDir.getAbsolutePath()+ "/Books/" + book.bookId + "/book.json").isFile();
 	}
 
 
@@ -340,22 +340,13 @@ public class FileCacheManager {
 
 	public File getBitmapAllowingExternalPic(Book book, int page) {
 		File cache = new File(getCachePath(Constants.CACHE_PAGE_IMG,
-				NHentaiUrl.getOriginPictureUrl(book.galleryId, Integer.toString(page)), book.title));
+				NHentaiUrl.getOriginPictureUrl(book.galleryId, Integer.toString(page)), book.bookId));
 		File external = new File(getExternalPagePath(book, page));
 		return external.isFile() ? external : cache;
 	}
 
 	public Bitmap getBitmapUrl(String type, String url, String title) {
 		return getBitmap(type, getCacheName(url), title);
-	}
-
-	public File getBitmapFile(String type, String name, String title) {
-		return new File(getCachePath(type, name, title));
-	}
-
-	@SuppressWarnings("unused")
-	public File getBitmapUrlFile(String type, String url, String title) {
-		return getBitmapFile(type, getCacheName(url), title);
 	}
 
 	public Book getExternalBook(Book source) {
@@ -420,144 +411,33 @@ public class FileCacheManager {
 		return null;
 	}
 
+	public boolean checkUpdate (){
+		File updateFile = new File(mExternalDir.getAbsolutePath()+ "/update.txt");
+		return updateFile.exists();
+	}
 
-	public boolean updateSaved(Context context){
-		File parentDir = new File(mExternalDir.getAbsolutePath()+ "/Books/");
+	public void deleteCache() {
+		try {
+			File dir = new File(mCacheDir.getAbsolutePath());
+			deleteDir(dir);
+		} catch (Exception e) {}
+	}
 
-		if (parentDir.isDirectory()) {
-			File[] files = parentDir.listFiles();
-			for (File file : files) {
-				if (file.isDirectory()) {
-					File bookFile = new File(file.getAbsolutePath() + "/book.json");
-					if (bookFile.isFile()) {
-						try {
-							FileInputStream ins = new FileInputStream(bookFile);
-
-							byte b[] = new byte[(int) bookFile.length()];
-							if(ins.read(b)==-1){
-								Log.d(TAG, "updateSaved: Error Reading Book File");
-							}
-							ins.close();
-
-							Book book = Book.toBookFromJson(new String(b));
-
-							if (bookFile.delete()){
-								Log.d(TAG, "updateSaved: Erased correctly");
-							}
-
-							book = BookApi.getBook(context, book).getData();
-							Log.i(TAG, "Updated external: " + book.bookId);
-							saveBookDataToExternalPath(book);
-
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
+	public static boolean deleteDir(File dir) {
+		if (dir != null && dir.isDirectory()) {
+			String[] children = dir.list();
+			for (int i = 0; i < children.length; i++) {
+				boolean success = deleteDir(new File(dir, children[i]));
+				if (!success) {
+					return false;
 				}
 			}
+			return dir.delete();
+		} else if(dir!= null && dir.isFile()) {
+			return dir.delete();
 		} else {
 			return false;
 		}
-
-		parentDir = new File(mCacheDir.getAbsolutePath()+ "/pages/");
-		if (parentDir.exists()) {
-			File[] files = parentDir.listFiles();
-			for (File file : files) {
-				if(!file.delete()){
-					Log.i(TAG, "updateSaved: Error Deleting Page File");
-				}
-			}
-			if(!parentDir.delete()){
-				Log.i(TAG, "updateSaved: Error Deleting Page Directory");
-			}
-		}
-
-		parentDir = new File(mCacheDir.getAbsolutePath()+ "/thumb/");
-		if (parentDir.exists()) {
-			File[] files = parentDir.listFiles();
-			for (File file : files) {
-				if(!file.delete()){
-					Log.i(TAG, "updateSaved: Error Deleting Thumb File");
-				}
-			}
-			if (!parentDir.delete()){
-				Log.i(TAG, "updateSaved: Error Deleting Thumb Directory");
-			}
-		}
-
-		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updated.txt");
-		try {
-			OutputStream out = new FileOutputStream(updateFile);
-			out.write(String.valueOf("updated").getBytes());
-			out.close();
-			Log.d(TAG, "Version Updated Wroted");
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
-	public boolean checkUpdate (){
-		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updated.txt");
-		return updateFile.exists();
-	}
-
-	public boolean checkUpdateFavorites (){
-		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updateFab.txt");
-		return updateFile.exists();
-	}
-
-	public boolean checkUpdateLatest(){
-		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updateLat.txt");
-		return updateFile.exists();
-	}
-
-	public boolean checkUpdateCategories(){
-		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updateCat.txt");
-		return updateFile.exists();
-	}
-
-	public boolean UpdateFavoriteCategories(){
-		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updateCat.txt");
-		try {
-			OutputStream out = new FileOutputStream(updateFile);
-			out.write(String.valueOf("updated").getBytes());
-			out.close();
-			Log.d(TAG, "Categories Updated Wroted");
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
-	public boolean UpdateFavorites(){
-		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updateFab.txt");
-		try {
-			OutputStream out = new FileOutputStream(updateFile);
-			out.write(String.valueOf("updated").getBytes());
-			out.close();
-			Log.d(TAG, "Favorites Updated Wrote");
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
-	public boolean UpdateLatest(){
-		File updateFile = new File(mCacheDir.getAbsolutePath()+ "/Books/updateLat.txt");
-		try {
-			OutputStream out = new FileOutputStream(updateFile);
-			out.write(String.valueOf("updated").getBytes());
-			out.close();
-			Log.d(TAG, "Latest Updated Wrote");
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
 	}
 
 	public ArrayList<Book> getExternalBooks() {
@@ -594,10 +474,50 @@ public class FileCacheManager {
 		}
 	}
 
+	public void updateExternalBooks() {
+		File parentDir = new File(mExternalDir.getAbsolutePath()+ "/Books/");
+		File newFolder = new File(mExternalDir.getAbsolutePath()+ "/Books/");;
+		if (parentDir.isDirectory()) {
+			File[] files = parentDir.listFiles();
+			for (File file : files) {
+				if (file.isDirectory()) {
+					File bookFile = new File(file.getAbsolutePath() + "/book.json");
+					if (bookFile.exists() && bookFile.isFile()) {
+						try {
+							FileInputStream ins = new FileInputStream(bookFile);
+
+							byte b[] = new byte[(int) bookFile.length()];
+							if (ins.read(b) == -1) {
+								Log.d(TAG, "getExternalBooks: Error reading file");
+							}
+							ins.close();
+
+							Book book = Book.toBookFromJson(new String(b));
+							String id = book.bookId;
+							newFolder = new File(mExternalDir.getAbsolutePath()+ "/Books/" + id);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					Boolean result = file.renameTo(newFolder);
+					Log.d(TAG, "updateExternalBooks: "+ result);
+				}
+			}
+			File updateFile = new File(mExternalDir.getAbsolutePath()+ "/update.txt");
+			try {
+				OutputStream out = new FileOutputStream(updateFile);
+				out.write(String.valueOf("updated").getBytes());
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public int getExternalBookDownloadedCount(Book source) {
 		Book book = getExternalBook(source);
 		if (book != null && externalBookExists(book)) {
-			File parentDir = new File(mExternalDir.getAbsolutePath()+ "/Books/" + book.title);
+			File parentDir = new File(mExternalDir.getAbsolutePath()+ "/Books/" + book.bookId);
 			String[] pngs = parentDir.list(new FilenameFilter() {
 				@Override
 				public boolean accept(File file, String s) {
@@ -619,7 +539,7 @@ public class FileCacheManager {
 	}
 
 	public String getExternalPath(Book book) {
-		return mExternalDir.getAbsolutePath() + "/Books/" + book.title;
+		return mExternalDir.getAbsolutePath() + "/Books/" + book.bookId;
 	}
 
 	public String getExternalPagePath(Book book, int page) {
@@ -628,7 +548,7 @@ public class FileCacheManager {
 
 	public boolean saveToExternalPath(Book book, int page) {
 		String path = getExternalPagePath(book, page);
-		String src = getCachePath(Constants.CACHE_PAGE_IMG, getCacheName(NHentaiUrl.getOriginPictureUrl(book.galleryId, Integer.toString(page))), book.title);
+		String src = getCachePath(Constants.CACHE_PAGE_IMG, getCacheName(NHentaiUrl.getOriginPictureUrl(book.galleryId, Integer.toString(page))), book.bookId);
 		File target = new File(path);
 		File srcFile = new File(src);
 
@@ -637,8 +557,7 @@ public class FileCacheManager {
 			return true;
 		}
 
-
-		File targetParent = new File(mExternalDir.getAbsolutePath() + "/Books/" + book.title);
+		File targetParent = new File(mExternalDir.getAbsolutePath() + "/Books/" + book.bookId);
 		if (targetParent.isFile()) {
 			if(!targetParent.delete()){
 				Log.i(TAG, "saveToExternalPath: Error Removing Past File");

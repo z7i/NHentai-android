@@ -246,13 +246,13 @@ public class PageApi {
             Log.i(TAG, "getPageOriginImage: Loaded from external");
             return FileCacheManager.getInstance(context).getBitmapFile(FileCacheManager.getInstance(context).getBitmapAllowingExternalPic(book, page_num));
         }
-        if (FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url, book.title)){
+        if (FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url, book.bookId)){
             Log.i(TAG, "getPageOriginImage: Loaded from cache");
-            return FileCacheManager.getInstance(context).getBitmapUrl(CACHE_PAGE_IMG, url, book.title);
+            return FileCacheManager.getInstance(context).getBitmapUrl(CACHE_PAGE_IMG, url, book.bookId);
         }
-        else if(FileCacheManager.getInstance(context).createCacheFromNetwork(CACHE_PAGE_IMG, url, book.title)) {
+        else if(FileCacheManager.getInstance(context).createCacheFromNetwork(CACHE_PAGE_IMG, url, book.bookId)) {
             Log.i(TAG, "getPageOriginImage: Downloaded from web");
-			return  FileCacheManager.getInstance(context).getBitmapUrl(CACHE_PAGE_IMG, url, book.title);
+			return  FileCacheManager.getInstance(context).getBitmapUrl(CACHE_PAGE_IMG, url, book.bookId);
 		}
 
         else{
@@ -269,11 +269,11 @@ public class PageApi {
            return FileCacheManager.getInstance(context).getBitmapAllowingExternalPic(book, page_num);
         }
 
-        else if (FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url, book.title)){
+        else if (FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url, book.bookId)){
             Log.i(TAG, "getPageOriginImageFile: Loaded from cache");
             return FileCacheManager.getInstance(context).getBitmapAllowingExternalPic(book, page_num);
         }
-        else if (FileCacheManager.getInstance(context).createCacheFromNetwork(CACHE_PAGE_IMG, url, book.title)){
+        else if (FileCacheManager.getInstance(context).createCacheFromNetwork(CACHE_PAGE_IMG, url, book.bookId)){
             Log.i(TAG, "getPageOriginImageFile: Downloaded from web");
             return FileCacheManager.getInstance(context).getBitmapAllowingExternalPic(book, page_num);
 		}
@@ -288,7 +288,7 @@ public class PageApi {
 
     public static boolean isPageOriginImageCacheFileExist(Context context, Book book, int page_num) {
         String url = NHentaiUrl.getOriginPictureUrl(book.galleryId, String.valueOf(page_num));
-        return FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url, book.title);
+        return FileCacheManager.getInstance(context).cacheExistsUrl(CACHE_PAGE_IMG, url, book.bookId);
     }
 
 }

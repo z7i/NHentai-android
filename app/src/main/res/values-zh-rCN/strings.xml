@@ -174,5 +174,8 @@
     <string name="no_update">應用程式已更新</string>
     <string name="ignore">忽視</string>
     <string name="action_clear_recents">清除所有最近</string>
+    <string name="clear_cache_title">清除缓存</string>
+    <string name="clear_cache">清除设备缓存</string>
+    <string name="cache_cleared">缓存已成功清除</string>
 
 </resources>

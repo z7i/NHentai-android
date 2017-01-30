@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import moe.feng.nhentai.R;
+import moe.feng.nhentai.cache.file.FileCacheManager;
 import moe.feng.nhentai.dao.SearchHistoryManager;
 import moe.feng.nhentai.ui.SettingsActivity;
 import moe.feng.nhentai.util.Updates;
@@ -24,7 +25,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 	private Preference mAppearancePref;
 	private Preference mStoragePref;
 	private Preference mSearchPref;
-
+	private Preference mCachePref;
 	private Preference mVersionPref;
 
 	@Override
@@ -40,6 +41,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 		mAppearancePref = (Preference) findPreference("ui");
 		mStoragePref = (Preference) findPreference("storage");
 		mGoogleGroupPref = (Preference) findPreference("google_plus_group");
+		mCachePref = (Preference) findPreference("cache");
 
 		String version = "Unknown";
 		try {
@@ -59,6 +61,7 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 		mAppearancePref.setOnPreferenceClickListener(this);
 		mStoragePref.setOnPreferenceClickListener(this);
 		mGoogleGroupPref.setOnPreferenceClickListener(this);
+		mCachePref.setOnPreferenceClickListener(this);
 	}
 
 	@Override
@@ -93,6 +96,11 @@ public class SettingsMain extends PreferenceFragment implements Preference.OnPre
 		if (pref == mSearchPref) {
 			SearchHistoryManager.getInstance(getParentActivity().getBaseContext(), "all").cleanAll();
 			Toast.makeText(getParentActivity().getBaseContext(), R.string.search_cleared, Toast.LENGTH_LONG).show();
+			return true;
+		}
+		if (pref == mCachePref) {
+			FileCacheManager.getInstance(getParentActivity().getBaseContext()).deleteCache();
+			Toast.makeText(getParentActivity().getBaseContext(), R.string.cache_cleared, Toast.LENGTH_LONG).show();
 			return true;
 		}
 		if (pref == mVersionPref) {
