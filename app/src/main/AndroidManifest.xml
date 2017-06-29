@@ -35,8 +35,9 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="nhentai.net" android:pathPrefix="/g"/>
+                <data android:scheme="https" android:host="nhentai.net" android:pathPrefix="/g"/>
             </intent-filter>
         </activity>
 
@@ -87,10 +88,10 @@
         </activity>
 
        <provider
-        android:name="android.support.v4.content.FileProvider"
-        android:authorities="moe.feng.nhentai.ui.HomeActivity"
-        android:exported="false"
-        android:grantUriPermissions="true">
+           android:name="android.support.v4.content.FileProvider"
+           android:authorities="${applicationId}.HomeActivity"
+           android:exported="false"
+           android:grantUriPermissions="true">
         <meta-data
         android:name="android.support.FILE_PROVIDER_PATHS"
         android:resource="@xml/provider_paths"/>
