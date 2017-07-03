@@ -223,13 +223,14 @@ public class BookDetailsActivity extends AbsActivity implements ObservableScroll
 		Intent intent = new Intent(context, BookDetailsActivity.class);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
 				&& Settings.getInstance(context).getBoolean(Settings.KEY_ALLOW_STANDALONE_TASK, true)) {
-			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 		} else {
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		}
 		intent.putExtra(EXTRA_BOOK_DATA, book.toJSONString());
 		intent.putExtra(EXTRA_POSITION, fromPosition);
 		intent.putExtra(EXTRA_IS_SAVED, isFromSaved);
+
 		context.startActivity(intent);
 	}
 

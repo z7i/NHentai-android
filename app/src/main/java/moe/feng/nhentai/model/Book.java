@@ -59,7 +59,17 @@ public class Book {
 		}
 
 		if( (this.langField.equals(Book.LANG_JP) || this.langField.equals(Book.LANG_CN))){
-			return this.titleJP != null ? this.titleJP : this.title;
+			if(titleJP != null){
+				if(!titlePretty.equals("")){
+					return titleJP;
+				}
+				else{
+					return this.title;
+				}
+			}
+			else {
+				return this.title;
+			}
 		}
 			return this.title != null ? this.title : this.titleJP;
 	}

@@ -9,7 +9,7 @@ android {
 		minSdkVersion 16
 		targetSdkVersion 25
 		versionCode 35
-		versionName "1.8.3"
+		versionName "1.8.4"
 	}
 	productFlavors {
 		dev {
@@ -36,7 +36,7 @@ android {
 
 dependencies {
 	compile fileTree(dir: 'libs', include: ['*.jar'])
-	final GOOGLE_SUPPORT_VERSION = '25.1.1'
+	final GOOGLE_SUPPORT_VERSION = '25.3.1'
 	compile "com.android.support:support-v13:${GOOGLE_SUPPORT_VERSION}"
 	compile "com.android.support:design:${GOOGLE_SUPPORT_VERSION}"
 	compile "com.android.support:appcompat-v7:${GOOGLE_SUPPORT_VERSION}"
