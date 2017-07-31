@@ -20,7 +20,7 @@ import moe.feng.nhentai.view.pref.SwitchPreference;
 public class SettingsAppearance extends PreferenceFragment implements Preference.OnPreferenceClickListener, android.preference.Preference.OnPreferenceChangeListener {
 
 	private Preference mCardCountPref;
-	private SwitchPreference mHDImagePref, mFullHDPreviewPref, mAllowStandaloneTaskPref;
+	private SwitchPreference mHDImagePref, mFullHDPreviewPref, mAllowStandaloneTaskPref, mGalleryCompressionPref;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -33,6 +33,7 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 		mHDImagePref = (SwitchPreference) findPreference("hd_image");
 		mFullHDPreviewPref = (SwitchPreference) findPreference("full_image_preview");
 		mAllowStandaloneTaskPref = (SwitchPreference) findPreference("allow_standalone_task");
+		mGalleryCompressionPref = (SwitchPreference) findPreference("gallery_image_compression");
 
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			mAllowStandaloneTaskPref.setEnabled(false);
@@ -51,11 +52,13 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 		mHDImagePref.setChecked(mSets.getBoolean(Settings.KEY_LIST_HD_IMAGE, false));
 		mFullHDPreviewPref.setChecked(mSets.getBoolean(Settings.KEY_FULL_IMAGE_PREVIEW, false));
 		mAllowStandaloneTaskPref.setChecked(mSets.getBoolean(Settings.KEY_ALLOW_STANDALONE_TASK, true) && mAllowStandaloneTaskPref.isEnabled());
+		mGalleryCompressionPref.setChecked(mSets.getBoolean(Settings.KEY_GALLERY_COMPRESSION, false) && mGalleryCompressionPref.isEnabled());
 
 		mCardCountPref.setOnPreferenceClickListener(this);
 		mHDImagePref.setOnPreferenceChangeListener(this);
 		mFullHDPreviewPref.setOnPreferenceChangeListener(this);
 		mAllowStandaloneTaskPref.setOnPreferenceChangeListener(this);
+		mGalleryCompressionPref.setOnPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -165,6 +168,12 @@ public class SettingsAppearance extends PreferenceFragment implements Preference
 			Boolean b = (Boolean) o;
 			mSets.putBoolean(Settings.KEY_ALLOW_STANDALONE_TASK, b);
 			mAllowStandaloneTaskPref.setChecked(b);
+			return true;
+		}
+		if (pref == mGalleryCompressionPref) {
+			Boolean b = (Boolean) o;
+			mSets.putBoolean(Settings.KEY_GALLERY_COMPRESSION, b);
+			mGalleryCompressionPref.setChecked(b);
 			return true;
 		}
 		return false;

@@ -28,6 +28,7 @@ import moe.feng.nhentai.api.common.NHentaiUrl;
 import moe.feng.nhentai.cache.common.Constants;
 import moe.feng.nhentai.model.Book;
 import moe.feng.nhentai.ui.HomeActivity;
+import moe.feng.nhentai.util.Settings;
 
 import static moe.feng.nhentai.BuildConfig.DEBUG;
 
@@ -39,7 +40,11 @@ public class FileCacheManager {
 
 	private File mCacheDir, mExternalDir;
 
+	private Settings mSettings;
+
 	private FileCacheManager(Context context) {
+		mSettings = Settings.getInstance(context);
+
 		try {
 			mCacheDir = context.getExternalCacheDir();
 		} catch (Exception e) {
@@ -281,7 +286,9 @@ public class FileCacheManager {
 		bounds.inJustDecodeBounds=true;
 		BitmapFactory.decodeStream(ipt,null,bounds);
 
-		bounds.inSampleSize = calculateInSampleSize(bounds,720, 1280);
+		if (mSettings.getBoolean(Settings.KEY_GALLERY_COMPRESSION, false)) {
+			bounds.inSampleSize = calculateInSampleSize(bounds, 720, 1280);
+		}
 
 		Log.d(TAG, "getBitmap: " + bounds.inSampleSize);
 		FileInputStream iptF;
@@ -318,7 +325,9 @@ public class FileCacheManager {
 		bounds.inJustDecodeBounds=true;
 		BitmapFactory.decodeStream(ipt,null,bounds);
 
-		bounds.inSampleSize = calculateInSampleSize(bounds,480, 640);
+		if (mSettings.getBoolean(Settings.KEY_GALLERY_COMPRESSION, false)) {
+			bounds.inSampleSize = calculateInSampleSize(bounds, 480, 640);
+		}
 
 		FileInputStream iptF=openCacheStream(type,name, title);
 
