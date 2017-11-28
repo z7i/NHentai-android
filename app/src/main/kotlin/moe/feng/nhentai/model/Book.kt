@@ -4,7 +4,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = Book.TAG) class Book {
+@Entity(tableName = Book.TAG) class Book: History.KeyContainer<Book.HistoryKey> {
 
 	// Serializable fields
 	@PrimaryKey @SerializedName("id") lateinit var bookId: String
@@ -33,7 +33,12 @@ import com.google.gson.annotations.SerializedName
 	val jpTitle: String? get() = titles.japanese
 	val prettyTitle: String? get() = titles.pretty
 
-	private data class BookTitle(
+	override fun getHistoryAction(): Int = History.ACTION_READ_BOOK
+
+	override fun getHistoryKey(): Book.HistoryKey
+			= HistoryKey(bookId, galleryId, titles, images.cover)
+
+	data class BookTitle(
 			var japanese: String? = null,
 			var pretty: String? = null,
 			var english: String = ""
@@ -44,6 +49,13 @@ import com.google.gson.annotations.SerializedName
 	        var pages: Array<Picture> = emptyArray(),
 	        var thumbnail: Picture? = null
 	)
+
+	class HistoryKey(
+			override val id: String,
+	        val galleryId: String,
+	        val titles: BookTitle,
+	        val cover: Picture? = null
+	): History.Key
 
 	companion object {
 

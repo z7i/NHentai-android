@@ -6,7 +6,7 @@ object GsonUtils {
 
 	private val gson = GsonBuilder().create()
 
-	fun toJson(obj: Any): String = gson.toJson(obj)
+	fun <T> toJson(obj: T): String = gson.toJson(obj)
 
 	fun <T> fromJson(json: String, clazz: Class<T>): T = gson.fromJson(json, clazz)
 

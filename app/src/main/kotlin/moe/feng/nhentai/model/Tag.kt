@@ -10,7 +10,18 @@ import android.arch.persistence.room.PrimaryKey
 		val url: String = "",
 		val count: Int = 0,
         val isFavourite: Boolean = false
-) {
+): History.KeyContainer<Tag.HistoryKey> {
+
+	override fun getHistoryAction(): Int = History.ACTION_READ_TAGS
+
+	override fun getHistoryKey(): HistoryKey
+			= HistoryKey(id, type, name)
+
+	class HistoryKey(
+			override val id: Int,
+	        val type: String,
+	        val name: String
+	): History.Key
 
 	companion object {
 

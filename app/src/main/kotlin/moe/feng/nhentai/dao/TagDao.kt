@@ -40,7 +40,7 @@ import moe.feng.nhentai.model.Tag
 
 	/**
 	 * Delete tag from cache
-	 * @param books Tag being deleted
+	 * @param tag Tag being deleted
 	 */
 	@Delete
 	fun delete(tag: Tag)
