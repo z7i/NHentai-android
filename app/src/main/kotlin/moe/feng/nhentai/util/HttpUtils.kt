@@ -4,7 +4,7 @@ import moe.feng.nhentai.api.ApiConstants
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import java.io.IOException
+import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 
 object HttpUtils {
@@ -20,11 +20,15 @@ object HttpUtils {
 
 	private const val HEADER_USER_AGENT = "User-Agent"
 
-	@Throws(IOException::class)
-	fun requestUrl(url: String): Response = Request.Builder().url(url)
-			.addHeader(HEADER_USER_AGENT, ApiConstants.NHBOOKS_UA)
-			.build()
-			.run(client::newCall)
-			.execute()
+	fun requestUrl(url: String): Response? = try {
+		Request.Builder().url(url)
+				.addHeader(HEADER_USER_AGENT, ApiConstants.NHBOOKS_UA)
+				.build()
+				.run(client::newCall)
+				.execute()
+	} catch (e: SocketTimeoutException) {
+		e.printStackTrace()
+		null
+	}
 
 }

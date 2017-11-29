@@ -3,6 +3,7 @@ package moe.feng.nhentai.model
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import moe.feng.nhentai.R
 
 @Entity(tableName = Book.TAG) class Book: History.KeyContainer<Book.HistoryKey> {
 
@@ -32,6 +33,13 @@ import com.google.gson.annotations.SerializedName
 	val title: String get() = titles.english
 	val jpTitle: String? get() = titles.japanese
 	val prettyTitle: String? get() = titles.pretty
+
+	fun getLanguageFlagRes(): Int = when (language) {
+		Tag.LANG_CHINESE -> R.drawable.ic_lang_cn
+		Tag.LANG_ENGLISH -> R.drawable.ic_lang_gb
+		Tag.LANG_JAPANESE -> R.drawable.ic_lang_jp
+		else -> 0
+	}
 
 	override fun getHistoryAction(): Int = History.ACTION_READ_BOOK
 

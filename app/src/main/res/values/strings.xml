@@ -11,6 +11,9 @@
     <string name="dialog_permission_msg">NHBooks needs permission to read and wtite on the external storage to save images. Without them, this app could not work well.</string>
     <string name="snack_permission_failed">The request of permissions was denied!</string>
 
+    <!-- 2.0 Main -->
+    <string name="item_history">History</string>
+
     <!-- New Home Design -->
     <string name="search_bar_hint">Search books here....</string>
     <string name="title_bar_main_recent">Latest Books</string>

@@ -8,6 +8,6 @@ object BookApi {
 
 	suspend fun getBook(bookId: String): Book? = ApiConstants.getBookDetailsUrl(bookId)
 			.run(HttpUtils::requestUrl)
-			.readAsJsonObject()
+			?.readAsJsonObject()
 
 }

@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
 	compileSdkVersion 27
@@ -62,7 +63,7 @@ dependencies {
 	implementation "com.android.support:support-v4:${GOOGLE_SUPPORT_VERSION}"
 	implementation "android.arch.persistence.room:runtime:1.0.0"
 	annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
-	implementation "android.arch.persistence.room:rxjava2:1.0.0"
+	kapt 'com.android.databinding:compiler:2.3.1'
 
 	// Model & Data
 	implementation 'com.google.code.gson:gson:2.8.2'
@@ -72,6 +73,7 @@ dependencies {
 
 	// Network & Utils
 	implementation 'com.squareup.okhttp3:okhttp:3.9.1'
+	implementation 'me.drakeet.multitype:multitype:3.4.0'
 
 	// UI & Widgets
 	implementation 'com.afollestad.material-dialogs:core:0.9.4.3'
@@ -84,4 +86,5 @@ dependencies {
 	implementation ('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
 		transitive = true
 	}
+	compile 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:2.0.1-rc1'
 }

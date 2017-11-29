@@ -29,7 +29,7 @@ abstract class AppDatabase: RoomDatabase() {
 		@SuppressLint("StaticFieldLeak")
 		var INSTANCE: AppDatabase? = null
 
-		@Synchronized fun init(context: Context) {
+		@Synchronized fun init(context: Context): AppDatabase {
 			if (INSTANCE == null) {
 				INSTANCE = Room.databaseBuilder(
 						context.applicationContext,
@@ -37,6 +37,7 @@ abstract class AppDatabase: RoomDatabase() {
 						TAG
 				).build()
 			}
+			return INSTANCE!!
 		}
 
 	}
