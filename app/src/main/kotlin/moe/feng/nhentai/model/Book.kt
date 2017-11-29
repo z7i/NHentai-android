@@ -22,7 +22,8 @@ import moe.feng.nhentai.R
 	var isFavourite: Boolean = false
 
 	// Methods
-	val language: String get() = allTags.find { it.type == Tag.TYPE_LANGUAGE }?.name ?: Tag.LANG_JAPANESE
+	val language: String get() = allTags.find {
+		it.type == Tag.TYPE_LANGUAGE && it.name != Tag.LANG_TRANSLATED }?.name ?: Tag.LANG_JAPANESE
 	val tags: Array<Tag> get() = allTags.filter { it.type == Tag.TYPE_TAG }.toTypedArray()
 	val categories: Array<Tag> get() = allTags.filter { it.type == Tag.TYPE_CATEGORY }.toTypedArray()
 	val characters: Array<Tag> get() = allTags.filter { it.type == Tag.TYPE_CHARACTER }.toTypedArray()

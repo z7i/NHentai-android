@@ -38,6 +38,7 @@ import android.arch.persistence.room.PrimaryKey
 		const val LANG_CHINESE = "chinese"
 		const val LANG_ENGLISH = "english"
 		const val LANG_JAPANESE = "japanese"
+		const val LANG_TRANSLATED = "translated"
 
 	}
 

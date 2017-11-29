@@ -44,7 +44,7 @@
                 android:maxLines="2"
                 android:id="@+id/book_title"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text='@{"      "  + book.title}'/>
+                android:text='@{"       "  + book.title}'/>
 
         </FrameLayout>
 
