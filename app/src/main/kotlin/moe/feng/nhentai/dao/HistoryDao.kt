@@ -1,7 +1,6 @@
 package moe.feng.nhentai.dao
 
 import android.arch.persistence.room.*
-import io.reactivex.Flowable
 import moe.feng.nhentai.model.History
 
 /**
@@ -14,7 +13,7 @@ import moe.feng.nhentai.model.History
 	 * @return All histories list
 	 */
 	@Query("SELECT * from ${History.TAG}")
-	fun getAllHistories(): Flowable<History>
+	fun getAllHistories(): List<History>
 
 	/**
 	 * Insert history(s)

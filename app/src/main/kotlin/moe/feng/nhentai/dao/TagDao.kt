@@ -1,8 +1,6 @@
 package moe.feng.nhentai.dao
 
 import android.arch.persistence.room.*
-import io.reactivex.Flowable
-import io.reactivex.Single
 import moe.feng.nhentai.model.Tag
 
 /**
@@ -15,21 +13,21 @@ import moe.feng.nhentai.model.Tag
 	 * @return All cached tags list
 	 */
 	@Query("SELECT * from ${Tag.TAG}")
-	fun getAllTags(): Flowable<Tag>
+	fun getAllTags(): List<Tag>
 
 	/**
 	 * Get favourite tags
 	 * @return Favourite tags list
 	 */
 	@Query("SELECT * from ${Tag.TAG} WHERE isFavourite = 1")
-	fun getFavouriteTags(): Flowable<Tag>
+	fun getFavouriteTags(): List<Tag>
 
 	/**
 	 * Get tag by id
 	 * @return Specific id cached tag
 	 */
 	@Query("SELECT * from ${Tag.TAG} WHERE id = :tagId")
-	fun getTag(tagId: Int): Single<Tag>
+	fun getTag(tagId: Int): Tag
 
 	/**
 	 * Insert tag(s) to cache

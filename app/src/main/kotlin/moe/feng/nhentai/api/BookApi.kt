@@ -6,7 +6,7 @@ import moe.feng.nhentai.util.extension.readAsJsonObject
 
 object BookApi {
 
-	fun getBook(bookId: String): Book? = ApiConstants.getBookDetailsUrl(bookId)
+	suspend fun getBook(bookId: String): Book? = ApiConstants.getBookDetailsUrl(bookId)
 			.run(HttpUtils::requestUrl)
 			.readAsJsonObject()
 
