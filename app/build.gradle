@@ -74,6 +74,7 @@ dependencies {
 	// Network & Utils
 	implementation 'com.squareup.okhttp3:okhttp:3.9.1'
 	implementation 'me.drakeet.multitype:multitype:3.4.0'
+	implementation 'moe.shizuku.fontprovider:api:8'
 
 	// UI & Widgets
 	implementation 'com.afollestad.material-dialogs:core:0.9.4.3'

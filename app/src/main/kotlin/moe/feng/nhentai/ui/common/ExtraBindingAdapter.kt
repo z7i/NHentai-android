@@ -1,13 +1,10 @@
 package moe.feng.nhentai.ui.common
 
 import android.databinding.BindingAdapter
-import android.graphics.drawable.BitmapDrawable
-import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
 import android.view.ViewTreeObserver
 import android.widget.ImageView
-import com.robertlevonyan.views.chip.Chip
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.experimental.*
@@ -92,25 +89,6 @@ object ExtraBindingAdapter: AnkoLogger {
 				}
 			}
 		}
-	}
-
-	@BindingAdapter("app:mcv_chipText")
-	@JvmStatic fun setChipText(chip: Chip, text: String) {
-		chip.chipText = text
-	}
-
-	@BindingAdapter("app:mcv_chipIcon")
-	@JvmStatic fun setChipIconResource(chip: Chip, resource: Int) {
-		chip.chipIcon = BitmapDrawable(
-				ContextCompat.getDrawable(chip.context, resource)!!.toBitmap().apply {
-					height = (height * 0.75F).toInt()
-					width = (width * 0.75F).toInt()
-				})
-	}
-
-	@BindingAdapter("app:mcv_backgroundColor")
-	@JvmStatic fun setChipBackgroundColor(chip: Chip, color: Int) {
-		chip.changeBackgroundColor(color)
 	}
 
 }
