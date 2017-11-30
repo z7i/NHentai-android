@@ -2,6 +2,7 @@ package moe.feng.nhentai.model
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import moe.feng.nhentai.R
 
 @Entity(tableName = Tag.TAG) class Tag @JvmOverloads constructor(
 		@PrimaryKey val id: Int = 0,
@@ -16,6 +17,17 @@ import android.arch.persistence.room.PrimaryKey
 
 	override fun getHistoryKey(): HistoryKey
 			= HistoryKey(id, type, name)
+
+	val typeIcon: Int get() = when (type) {
+		TYPE_LANGUAGE -> R.drawable.ic_language_white_24dp
+		TYPE_ARTIST -> R.drawable.ic_account_circle_white_24dp
+		TYPE_CATEGORY -> R.drawable.ic_loyalty_white_24dp
+		TYPE_CHARACTER -> R.drawable.ic_wc_white_24dp
+		TYPE_GROUP -> R.drawable.ic_group_work_white_24dp
+		TYPE_PARODY -> R.drawable.ic_movie_creation_white_24dp
+		TYPE_TAG -> R.drawable.ic_label_white_24dp
+		else -> 0
+	}
 
 	class HistoryKey(
 			val id: Int,

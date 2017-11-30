@@ -19,7 +19,7 @@ class ColorGenerator private constructor(private val mColors: List<Int>) {
 
 	companion object {
 
-		val DEFAULT: ColorGenerator = create(Arrays.asList(
+		@JvmStatic val DEFAULT: ColorGenerator = create(Arrays.asList(
 				-0xe9c9c,
 				-0xa7aa7,
 				-0x65bc2,
@@ -31,7 +31,7 @@ class ColorGenerator private constructor(private val mColors: List<Int>) {
 				-0x7fa87f
 		))
 
-		val MATERIAL: ColorGenerator = create(Arrays.asList(
+		@JvmStatic val MATERIAL: ColorGenerator = create(Arrays.asList(
 				-0x1a8c8d,
 				-0xf9d6e,
 				-0x459738,
@@ -51,7 +51,7 @@ class ColorGenerator private constructor(private val mColors: List<Int>) {
 				-0x6f5b52
 		))
 
-		fun create(colorList: List<Int>): ColorGenerator {
+		@JvmStatic fun create(colorList: List<Int>): ColorGenerator {
 			return ColorGenerator(colorList)
 		}
 	}
