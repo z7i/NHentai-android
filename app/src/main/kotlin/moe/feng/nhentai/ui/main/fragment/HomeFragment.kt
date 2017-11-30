@@ -27,6 +27,7 @@ class HomeFragment: NHBindingFragment<FragmentNewHomeBinding>() {
 			recyclerView.adapter = adapter
 			recyclerView.setOnLoadMoreListener(viewModel::onNext)
 
+			swipeRefreshLayout.setColorSchemeResources(R.color.deep_purple_500)
 			swipeRefreshLayout.setOnRefreshListener(viewModel)
 		}
 	}

@@ -18,10 +18,12 @@ import android.arch.persistence.room.PrimaryKey
 			= HistoryKey(id, type, name)
 
 	class HistoryKey(
-			override val id: Int,
+			val id: Int,
 	        val type: String,
 	        val name: String
-	): History.Key
+	): History.Key {
+		override fun id(): String = id.toString()
+	}
 
 	companion object {
 

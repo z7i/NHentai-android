@@ -10,7 +10,6 @@ import com.squareup.picasso.Picasso
 import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.UI
 import me.drakeet.multitype.MultiTypeAdapter
-import moe.feng.nhentai.api.model.*
 import moe.feng.nhentai.model.Book
 import moe.feng.nhentai.util.ColorGenerator
 import moe.feng.nhentai.util.TextDrawable

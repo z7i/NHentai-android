@@ -8,7 +8,7 @@ import java.util.*
 @Entity(tableName = History.TAG) class History(
 		val action: Int,
 		@PrimaryKey var time: Long = System.currentTimeMillis(),
-		var key: String = "{}"
+		var key: String = ""
 ) {
 
 	fun getDate(): Date {
@@ -23,7 +23,9 @@ import java.util.*
 	}
 
 	interface Key {
-		val id: Any
+
+		fun id(): String
+
 	}
 
 	companion object {
@@ -35,7 +37,7 @@ import java.util.*
 		const val ACTION_SEARCH = 2
 
 		fun <T: Key> from(item: KeyContainer<T>): History
-				= History(item.getHistoryAction(), key = item.getHistoryKey().objectAsJson())
+				= History(item.getHistoryAction(), key = item.getHistoryKey().id())
 
 	}
 

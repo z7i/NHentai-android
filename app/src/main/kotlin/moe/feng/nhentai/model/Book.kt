@@ -4,6 +4,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import moe.feng.nhentai.R
+import moe.feng.nhentai.api.ApiConstants
 
 @Entity(tableName = Book.TAG) class Book: History.KeyContainer<Book.HistoryKey> {
 
@@ -62,15 +63,36 @@ import moe.feng.nhentai.R
 	)
 
 	class HistoryKey(
-			override val id: String,
+			val id: String,
 	        val galleryId: String,
 	        val titles: BookTitle,
 	        val cover: Picture? = null
-	): History.Key
+	): History.Key {
+		override fun id(): String = id
+	}
 
 	companion object {
 
 		const val TAG = "Book"
+
+	}
+
+	// Extend function
+
+	val requestUrl: String get() = ApiConstants.getBookDetailsUrl(bookId)
+	val thumbUrl: String get() = ApiConstants.getBookThumbUrl(galleryId, images.cover?.fileType)
+	val bigCoverUrl: String get() = ApiConstants.getBigCoverUrl(galleryId)
+	val pagePictures: BookPageGetter get() = BookPageGetter(this, false)
+	val pageThumbnails: BookPageGetter get() = BookPageGetter(this, true)
+
+	class BookPageGetter internal constructor(private val book: Book, private val thumb: Boolean) {
+
+		operator fun get(pageNum: Int): String =
+				(if (thumb) ApiConstants::getPictureUrl else ApiConstants::getThumbPictureUrl)(
+						book.galleryId,
+						pageNum.toString(),
+						book.images.pages[pageNum].fileType
+				)
 
 	}
 
