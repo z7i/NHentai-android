@@ -5,6 +5,8 @@ import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import moe.feng.nhentai.R
 import moe.feng.nhentai.api.ApiConstants
+import java.text.DateFormat
+import java.util.*
 
 @Entity(tableName = Book.TAG) class Book: History.KeyContainer<Book.HistoryKey> {
 
@@ -42,6 +44,8 @@ import moe.feng.nhentai.api.ApiConstants
 		Tag.LANG_JAPANESE -> R.drawable.ic_lang_jp
 		else -> 0
 	}
+
+	fun getFormattedTime(): String = DateFormat.getDateTimeInstance().format(Date(uploadDate * 1000))
 
 	override fun getHistoryAction(): Int = History.ACTION_READ_BOOK
 

@@ -14,6 +14,9 @@
     <!-- 2.0 Main -->
     <string name="item_history">History</string>
 
+    <!-- 2.0 Details -->
+	<string name="upload_time_format">Upload at %s</string>
+
     <!-- New Home Design -->
     <string name="search_bar_hint">Search books here....</string>
     <string name="title_bar_main_recent">Latest Books</string>
