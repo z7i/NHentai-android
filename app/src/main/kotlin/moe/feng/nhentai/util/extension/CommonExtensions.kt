@@ -21,3 +21,9 @@ inline fun <reified METHOD: KFunction<RESULT>, reified RESULT>
 		}
 
 fun <T> T.printAsJson(): T = apply { Log.i("Debug", objectAsJson()) }
+
+private val BRACKETS = arrayOf("[",  "]", "{", "}", "(", ")", ",", ".",
+		"<", ">", "《", "》", "【", "】", "｛", "｝")
+
+fun String.firstWord(): String? =
+		(0 until length).map { substring(it, it + 1) }.firstOrNull { it !in BRACKETS }

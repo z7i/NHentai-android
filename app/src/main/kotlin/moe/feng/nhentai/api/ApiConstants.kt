@@ -51,10 +51,7 @@ object ApiConstants {
 	fun getOriginPictureUrl(galleryId: String, pageNum: String): String =
 			getPictureUrl(galleryId, pageNum, "jpg")
 
-	fun getThumbPictureUrl(galleryId: String, pageNum: String): String =
-			getThumbPictureUrl(galleryId, pageNum + "t", "jpg")
-
-	fun getBookThumbUrl(galleryId: String): String =
-			getThumbPictureUrl(galleryId, "thumb", "jpg")
+	fun getBookThumbUrl(galleryId: String, fileType: String? = "jpg"): String =
+			getThumbPictureUrl(galleryId, "thumb", fileType ?: "jpg")
 
 }

@@ -9,6 +9,7 @@ class Picture {
 	private @SerializedName("t") var type: String = "j"
 	val isJpg: Boolean get() = type == "j"
 	val isPng: Boolean get() = type == "p"
+	val fileType: String get() = if (isJpg) "jpg" else "png"
 
 	fun setIsJpg() {
 		type = "j"

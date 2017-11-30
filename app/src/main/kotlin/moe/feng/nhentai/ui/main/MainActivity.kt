@@ -20,14 +20,16 @@ class MainActivity: NHBindingActivity<ActivityMainBinding>(), BottomNavigation.O
 	}
 
 	override fun onMenuChanged(item: BottomNavigation) {
-		supportFragmentManager.beginTransaction().apply {
-			when (item.id) {
-				R.id.item_home -> replace(R.id.container, homeFragment)
-				R.id.item_downloaded ->  replace(R.id.container, homeFragment)
-				R.id.item_fav ->  replace(R.id.container, homeFragment)
-				R.id.item_history ->  replace(R.id.container, homeFragment)
-			}
-		}.commit()
+		if (!supportFragmentManager.isStateSaved) {
+			supportFragmentManager.beginTransaction().apply {
+				when (item.id) {
+					R.id.item_home -> replace(R.id.container, homeFragment)
+					R.id.item_downloaded ->  replace(R.id.container, homeFragment)
+					R.id.item_fav ->  replace(R.id.container, homeFragment)
+					R.id.item_history ->  replace(R.id.container, homeFragment)
+				}
+			}.commit()
+		}
 	}
 
 }

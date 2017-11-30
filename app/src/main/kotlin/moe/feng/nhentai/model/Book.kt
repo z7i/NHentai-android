@@ -47,6 +47,8 @@ import moe.feng.nhentai.R
 	override fun getHistoryKey(): Book.HistoryKey
 			= HistoryKey(bookId, galleryId, titles, images.cover)
 
+	// Sub-classes
+
 	data class BookTitle(
 			var japanese: String? = null,
 			var pretty: String? = null,

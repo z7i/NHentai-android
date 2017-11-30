@@ -81,6 +81,7 @@ dependencies {
 	implementation 'com.github.linger1216:labelview:v1.1.1'
 	implementation 'com.github.ksoichiro:android-observablescrollview:1.6.0'
 	implementation 'com.nineoldandroids:library:2.4.0'
+	implementation 'com.squareup.picasso:picasso:2.5.2'
 	implementation 'com.github.florent37:materialimageloading:1.0.2'
 	implementation 'com.github.AlbertGrobas:MovingImageView:381fddac64'
 	implementation ('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
