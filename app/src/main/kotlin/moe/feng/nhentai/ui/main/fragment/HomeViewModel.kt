@@ -5,16 +5,15 @@ import android.support.v4.widget.SwipeRefreshLayout
 import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.UI
 import moe.feng.nhentai.api.PageApi
-import moe.feng.nhentai.model.Book
+import moe.feng.nhentai.dao.LatestBook
 import moe.feng.nhentai.ui.common.NHViewModel
 import org.jetbrains.anko.*
 
 class HomeViewModel: NHViewModel(), SwipeRefreshLayout.OnRefreshListener {
 
-	var updateTime = ObservableField("")
 	var isRefreshing = ObservableField(false)
-	var currentPage = ObservableField(1)
-	var items = ObservableField(mutableListOf<Book>())
+	var currentPage = ObservableField(LatestBook.nowPage)
+	var items = ObservableField(LatestBook.list?.toMutableList() ?: mutableListOf())
 
 	override fun onRefresh() {
 		async(UI) {
@@ -25,6 +24,7 @@ class HomeViewModel: NHViewModel(), SwipeRefreshLayout.OnRefreshListener {
 				if (result?.isNotEmpty() == true) {
 					items.set(result.toMutableList())
 					currentPage.set(1)
+					saveLatestBook()
 				} else {
 					// TODO Error
 					error("Error")
@@ -45,6 +45,7 @@ class HomeViewModel: NHViewModel(), SwipeRefreshLayout.OnRefreshListener {
 				if (result?.isNotEmpty() == true) {
 					items.set((items.get() + result).toMutableList())
 					currentPage.set(currentPage.get() + 1)
+					saveLatestBook()
 				} else {
 					// TODO Error
 					error("Error")
@@ -54,6 +55,11 @@ class HomeViewModel: NHViewModel(), SwipeRefreshLayout.OnRefreshListener {
 				isRefreshing.set(false)
 			}
 		}
+	}
+
+	fun saveLatestBook() {
+		LatestBook.list = items.get()
+		LatestBook.nowPage = currentPage.get()
 	}
 
 }

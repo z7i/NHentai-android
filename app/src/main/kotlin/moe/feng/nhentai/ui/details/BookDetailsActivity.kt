@@ -13,11 +13,14 @@ import moe.feng.nhentai.databinding.ActivityNewBookDetailsBinding
 import moe.feng.nhentai.model.Book
 import moe.feng.nhentai.ui.adapter.TagBinder
 import moe.feng.nhentai.ui.common.NHBindingActivity
+import moe.feng.nhentai.ui.widget.SwipeBackCoordinatorLayout
 import moe.feng.nhentai.util.extension.jsonAsObject
 import moe.feng.nhentai.util.extension.objectAsJson
 import moe.feng.nhentai.util.extension.registerOne
+import org.jetbrains.anko.info
 
-class BookDetailsActivity: NHBindingActivity<ActivityNewBookDetailsBinding>() {
+class BookDetailsActivity: NHBindingActivity<ActivityNewBookDetailsBinding>(),
+		SwipeBackCoordinatorLayout.OnSwipeListener {
 
 	override val LAYOUT_RES_ID: Int = R.layout.activity_new_book_details
 
@@ -25,6 +28,8 @@ class BookDetailsActivity: NHBindingActivity<ActivityNewBookDetailsBinding>() {
 
 	override fun onViewCreated(savedInstanceState: Bundle?) {
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+		binding.swipeBackLayout.setOnSwipeListener(this)
 
 		binding.fab.setOnClickListener {
 			// TODO onClick
@@ -44,6 +49,20 @@ class BookDetailsActivity: NHBindingActivity<ActivityNewBookDetailsBinding>() {
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
 		menuInflater.inflate(R.menu.menu_details, menu)
 		return super.onCreateOptionsMenu(menu)
+	}
+
+	override fun canSwipeBack(dir: Int): Boolean {
+		info("canSwipeBack called dir=$dir")
+		return dir == SwipeBackCoordinatorLayout.UP_DIR ||
+				(dir == SwipeBackCoordinatorLayout.DOWN_DIR && binding.appBarLayout.y >= 0)
+	}
+
+	override fun onSwipeProcess(percent: Float) {
+		binding.root.setBackgroundColor(SwipeBackCoordinatorLayout.getBackgroundColor(percent))
+	}
+
+	override fun onSwipeFinish(dir: Int) {
+		finish()
 	}
 
 	companion object {

@@ -31,7 +31,9 @@
             </intent-filter>
         </activity>
 
-	    <activity android:name=".ui.details.BookDetailsActivity">
+	    <activity
+		    android:name=".ui.details.BookDetailsActivity"
+		    android:theme="@style/Theme.NHBooks.Light.Transparent">
 		    <intent-filter>
 			    <action android:name="android.intent.action.VIEW"/>
 		    </intent-filter>

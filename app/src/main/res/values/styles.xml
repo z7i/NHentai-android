@@ -27,6 +27,11 @@
 		<item name="colorAccent">@color/pink_500</item>
 	</style>
 
+	<style name="Theme.NHBooks.Light.Transparent" parent="Theme.NHBooks.Light.DarkActionBar">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowBackground">@android:color/transparent</item>
+	</style>
+
 	<style name="Theme.NHBooks.Dark" parent="Base.Theme.NHBooks.Dark">
 		<item name="windowActionBar">false</item>
 		<item name="windowNoTitle">true</item>
