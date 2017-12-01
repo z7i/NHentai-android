@@ -19,13 +19,13 @@ import org.jetbrains.anko.*
 object ExtraBindingAdapter: AnkoLogger {
 
 	@BindingAdapter("bind:items")
-	@JvmStatic fun setMultiTypeAdapterItems(view: RecyclerView, array: Array<*>) {
-		setMultiTypeAdapterItems(view, array.toList())
+	@JvmStatic fun setMultiTypeAdapterItems(view: RecyclerView, array: Array<*>?) {
+		setMultiTypeAdapterItems(view, array?.toList())
 	}
 
 	@BindingAdapter("bind:items")
-	@JvmStatic fun setMultiTypeAdapterItems(view: RecyclerView, list: List<*>) {
-		(view.adapter as? MultiTypeAdapter)?.items = list
+	@JvmStatic fun setMultiTypeAdapterItems(view: RecyclerView, list: List<*>?) {
+		(view.adapter as? MultiTypeAdapter)?.items = list ?: mutableListOf<Any>()
 		view.adapter?.notifyDataSetChanged()
 	}
 

@@ -16,6 +16,10 @@
 
     <!-- 2.0 Details -->
 	<string name="upload_time_format">Upload at %s</string>
+    <string name="total_pages_format">Total %d pages</string>
+	<string name="btn_preview_list">Preview list</string>
+	<string name="header_tags">TAGS</string>
+    <string name="header_related">You may also like…</string>
 
     <!-- New Home Design -->
     <string name="search_bar_hint">Search books here....</string>

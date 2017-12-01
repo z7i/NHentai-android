@@ -89,6 +89,8 @@ import java.util.*
 	val pagePictures: BookPageGetter get() = BookPageGetter(this, false)
 	val pageThumbnails: BookPageGetter get() = BookPageGetter(this, true)
 
+	val relatedApiUrl: String get() = ApiConstants.getBookRecommendUrl(bookId)
+
 	class BookPageGetter internal constructor(private val book: Book, private val thumb: Boolean) {
 
 		operator fun get(pageNum: Int): String =

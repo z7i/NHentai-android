@@ -5,6 +5,7 @@
 	xmlns:bind="http://schemas.android.com/apk/res-auto"
 	tools:context=".ui.details.BookDetailsActivity">
 	<data>
+		<import type="android.view.View"/>
 		<variable name="vm" type="moe.feng.nhentai.ui.details.BookDetailsViewModel"/>
 	</data>
 	<android.support.design.widget.CoordinatorLayout
@@ -17,7 +18,6 @@
 			android:id="@+id/swipe_back_layout"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:background="@color/material_grey_50"
 			android:fitsSystemWindows="true">
 
 			<android.support.design.widget.AppBarLayout
@@ -32,6 +32,7 @@
 					android:layout_width="match_parent"
 					android:layout_height="@dimen/appbar_parallax_max_height"
 					app:title="@{vm.data.prettyTitle}"
+					app:expandedTitleTextAppearance="@style/TextAppearance.NHBooks.ParallaxTitle"
 					app:layout_scrollFlags="exitUntilCollapsed|scroll"
 					app:contentScrim="?attr/colorPrimary">
 
@@ -75,6 +76,7 @@
 			<android.support.v4.widget.NestedScrollView
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
+				android:background="@color/material_grey_50"
 				app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 				<LinearLayout
@@ -97,9 +99,37 @@
 						android:layout_height="wrap_content"
 						android:layout_marginStart="16dp"
 						android:layout_marginEnd="16dp"
-						android:layout_marginBottom="16dp"
+						android:layout_marginBottom="8dp"
 						android:textAppearance="@style/TextAppearance.AppCompat.Body1"
 						android:text="@{@string/upload_time_format(vm.data.formattedTime)}"/>
+
+					<LinearLayout
+						android:orientation="horizontal"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:paddingStart="16dp"
+						android:paddingEnd="16dp"
+						android:layout_marginTop="8dp">
+
+						<TextView
+							android:layout_width="0dp"
+							android:layout_weight="1"
+							android:layout_height="wrap_content"
+							android:layout_marginBottom="16dp"
+							android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+							android:text="@{@string/total_pages_format(vm.data.pageCount)}"/>
+
+						<Button
+							android:id="@+id/preview_list_button"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginBottom="16dp"
+							android:text="@string/btn_preview_list"
+							android:drawableStart="@drawable/ic_photo_library_black_24dp"
+							android:drawablePadding="8dp"
+							android:backgroundTint="@color/material_grey_100"/>
+
+					</LinearLayout>
 
 					<!-- Divider -->
 					<View
@@ -109,12 +139,60 @@
 						android:layout_marginBottom="4dp"
 						android:background="#4f000000"/>
 
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="16dp"
+						android:layout_marginEnd="16dp"
+						android:layout_marginTop="12dp"
+						android:layout_marginBottom="8dp"
+						android:textAppearance="@style/TextAppearance.AppCompat.Button"
+						android:textColor="?attr/colorPrimaryDark"
+						android:text="@string/header_tags"/>
+
 					<android.support.v7.widget.RecyclerView
 						android:id="@+id/tags_list"
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:padding="8dp"
 						bind:items="@{vm.data.allTags}"/>
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="16dp"
+						android:layout_marginEnd="16dp"
+						android:layout_marginTop="12dp"
+						android:layout_marginBottom="8dp"
+						android:textAppearance="@style/TextAppearance.AppCompat.Button"
+						android:textColor="?attr/colorPrimaryDark"
+						android:text="@string/header_related"/>
+
+					<FrameLayout
+						android:layout_width="match_parent"
+						android:layout_height="260dp"
+						android:layout_marginTop="16dp"
+						android:layout_marginBottom="32dp">
+
+						<android.support.v7.widget.RecyclerView
+							android:id="@+id/related_list"
+							android:layout_width="match_parent"
+							android:layout_height="match_parent"
+							android:paddingStart="8dp"
+							android:paddingEnd="8dp"
+							android:clipToPadding="false"
+							android:orientation="horizontal"
+							android:visibility="@{vm.relatedBooks == null ? View.GONE : View.VISIBLE}"
+							bind:items="@{vm.relatedBooks}"/>
+
+						<moe.feng.nhentai.view.WheelProgressView
+							android:layout_width="48dp"
+							android:layout_height="48dp"
+							android:layout_gravity="center"
+							android:visibility="@{vm.relatedBooks != null ? View.GONE : View.VISIBLE}"
+							app:matProg_barColor="?attr/colorAccent"/>
+
+					</FrameLayout>
 
 				</LinearLayout>
 
@@ -124,7 +202,7 @@
 				android:id="@+id/fab"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:src="@drawable/ic_photo_library_black_24dp"
+				android:src="@drawable/ic_play_arrow_black_24dp"
 				android:tint="@android:color/white"
 				android:layout_marginEnd="16dp"
 				app:layout_anchor="@+id/app_bar_layout"
