@@ -32,4 +32,9 @@ class HomeFragment: NHBindingFragment<FragmentNewHomeBinding>() {
 		}
 	}
 
+	override fun onPause() {
+		super.onPause()
+		viewModel.saveLatestBook()
+	}
+
 }
