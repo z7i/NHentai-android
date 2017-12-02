@@ -185,12 +185,12 @@
 							android:visibility="@{vm.relatedBooks == null ? View.GONE : View.VISIBLE}"
 							bind:items="@{vm.relatedBooks}"/>
 
-						<moe.feng.nhentai.view.WheelProgressView
+						<ProgressBar
 							android:layout_width="48dp"
 							android:layout_height="48dp"
 							android:layout_gravity="center"
 							android:visibility="@{vm.relatedBooks != null ? View.GONE : View.VISIBLE}"
-							app:matProg_barColor="?attr/colorAccent"/>
+							style="?attr/progressBarStyle"/>
 
 					</FrameLayout>
 

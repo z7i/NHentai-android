@@ -1,7 +1,10 @@
 package moe.feng.nhentai.ui.details
 
+import android.app.ActivityManager
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
+import android.databinding.Observable
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
@@ -38,6 +41,10 @@ class BookDetailsActivity: NHBindingActivity<ActivityNewBookDetailsBinding>(),
 	override fun onViewCreated(savedInstanceState: Bundle?) {
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			ActivityOptions.makeTaskLaunchBehind()
+		}
+
 		binding.swipeBackLayout.setOnSwipeListener(this)
 
 		binding.fab.setOnClickListener {
@@ -48,7 +55,7 @@ class BookDetailsActivity: NHBindingActivity<ActivityNewBookDetailsBinding>(),
 				.setChildGravity(Gravity.START)
 				.setScrollingEnabled(false)
 				.build()
-		binding.tagsList.isNestedScrollingEnabled = false 
+		binding.tagsList.isNestedScrollingEnabled = false
 		binding.tagsList.adapter = MultiTypeAdapter().apply { registerOne(TagBinder()) }
 
 		binding.relatedList.layoutManager = LinearLayoutManager(this,
@@ -87,6 +94,15 @@ class BookDetailsActivity: NHBindingActivity<ActivityNewBookDetailsBinding>(),
 
 		binding.vm = viewModel
 
+		viewModel.data.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+			override fun onPropertyChanged(data: Observable?, p1: Int) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+					setTaskDescription(ActivityManager.TaskDescription(
+							viewModel.data.get().prettyTitle ?: viewModel.data.get().jpTitle
+					))
+				}
+			}
+		})
 		viewModel.data.set(intent.getStringExtra(EXTRA_BOOK_JSON).jsonAsObject())
 
 		viewModel.loadBookDataIfNecessary()
@@ -152,7 +168,7 @@ class BookDetailsActivity: NHBindingActivity<ActivityNewBookDetailsBinding>(),
 		fun launch(context: Context, book: Book) {
 			Intent(context, BookDetailsActivity::class.java).apply {
 				flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-					Intent.FLAG_ACTIVITY_NEW_DOCUMENT
+					Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 				} else {
 					Intent.FLAG_ACTIVITY_NEW_TASK
 				}
