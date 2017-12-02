@@ -1,36 +1,51 @@
 # NHBooks for Android
-<img src="./art/nhbooks.png" width="30%"/>
+<img src="./art/nhbooks.png" width="20%"/>
 
-a Material Design NHentai client for Android.
-一枚 Material Design 風格的 NHentai Android 客戶端
+A Material Design (3rd-party) NHentai client for Android.
 
-注意：R-18 警告！ (R-18 WARNING!!)
+WARNING: This application contains sexually explicit content that is not suitable for minors.
 
-到這裡下載已編譯的應用程式 (Download binary): https://github.com/fython/NHentai-android/releases
+You can download release version from here: https://github.com/fython/NHentai-android/releases
 
-### 螢幕截圖
-<a href="./art/screenshot_main.png"><img src="./art/screenshot_main.png" width="40%"/></a>
-<a href="./art/screenshot_details.png"><img src="./art/screenshot_details.png" width="40%"/></a>
+## Screenshots
 
-## 軟體說明
-該程式按照 Material Design 設計規範，提供簡潔、美觀的介面，並通過 API 從 NHentai 獲取本子，給你一個輕量、方便的客戶端。
+Screenshots are out-of-dated. We will update it soon.
 
-### 特別聲明
-該應用程式所供應的內容不適合未成年人觀看，所有內容通過 Jsoup 解析 NHentai 官網獲得，內容有任何異議或造成心理甚至生理上的問題均與本項目無關。
+## Introduction
 
-觀看時請留意是否適用於當地法律法規。
+### For users
 
-### 聯絡我
+This application develops on Material Design guidance. It provides a beautiful and friendly UI. Maybe it's the most beautiful doujinshi client.
+
+**NHBooks uses NHentai.net's API. The sites may contain NSFW contents. Please pay attention to whether it is applicable to local laws and regulations.**
+
+### For developers
+
+Since NHBooks 2.0, we make a refactor for it. Now it uses Kotlin + Android Databinding + Room + MVVM Structure.
+
+BTW, We try using Kotlin coroutine instead of popular async handle library (like RxJava, AsyncTask). Although it's a experimental function, it works fine.
+
+## Build environment
+
+This project was built successfully with these tools:
+
+- Kotlin 1.2.0 Support
+- Android Studio 3.0 / IntelliJ IDEA 2017.3 (Untested)
+- Android SDK Platform 27
+- Gradle 4.3
+
+## Contact me
 
 Google Plus: +Fung Jichun
+Telegram: [@fython](https://t.me/fython)
 
-新浪微博: @某燒餅
+## Donate me
 
-### 支持項目
+Alipay: fythonx#gmail.com (Replace `#` with `@`)
 
-Alipay 支付寶: 316643843@qq.com
+Paypal: https://paypal.me/fython
 
-### License 開源協議
+## License
 
 ```
 GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
