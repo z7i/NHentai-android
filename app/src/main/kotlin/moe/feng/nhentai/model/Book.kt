@@ -2,6 +2,8 @@ package moe.feng.nhentai.model
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import android.util.Log
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import moe.feng.nhentai.R
 import moe.feng.nhentai.api.ApiConstants
@@ -11,20 +13,22 @@ import java.util.*
 @Entity(tableName = Book.TAG) class Book: History.KeyContainer<Book.HistoryKey> {
 
 	// Serializable fields
-	@PrimaryKey @SerializedName("id") lateinit var bookId: String
-	@SerializedName("media_id") lateinit var galleryId: String
-	private @SerializedName("title") var titles: BookTitle = BookTitle()
-	@SerializedName("upload_date") var uploadDate: Long = 0L
-	@SerializedName("num_favorites") var favCount: Int = 0
-	var scanlator: String = ""
-	@SerializedName("num_pages") var pageCount: Int = 0
-	var images: BookImages = BookImages()
-	@SerializedName("tags") var allTags: Array<Tag> = emptyArray()
+	@Expose @PrimaryKey @SerializedName("id") lateinit var bookId: String
+	@Expose @SerializedName("media_id") lateinit var galleryId: String
+	private @Expose @SerializedName("title") var titles: BookTitle = BookTitle()
+	@Expose @SerializedName("upload_date") var uploadDate: Long = 0L
+	@Expose @SerializedName("num_favorites") var favCount: Int = 0
+	@Expose var scanlator: String = ""
+	@Expose @SerializedName("num_pages") var pageCount: Int = 0
+	private @Expose @SerializedName("images") var _images: BookImages = BookImages()
+	@Expose @SerializedName("tags") var allTags: Array<Tag> = emptyArray()
 
 	// Favourite mark
-	var isFavourite: Boolean = false
+	@Expose var isFavourite: Boolean = false
 
 	// Methods
+	val images: BookImages get() = _images.apply { book = this@Book }
+
 	val language: String get() = allTags.find {
 		it.type == Tag.TYPE_LANGUAGE && it.name != Tag.LANG_TRANSLATED }?.name ?: Tag.LANG_JAPANESE
 	val tags: Array<Tag> get() = allTags.filter { it.type == Tag.TYPE_TAG }.toTypedArray()
@@ -55,22 +59,36 @@ import java.util.*
 	// Sub-classes
 
 	data class BookTitle(
-			var japanese: String? = null,
-			var pretty: String? = null,
-			var english: String = ""
+			@Expose var japanese: String? = null,
+			@Expose var pretty: String? = null,
+			@Expose var english: String = ""
 	)
 
 	class BookImages(
-			var cover: Picture? = null,
-	        var pages: Array<Picture> = emptyArray(),
-	        var thumbnail: Picture? = null
-	)
+			@Expose var cover: Picture? = null,
+			@Expose var pages: Array<Picture> = emptyArray(),
+			@Expose var thumbnail: Picture? = null,
+			var book: Book? = null
+	) {
+
+		fun getThumbnails(): Array<PictureUrl> {
+			book?.let {
+				val list = mutableListOf<PictureUrl>()
+				for (i in 1..it.pageCount) {
+					list += PictureUrl(it.pageThumbnails[i], title = i.toString())
+				}
+				return list.toTypedArray()
+			}
+			return emptyArray()
+		}
+
+	}
 
 	class HistoryKey(
-			val id: String,
-	        val galleryId: String,
-	        val titles: BookTitle,
-	        val cover: Picture? = null
+			@Expose val id: String,
+			@Expose val galleryId: String,
+			@Expose val titles: BookTitle,
+			@Expose val cover: Picture? = null
 	): History.Key {
 		override fun id(): String = id
 	}
@@ -94,10 +112,10 @@ import java.util.*
 	class BookPageGetter internal constructor(private val book: Book, private val thumb: Boolean) {
 
 		operator fun get(pageNum: Int): String =
-				(if (thumb) ApiConstants::getPictureUrl else ApiConstants::getThumbPictureUrl)(
+				(if (!thumb) ApiConstants::getPictureUrl else ApiConstants::getThumbPictureUrl)(
 						book.galleryId,
 						pageNum.toString(),
-						book.images.pages[pageNum].fileType
+						book.images.pages[pageNum - 1].fileType
 				)
 
 	}

@@ -5,6 +5,7 @@ import moe.feng.nhentai.databinding.ItemBookCardFixedHeightBinding
 import moe.feng.nhentai.model.Book
 import moe.feng.nhentai.ui.common.NHBindingItemViewBinder
 import moe.feng.nhentai.ui.details.BookDetailsActivity
+import org.jetbrains.anko.info
 
 class FixedHeightBookCardBinder: NHBindingItemViewBinder<Book, ItemBookCardFixedHeightBinding>() {
 
@@ -12,6 +13,7 @@ class FixedHeightBookCardBinder: NHBindingItemViewBinder<Book, ItemBookCardFixed
 
 	override fun onViewHolderCreated(holder: BindingHolder<Book, ItemBookCardFixedHeightBinding>) {
 		holder.binding.bookCard.setOnClickListener {
+			info("Clicked")
 			holder.currentItem?.let {
 				BookDetailsActivity.launch(holder.context, it)
 			}

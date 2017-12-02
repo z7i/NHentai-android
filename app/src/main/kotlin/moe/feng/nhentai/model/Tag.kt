@@ -2,15 +2,16 @@ package moe.feng.nhentai.model
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import com.google.gson.annotations.Expose
 import moe.feng.nhentai.R
 
 @Entity(tableName = Tag.TAG) class Tag @JvmOverloads constructor(
-		@PrimaryKey val id: Int = 0,
-		val type: String = "category",
-		val name: String = "",
-		val url: String = "",
-		val count: Int = 0,
-        val isFavourite: Boolean = false
+		@Expose @PrimaryKey val id: Int = 0,
+		@Expose val type: String = "category",
+		@Expose val name: String = "",
+		@Expose val url: String = "",
+		@Expose val count: Int = 0,
+		@Expose val isFavourite: Boolean = false
 ): History.KeyContainer<Tag.HistoryKey> {
 
 	override fun getHistoryAction(): Int = History.ACTION_READ_TAGS
@@ -30,9 +31,9 @@ import moe.feng.nhentai.R
 	}
 
 	class HistoryKey(
-			val id: Int,
-	        val type: String,
-	        val name: String
+			@Expose val id: Int,
+			@Expose val type: String,
+			@Expose val name: String
 	): History.Key {
 		override fun id(): String = id.toString()
 	}

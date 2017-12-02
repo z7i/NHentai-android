@@ -209,6 +209,34 @@
 				app:layout_anchorGravity="end|bottom"
 				app:behavior_autoHide="true"/>
 
+			<View
+				android:id="@+id/preview_list_background"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:background="#6f000000"
+				android:alpha="0"
+				tools:alpha="1"/>
+
+			<FrameLayout
+				android:id="@+id/preview_list_layout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				style="@style/Widget.Design.BottomSheet.Modal"
+				app:behavior_hideable="true"
+				app:behavior_peekHeight="240dp"
+				app:layout_behavior="@string/bottom_sheet_behavior">
+
+				<android.support.v7.widget.RecyclerView
+					android:id="@+id/preview_list"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:paddingTop="8dp"
+					android:paddingBottom="8dp"
+					android:clipToPadding="false"
+					bind:items="@{vm.data.images.thumbnails}"/>
+
+			</FrameLayout>
+
 		</moe.feng.nhentai.ui.widget.SwipeBackCoordinatorLayout>
 
 	</android.support.design.widget.CoordinatorLayout>

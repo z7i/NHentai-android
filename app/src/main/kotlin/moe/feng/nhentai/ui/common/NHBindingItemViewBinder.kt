@@ -9,9 +9,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import me.drakeet.multitype.ItemViewBinder
 import moe.feng.nhentai.BR
+import org.jetbrains.anko.AnkoLogger
 
 abstract class NHBindingItemViewBinder<M, DB: ViewDataBinding>:
-		ItemViewBinder<M, NHBindingItemViewBinder.BindingHolder<M, DB>>() {
+		ItemViewBinder<M, NHBindingItemViewBinder.BindingHolder<M, DB>>(), AnkoLogger {
 
 	abstract val LAYOUT_RES_ID: Int
 

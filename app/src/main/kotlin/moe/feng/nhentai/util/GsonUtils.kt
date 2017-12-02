@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder
 
 object GsonUtils {
 
-	private val gson = GsonBuilder().create()
+	private val gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()
 
 	fun <T> toJson(obj: T): String = gson.toJson(obj)
 

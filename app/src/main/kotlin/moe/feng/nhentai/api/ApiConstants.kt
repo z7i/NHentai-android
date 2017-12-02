@@ -43,15 +43,15 @@ object ApiConstants {
 			"${getGalleryUrl(galleryId)}/$pageNum.$fileType"
 
 	fun getThumbPictureUrl(galleryId: String, pageNum: String, fileType: String): String =
-			"${getThumbGalleryUrl(galleryId)}/$pageNum.$fileType"
+			"${getThumbGalleryUrl(galleryId)}/${pageNum}t.$fileType"
 
 	fun getBigCoverUrl(galleryId: String): String =
-			getThumbPictureUrl(galleryId, "cover", "jpg")
+			"${getThumbGalleryUrl(galleryId)}/cover.jpg"
 
 	fun getOriginPictureUrl(galleryId: String, pageNum: String): String =
 			getPictureUrl(galleryId, pageNum, "jpg")
 
 	fun getBookThumbUrl(galleryId: String, fileType: String? = "jpg"): String =
-			getThumbPictureUrl(galleryId, "thumb", fileType ?: "jpg")
+			"${getThumbGalleryUrl(galleryId)}/thumb.${fileType ?: "jpg"}"
 
 }

@@ -2,13 +2,14 @@ package moe.feng.nhentai.model
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import com.google.gson.annotations.Expose
 import moe.feng.nhentai.util.extension.*
 import java.util.*
 
 @Entity(tableName = History.TAG) class History(
-		val action: Int,
-		@PrimaryKey var time: Long = System.currentTimeMillis(),
-		var key: String = ""
+		@Expose val action: Int,
+		@Expose @PrimaryKey var time: Long = System.currentTimeMillis(),
+		@Expose var key: String = ""
 ) {
 
 	fun getDate(): Date {
