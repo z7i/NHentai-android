@@ -50,7 +50,7 @@ Paypal: https://paypal.me/fython
 ```
 GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 
-Copyright (C) 2015 FengMoe Team
+Copyright (C) 2015-2017 NHMoeDev
 
 This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it under certain conditions.
