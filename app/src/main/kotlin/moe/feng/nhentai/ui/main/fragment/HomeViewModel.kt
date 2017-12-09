@@ -32,18 +32,15 @@ class HomeViewModel: NHViewModel(), SwipeRefreshLayout.OnRefreshListener {
 		}
 	}
 
-	fun onNext() = ui {
+	@Synchronized fun onNext() = ui {
 		if (!isRefreshing.get()) {
 			isRefreshing.set(true)
 
 			val result = PageApi.getHomePageListAsync(currentPage.get() + 1).await()?.result
 			if (result?.isNotEmpty() == true) {
-				try {
-					items.set((items.get() + result).toMutableList())
-					currentPage.set(currentPage.get() + 1)
-				} catch (e: Exception) {
-					e.printStackTrace()
-				}
+				items.set((items.get() + result).toMutableList())
+				currentPage.set(currentPage.get() + 1)
+				saveLatestBook()
 			} else {
 				// TODO Error
 				error("Error")
