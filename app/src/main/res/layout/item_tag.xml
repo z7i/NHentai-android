@@ -4,6 +4,7 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 	<data>
 		<import type="moe.feng.nhentai.util.ColorGenerator"/>
+		<import type="moe.feng.nhentai.ui.category.CategoryActivity"/>
 		<variable name="item" type="moe.feng.nhentai.model.Tag"/>
 	</data>
 	<FrameLayout
@@ -19,7 +20,11 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:gravity="center_vertical"
-			android:background="@drawable/tag_bg_purple">
+			android:clickable="true"
+			android:focusable="true"
+			android:foreground="?attr/selectableItemBackground"
+			android:background="@drawable/tag_bg_purple"
+			android:onClick="@{(v) -> CategoryActivity.launch(v.getContext(), item)}">
 
 			<ImageView
 				android:layout_width="32dp"

@@ -215,8 +215,8 @@ class SwipeBackCoordinatorLayout : CoordinatorLayout {
 		 * @param v   child view.
 		 * @param dir drag direction.
 		 */
-		fun canSwipeBack(v: View, dir: Int): Boolean {
-			return !v.canScrollVertically(dir)
+		fun canSwipeBack(v: View?, dir: Int): Boolean {
+			return v?.canScrollVertically(dir) != true
 		}
 
 		/**

@@ -30,9 +30,10 @@ object ApiConstants {
 	fun getThumbGalleryUrl(galleryId: String): String =
 			"$NHENTAI_T/galleries/$galleryId"
 
-	fun getTagUrl(tag: Tag, isPopularList: Boolean): String =
+	fun getTagUrl(tag: Tag, isPopularList: Boolean, pageNum: Int): String =
 			"$NHENTAI_HOME/api/galleries/tagged?" +
-					"tag_id=" + tag.id +
+					"tag_id=${tag.id}" +
+					"&page=$pageNum" +
 					if (isPopularList) "&sort=popular" else ""
 
 	fun getHomePageUrl(pageNum: Int): String =
