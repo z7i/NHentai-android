@@ -1,19 +1,18 @@
 package moe.feng.nhentai.ui.main.fragment
 
 import android.databinding.ObservableField
-import android.support.v4.widget.SwipeRefreshLayout
 import moe.feng.nhentai.api.PageApi
 import moe.feng.nhentai.dao.LatestBook
 import moe.feng.nhentai.ui.common.NHViewModel
 import org.jetbrains.anko.*
 
-class HomeViewModel: NHViewModel(), SwipeRefreshLayout.OnRefreshListener {
+class HomeViewModel: NHViewModel() {
 
 	var isRefreshing = ObservableField(false)
 	var currentPage = ObservableField(LatestBook.nowPage)
 	var items = ObservableField(LatestBook.list?.toMutableList() ?: mutableListOf())
 
-	override fun onRefresh() = ui {
+	@Synchronized fun onRefresh() = ui {
 		if (!isRefreshing.get()) {
 			isRefreshing.set(true)
 

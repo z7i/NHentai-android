@@ -45,54 +45,8 @@ class BookDetailsActivity: NHBindingActivity<ActivityNewBookDetailsBinding>(),
 			ActivityOptions.makeTaskLaunchBehind()
 		}
 
-		binding.swipeBackLayout.setOnSwipeListener(this)
-
-		binding.fab.setOnClickListener {
-			// TODO onClick
-		}
-
-		binding.tagsList.layoutManager = ChipsLayoutManager.newBuilder(this)
-				.setChildGravity(Gravity.START)
-				.setScrollingEnabled(false)
-				.build()
-		binding.tagsList.isNestedScrollingEnabled = false
-		binding.tagsList.adapter = MultiTypeAdapter().apply { registerOne(TagBinder()) }
-
-		binding.relatedList.layoutManager = LinearLayoutManager(this,
-				LinearLayoutManager.HORIZONTAL, false)
-		binding.relatedList.adapter = MultiTypeAdapter().apply { registerOne(FixedHeightBookCardBinder()) }
-
-		bottomSheetBehavior = BottomSheetBehavior.from(binding.previewListLayout)
-		bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-		bottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-			override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-			override fun onStateChanged(bottomSheet: View, newState: Int) {
-				if (newState != BottomSheetBehavior.STATE_HIDDEN) {
-					hideFab()
-					binding.previewListBackground.animate().alpha(1f).start()
-				} else {
-					showFab()
-					binding.previewListBackground.animate().alpha(0f).start()
-				}
-			}
-		})
-		binding.previewListBackground.setOnTouchListener { _, _ ->
-			val state = bottomSheetBehavior.state
-			if (state == BottomSheetBehavior.STATE_COLLAPSED
-					|| state == BottomSheetBehavior.STATE_EXPANDED) {
-				bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-				true
-			} else false
-		}
-
-		binding.previewList.layoutManager = GridLayoutManager(this,
-				3, GridLayoutManager.VERTICAL, false)
-		binding.previewList.adapter = MultiTypeAdapter().apply { registerOne(PreviewItemBinder()) }
-
-		binding.previewListButton.setOnClickListener {
-			bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED }
-
 		binding.vm = viewModel
+		binding.init()
 
 		viewModel.data.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
 			override fun onPropertyChanged(data: Observable?, p1: Int) {
@@ -106,6 +60,55 @@ class BookDetailsActivity: NHBindingActivity<ActivityNewBookDetailsBinding>(),
 		viewModel.data.set(intent.getStringExtra(EXTRA_BOOK_JSON).jsonAsObject())
 
 		viewModel.loadBookDataIfNecessary()
+	}
+
+	private fun ActivityNewBookDetailsBinding.init() {
+		swipeBackLayout.setOnSwipeListener(this@BookDetailsActivity)
+
+		fab.setOnClickListener {
+			// TODO onClick
+		}
+
+		tagsList.layoutManager = ChipsLayoutManager.newBuilder(this@BookDetailsActivity)
+				.setChildGravity(Gravity.START)
+				.setScrollingEnabled(false)
+				.build()
+		tagsList.isNestedScrollingEnabled = false
+		tagsList.adapter = MultiTypeAdapter().apply { registerOne(TagBinder()) }
+
+		relatedList.layoutManager = LinearLayoutManager(this@BookDetailsActivity,
+				LinearLayoutManager.HORIZONTAL, false)
+		relatedList.adapter = MultiTypeAdapter().apply { registerOne(FixedHeightBookCardBinder()) }
+
+		bottomSheetBehavior = BottomSheetBehavior.from(previewListLayout)
+		bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+		bottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+			override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+			override fun onStateChanged(bottomSheet: View, newState: Int) {
+				if (newState != BottomSheetBehavior.STATE_HIDDEN) {
+					hideFab()
+					previewListBackground.animate().alpha(1f).start()
+				} else {
+					showFab()
+					previewListBackground.animate().alpha(0f).start()
+				}
+			}
+		})
+		previewListBackground.setOnTouchListener { _, _ ->
+			val state = bottomSheetBehavior.state
+			if (state == BottomSheetBehavior.STATE_COLLAPSED
+					|| state == BottomSheetBehavior.STATE_EXPANDED) {
+				bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+				true
+			} else false
+		}
+
+		previewList.layoutManager = GridLayoutManager(this@BookDetailsActivity,
+				3, GridLayoutManager.VERTICAL, false)
+		previewList.adapter = MultiTypeAdapter().apply { registerOne(PreviewItemBinder()) }
+
+		previewListButton.setOnClickListener {
+			bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED }
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -165,7 +168,7 @@ class BookDetailsActivity: NHBindingActivity<ActivityNewBookDetailsBinding>(),
 
 		const val EXTRA_BOOK_JSON = "book_json"
 
-		fun launch(context: Context, book: Book) {
+		@JvmStatic fun launch(context: Context, book: Book) {
 			Intent(context, BookDetailsActivity::class.java).apply {
 				flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 					Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK or Intent.FLAG_ACTIVITY_NEW_TASK

@@ -14,9 +14,13 @@ class MainActivity: NHBindingActivity<ActivityMainBinding>(), BottomNavigation.O
 	private val homeFragment = HomeFragment()
 
 	override fun onViewCreated(savedInstanceState: Bundle?) {
-		binding.bottomNavigation.setOnMenuChangedListener(this)
+		binding.init()
 
 		supportFragmentManager.beginTransaction().replace(R.id.container, homeFragment).commit()
+	}
+
+	private fun ActivityMainBinding.init() {
+		bottomNavigation.setOnMenuChangedListener(this@MainActivity)
 	}
 
 	override fun onMenuChanged(item: BottomNavigation) {

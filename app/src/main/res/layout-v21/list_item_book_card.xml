@@ -5,6 +5,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	xmlns:bind="http://schemas.android.com/apk/res-auto">
 	<data>
+		<import type="moe.feng.nhentai.ui.details.BookDetailsActivity"/>
 		<variable name="item" type="moe.feng.nhentai.model.Book"/>
 	</data>
 	<android.support.v7.widget.CardView
@@ -13,7 +14,9 @@
 		android:layout_margin="5dp"
 		android:foreground="?attr/selectableItemBackground"
 		android:clickable="true"
+		android:focusable="true"
 		android:id="@+id/book_card"
+		android:onClick="@{(v) -> BookDetailsActivity.launch(v.getContext(), item)}"
 		android:stateListAnimator="@anim/state_anim_raise"
 		app:cardElevation="4dp"
 		app:cardCornerRadius="2dp"

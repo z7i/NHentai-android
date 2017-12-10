@@ -11,15 +11,13 @@ import me.drakeet.multitype.ItemViewBinder
 import moe.feng.nhentai.BR
 import org.jetbrains.anko.AnkoLogger
 
-abstract class NHBindingItemViewBinder<M, DB: ViewDataBinding>:
+abstract class NHBindingItemViewBinder<M, DB: ViewDataBinding>(private val layoutResId: Int):
 		ItemViewBinder<M, NHBindingItemViewBinder.BindingHolder<M, DB>>(), AnkoLogger {
-
-	abstract val LAYOUT_RES_ID: Int
 
 	@CallSuper
 	override fun onCreateViewHolder(inflater: LayoutInflater, parent: ViewGroup)
 			: BindingHolder<M, DB> {
-		val binding: DB = DataBindingUtil.inflate(inflater, LAYOUT_RES_ID, parent, false)
+		val binding: DB = DataBindingUtil.inflate(inflater, layoutResId, parent, false)
 		return BindingHolder(binding, this::onViewHolderCreated)
 	}
 

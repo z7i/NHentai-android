@@ -5,8 +5,5 @@ import moe.feng.nhentai.databinding.ItemBookPreviewBinding
 import moe.feng.nhentai.model.PictureUrl
 import moe.feng.nhentai.ui.common.NHBindingItemViewBinder
 
-class PreviewItemBinder: NHBindingItemViewBinder<PictureUrl, ItemBookPreviewBinding>() {
-
-	override val LAYOUT_RES_ID: Int = R.layout.item_book_preview
-
-}
+class PreviewItemBinder
+	: NHBindingItemViewBinder<PictureUrl, ItemBookPreviewBinding>(R.layout.item_book_preview)

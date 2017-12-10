@@ -46,7 +46,6 @@ class CategoryListFragment: NHBindingFragment<FragmentCategoryListBinding>() {
 	}
 
 	private fun FragmentCategoryListBinding.init() {
-		swipeRefreshLayout.setOnRefreshListener(viewModel::onRefresh)
 		recyclerView.setOnLoadMoreListener(viewModel::onNext)
 		recyclerView.layoutManager = StaggeredGridLayoutManager(
 				2, StaggeredGridLayoutManager.VERTICAL)

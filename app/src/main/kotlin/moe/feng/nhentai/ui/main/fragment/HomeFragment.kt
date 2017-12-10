@@ -14,22 +14,22 @@ class HomeFragment: NHBindingFragment<FragmentNewHomeBinding>() {
 
 	override val LAYOUT_RES_ID: Int = R.layout.fragment_new_home
 
-	private val adapter = MultiTypeAdapter()
+	private val adapter by lazy { MultiTypeAdapter().apply { registerOne(BookCardBinder()) } }
 
 	private val viewModel = HomeViewModel()
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		binding?.vm = viewModel
 
-		binding?.apply {
-			adapter.registerOne(BookCardBinder())
+		binding?.init()
+	}
 
-			recyclerView.adapter = adapter
-			recyclerView.setOnLoadMoreListener(viewModel::onNext)
+	private fun FragmentNewHomeBinding.init() {
+		recyclerView.adapter = adapter
+		recyclerView.setOnLoadMoreListener(viewModel::onNext)
 
-			swipeRefreshLayout.setColorSchemeResources(R.color.deep_purple_500)
-			swipeRefreshLayout.setOnRefreshListener(viewModel)
-		}
+		swipeRefreshLayout.setColorSchemeResources(R.color.deep_purple_500)
+		swipeRefreshLayout.setOnRefreshListener(viewModel::onRefresh)
 	}
 
 }
