@@ -2,9 +2,9 @@ package moe.feng.nhentai.ui.category
 
 import android.app.ActivityManager
 import android.app.ActivityOptions
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
-import android.databinding.Observable
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -14,6 +14,7 @@ import moe.feng.nhentai.R
 import moe.feng.nhentai.databinding.ActivityCategoryBinding
 import moe.feng.nhentai.model.Tag
 import moe.feng.nhentai.ui.common.NHBindingActivity
+import moe.feng.nhentai.ui.common.observers
 import moe.feng.nhentai.ui.widget.SwipeBackCoordinatorLayout
 import moe.feng.nhentai.util.extension.jsonAsObject
 import moe.feng.nhentai.util.extension.objectAsJson
@@ -25,7 +26,7 @@ class CategoryActivity: NHBindingActivity<ActivityCategoryBinding>(),
 
 	private val pagerAdapter by lazy { CategoryPagerAdapter(supportFragmentManager) }
 
-	private val viewModel: CategoryViewModel = CategoryViewModel()
+	private lateinit var viewModel: CategoryViewModel
 
 	override fun onViewCreated(savedInstanceState: Bundle?) {
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -34,17 +35,17 @@ class CategoryActivity: NHBindingActivity<ActivityCategoryBinding>(),
 			ActivityOptions.makeTaskLaunchBehind()
 		}
 
+        viewModel = ViewModelProviders.of(this)[CategoryViewModel::class.java]
+
 		binding.vm = viewModel
 
-		viewModel.tag.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-			override fun onPropertyChanged(p0: Observable?, p1: Int) {
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-					setTaskDescription(ActivityManager.TaskDescription(
-							viewModel.tag.get().type + ":" + viewModel.tag.get().name
-					))
-				}
+		viewModel.tag.observers += { _, _ ->
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				setTaskDescription(ActivityManager.TaskDescription(
+						viewModel.tag.get().type + ":" + viewModel.tag.get().name
+				))
 			}
-		})
+		}
 		viewModel.tag.set(intent.getStringExtra(EXTRA_DATA).jsonAsObject())
 
 		binding.init()

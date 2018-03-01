@@ -2,9 +2,9 @@ package moe.feng.nhentai.ui.details
 
 import android.app.ActivityManager
 import android.app.ActivityOptions
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
-import android.databinding.Observable
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
@@ -28,13 +28,14 @@ import android.support.design.widget.CoordinatorLayout
 import android.support.v7.widget.GridLayoutManager
 import android.view.View
 import android.widget.FrameLayout
+import moe.feng.nhentai.ui.common.observers
 
 class BookDetailsActivity: NHBindingActivity<ActivityNewBookDetailsBinding>(),
 		SwipeBackCoordinatorLayout.OnSwipeListener {
 
 	override val LAYOUT_RES_ID: Int = R.layout.activity_new_book_details
 
-	private val viewModel = BookDetailsViewModel()
+	private lateinit var viewModel: BookDetailsViewModel
 
 	private lateinit var bottomSheetBehavior: BottomSheetBehavior<FrameLayout>
 
@@ -45,18 +46,18 @@ class BookDetailsActivity: NHBindingActivity<ActivityNewBookDetailsBinding>(),
 			ActivityOptions.makeTaskLaunchBehind()
 		}
 
+        viewModel = ViewModelProviders.of(this)[BookDetailsViewModel::class.java]
+
 		binding.vm = viewModel
 		binding.init()
 
-		viewModel.data.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-			override fun onPropertyChanged(data: Observable?, p1: Int) {
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-					setTaskDescription(ActivityManager.TaskDescription(
-							viewModel.data.get().prettyTitle ?: viewModel.data.get().jpTitle
-					))
-				}
+		viewModel.data.observers += { _, _ ->
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				setTaskDescription(ActivityManager.TaskDescription(
+						viewModel.data.get().prettyTitle ?: viewModel.data.get().jpTitle
+				))
 			}
-		})
+		}
 		viewModel.data.set(intent.getStringExtra(EXTRA_BOOK_JSON).jsonAsObject())
 
 		viewModel.loadBookDataIfNecessary()

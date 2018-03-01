@@ -46,7 +46,7 @@ class SwipeBackCoordinatorLayout : CoordinatorLayout {
 		}
 	}
 
-	@IntDef(NULL_DIR.toLong(), UP_DIR.toLong(), DOWN_DIR.toLong())
+	@IntDef(NULL_DIR, UP_DIR, DOWN_DIR)
 	annotation class DirectionRule
 
 	private inner class ResetAnimation internal constructor(private val fromDistance: Int) : Animation() {
@@ -94,7 +94,7 @@ class SwipeBackCoordinatorLayout : CoordinatorLayout {
 		return type == 0
 	}
 
-	override fun onNestedPreScroll(target: View, dx: Int, dy: Int, consumed: IntArray?, type: Int) {
+	override fun onNestedPreScroll(target: View, dx: Int, dy: Int, consumed: IntArray, type: Int) {
 		var dyConsumed = 0
 		if (isVerticalDragged && swipeDistance != 0) {
 			dyConsumed = onVerticalPreScroll(dy)
@@ -103,10 +103,8 @@ class SwipeBackCoordinatorLayout : CoordinatorLayout {
 		val newConsumed = intArrayOf(0, 0)
 		super.onNestedPreScroll(target, dx, dy - dyConsumed, newConsumed, type)
 
-		if (consumed != null) {
-			consumed[0] = newConsumed[0]
-			consumed[1] = newConsumed[1] + dyConsumed
-		}
+        consumed[0] = newConsumed[0]
+        consumed[1] = newConsumed[1] + dyConsumed
 	}
 
 	override fun onNestedScroll(target: View, dxConsumed: Int, dyConsumed: Int,

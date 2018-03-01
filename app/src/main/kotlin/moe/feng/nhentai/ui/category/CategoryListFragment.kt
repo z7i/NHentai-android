@@ -1,5 +1,6 @@
 package moe.feng.nhentai.ui.category
 
+import android.arch.lifecycle.ViewModelProviders
 import android.databinding.ObservableField
 import android.os.Bundle
 import android.support.v7.widget.StaggeredGridLayoutManager
@@ -24,10 +25,12 @@ class CategoryListFragment: NHBindingFragment<FragmentCategoryListBinding>() {
 
 	override val LAYOUT_RES_ID: Int = R.layout.fragment_category_list
 
-	private val viewModel: CategoryListViewModel = CategoryListViewModel()
+	private lateinit var viewModel: CategoryListViewModel
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProviders.of(this)[CategoryListViewModel::class.java]
 
 		arguments?.let {
 			viewModel.tag = it.getString(ARG_TAG_DATA).jsonAsObject()

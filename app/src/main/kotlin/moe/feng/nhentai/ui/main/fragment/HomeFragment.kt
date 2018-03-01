@@ -1,5 +1,6 @@
 package moe.feng.nhentai.ui.main.fragment
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.View
 import me.drakeet.multitype.MultiTypeAdapter
@@ -16,7 +17,13 @@ class HomeFragment: NHBindingFragment<FragmentNewHomeBinding>() {
 
 	private val adapter by lazy { MultiTypeAdapter().apply { registerOne(BookCardBinder()) } }
 
-	private val viewModel = HomeViewModel()
+	private lateinit var viewModel: HomeViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProviders.of(this)[HomeViewModel::class.java]
+    }
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		binding?.vm = viewModel
