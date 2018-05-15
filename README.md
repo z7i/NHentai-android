@@ -1,4 +1,4 @@
-# NHBooks for Android
+# NHBooks for Android (Suspension of maintenance)
 <img src="./art/nhbooks.png" width="20%"/>
 
 A Material Design (3rd-party) NHentai client for Android.
@@ -6,6 +6,10 @@ A Material Design (3rd-party) NHentai client for Android.
 WARNING: This application contains sexually explicit content that is not suitable for minors.
 
 You can download release version from here: https://github.com/fython/NHentai-android/releases
+
+## Suspension of maintenance
+
+Due to time and some reasons, this project was suspended for maintenance. I am very sorry for the inconvenience! Here I recommend another similar application: [EhViewer](https://github.com/seven332/EhViewer), which has more powerful features and stability, is also currently ongoing maintenance.
 
 ## Screenshots
 
@@ -33,17 +37,6 @@ This project was built successfully with these tools:
 - Android Studio 3.0 / IntelliJ IDEA 2017.3 (Untested)
 - Android SDK Platform 27
 - Gradle 4.3
-
-## Contact me
-
-Google Plus: +Fung Jichun
-Telegram: [@fython](https://t.me/fython)
-
-## Donate me
-
-Alipay: fythonx#gmail.com (Replace `#` with `@`)
-
-Paypal: https://paypal.me/fython
 
 ## License
 
