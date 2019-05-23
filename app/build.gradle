@@ -12,6 +12,10 @@ android {
 		versionCode 36
 		versionName "1.8.4"
 	}
+	 
+	 lintOptions {
+          abortOnError false
+      	}
 
 	dataBinding {
 		enabled = true
